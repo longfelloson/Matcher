@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Product Grid</title>
+    <link rel="stylesheet" href="/css/products/buy-product.css"
+</head>
+<body>
+<div class="container">
+    {% for product in products %}
+        <div class="product-card">
+            <img alt="iPhone 15 Pro & iPhone 15 Pro Max" src="{{ product.img_path }}">
+            <h2>{{ product.name }}</h2>
+            <div class="price">{{ product.price }}</div>
+            <a class="buy-btn" href="/product/{{ product.id_ }}">Buy</a>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>

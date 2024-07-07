@@ -6,14 +6,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from src import config
+from config import settings
 
-DATABASE_URL = config.DATABASE_URL
 Base = declarative_base()
 
 metadata = MetaData()
 
-engine = create_async_engine(DATABASE_URL, poolclass=NullPool)
+engine = create_async_engine(settings.DATABASE.URL, poolclass=NullPool)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 

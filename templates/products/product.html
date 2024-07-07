@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <link rel="stylesheet" href="/static/css/products/product.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="product-container">
+    <img src="" alt="Product Image" class="product-image" id="product-image">
+    <div class="product-name" id="product-name">Product Name</div>
+    <div class="product-price" id="product-price">Price: $50</div>
+    <div class="product-description" id="product-description">Product Description</div>
+    <button class="exchange-button" onclick="exchangeProduct()">Обменять</button>
+    <div class="success-message" id="success-message" style="display: none">
+        <div class="text">Обмен прошел успешно ✅</div>
+    </div>
+</div>
+<script src="/static/js/products/product.js"></script>
+</body>
+</html>

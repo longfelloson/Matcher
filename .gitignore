@@ -1,4 +1,4 @@
 .env
-base.db
-.git
-.idea
+migrations
+alembic.ini
+nginx.conf
