@@ -5,10 +5,10 @@ def get_profile_text(user: User, points: int | float) -> str:
     """
     Returns user's formatted profile text
     """
-    return f"Имя: {bold(user.name)}\n\n" \
-           f"Баллов: {bold(points)}\n\n" \
-           f"Возраст: {bold(user.age)}\n\n" \
-           f"Город: {bold(user.city)}"
+    return f"🎫 Имя: {bold(user.name)}\n\n" \
+           f"🎈 Баллов: {bold(points)}\n\n" \
+           f"🔢 Возраст: {bold(user.age)}\n\n" \
+           f"🌆 Город: {bold(user.city)}"
 
 
 def get_user_profile_caption(user: User) -> str:
