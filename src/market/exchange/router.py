@@ -28,7 +28,7 @@ async def exchange_points_page(request: Request):
 @router.post("/exchange-points", response_class=JSONResponse)
 async def exchange_points_endpoint(data: ExchangeData, session: AsyncSession = Depends(get_async_session)):
     """
-    Endpoint for getting exchange points.
+    Endpoint to exchange user points.
     """
     await users_crud.decrease_user_points(data.user_id, data.points, session)
     await transactions_crud.create_transaction(TransactionType.PURCHASE, data.product_id, data.points, session)
@@ -41,4 +41,4 @@ async def get_exchange_points_rate_endpoint():
     """
     Endpoint for getting exchange points rate.
     """
-    return JSONResponse({"current-rate": 100})
+    return JSONResponse({"current-rate": settings.EXCHANGE_RATE})

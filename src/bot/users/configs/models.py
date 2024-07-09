@@ -11,4 +11,3 @@ class UserConfig(Base):
     guess_age = Column(Boolean)
 
     user = relationship("User", back_populates="config")
-

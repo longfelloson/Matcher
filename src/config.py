@@ -36,6 +36,7 @@ class Settings(BaseModel):
 
     TEMPLATES_PATH: str = '../templates'
     MARKET_LINK: str = os.getenv('MARKET_LINK')
+    EXCHANGE_RATE: str = os.getenv('EXCHANGE_RATE')
 
 
 settings = Settings()

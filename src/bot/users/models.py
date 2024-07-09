@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import String, DateTime, Column, Float, Integer, BigInteger
 from sqlalchemy.orm import relationship
 
-from bot.users.configs.models import UserConfig
 from bot.users.schemas import UserStatuses
 from database import Base
 
@@ -27,4 +26,3 @@ class User(Base):
     points = Column(Float, default=0.0)
 
     config = relationship("UserConfig", back_populates="user", uselist=False, lazy="selectin")
-
