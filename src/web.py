@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -7,7 +8,7 @@ import database
 from config import settings
 from market.router import router as market_router
 
-app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI()
 
 app.mount('/static', StaticFiles(directory='../static'), name='static')
 app.include_router(market_router)
@@ -36,3 +37,7 @@ async def root_page(request: Request):
     Root page for web app
     """
     return templates.TemplateResponse('index.html', {'request': request})
+
+
+if __name__ == "__main__":
+    uvicorn.run(app)
