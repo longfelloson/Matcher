@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guesser</title>
+    <link rel="stylesheet" href="/static/css/exchange/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="input-container">
+            <div class="input-field">
+                <img src="/static/img/coin-svgrepo-com.svg" alt="Coin Icon" class="icon">
+                <input type="number" id="points" placeholder="Введите количество баллов" oninput="calculateMoney()">
+            </div>
+            <div class="input-field">
+                <img src="/static/img/ruble-svgrepo-com.svg" alt="Coin Icon" class="icon">
+                <input type="text" id="money" placeholder="Вы получите в рублях" readonly>
+            </div>
+        </div>
+
+        <div class="carousel">
+            <div class="carousel-inner">
+                <img src="/static/img/tbank.svg" alt="Image 1" class="carousel-item" id="tbank" onclick="selectImage(this.id)">
+                <img src="/static/img/yoomoney.svg" alt="Image 2" class="carousel-item" id="yoomoney" onclick="selectImage(this.id)">
+                <img src="/static/img/sbp.svg" alt="Image 3" class="carousel-item" id="sbp" onclick="selectImage(this.id)">
+                <img src="/static/img/sberbank.svg" alt="Image 4" class="carousel-item" id="sberbank" onclick="selectImage(this.id)">
+            </div>
+        </div>
+
+        <div class="account-input">
+            <input type="text" id="account-details" placeholder="Введите реквизиты">
+        </div>
+
+        <div class="button-container">
+            <button id="exchange-button" onclick="exchangePoints()">Обменять</button>
+        </div>
+
+        <div id="result-message"></div>
+    </div>
+    <script src="/static/js/exchange/script.js"></script>
+</body>
+</html>

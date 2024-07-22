@@ -5,10 +5,11 @@ from starlette.templating import Jinja2Templates
 
 from config import settings
 from database import get_async_session
+from market.auth.utils import auth_guard
 from market.products import crud
 from market.products.schemas import CreateUserProduct
 
-router = APIRouter(tags=["Products"], prefix="/products")
+router = APIRouter(tags=["Products"], prefix="/products", dependencies=[Depends(auth_guard)])
 templates = Jinja2Templates(directory=settings.TEMPLATES_PATH + "/products")
 
 
@@ -37,10 +38,10 @@ async def get_product_endpoint(
     return await crud.get_product(product_id, session, user_id)
 
 
-@router.get("/{product_id}", response_class=HTMLResponse)
+@router.get("/product/{product_id}", response_class=HTMLResponse)
 async def get_product_page(request: Request):
     """
-    Return HTML page for exchange points
+    Return HTML page with product info
     """
     return templates.TemplateResponse("product.html", {"request": request})
 
@@ -48,7 +49,7 @@ async def get_product_page(request: Request):
 @router.get("/buy-product", response_class=HTMLResponse)
 async def buy_product_page(request: Request):
     """
-    Return HTML page for exchange points
+    Return HTML page with info to buy product
     """
     return templates.TemplateResponse("buy-product.html", {"request": request})
 

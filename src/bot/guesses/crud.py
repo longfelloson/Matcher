@@ -10,11 +10,11 @@ from bot.users.models import User
 from config import settings
 
 
-async def add_guess(rate: GuessSchema, session: AsyncSession) -> None:
+async def add_guess(guess: GuessSchema, session: AsyncSession) -> None:
     """
-    Добавление пользовательской оценки в базу
+    Добавление пользовательского угадывания в базу
     """
-    await session.execute(insert(Guess).values(**rate.model_dump()))
+    await session.execute(insert(Guess).values(**guess.model_dump()))
     await session.commit()
 
 
@@ -22,7 +22,7 @@ async def get_guess(guess_id: int, session: AsyncSession) -> Guess:
     """
     Получение оценки из базы
     """
-    guess = await session.execute(select(Guess).where(Guess.guess_id == guess_id))
+    guess = await session.execute(select(Guess).where(Guess.id_ == guess_id))
     return guess.scalar_one()
 
 
@@ -46,12 +46,3 @@ async def get_user_for_rate(user: User, user_rates: List[Rate], session: AsyncSe
     ]
     user_for_rate = await session.execute(select(User).where(and_(*conditions)).limit(1).order_by(func.random()))
     return user_for_rate.scalar_one_or_none()
-
-
-async def get_total_user_guesses_points(user_id: int, session: AsyncSession) -> int | float:
-    """
-    Получение количества угаданных пользователем оценок
-    """
-    points = await session.execute(select(func.sum(Guess.points)).where(Guess.guesser == user_id))
-    points = points.scalar()
-    return points if points else 0

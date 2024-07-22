@@ -7,3 +7,4 @@ class UserStates(StatesGroup):
     change_location = State()
     change_age = State()
     change_profile = State()
+    change_photo = State()

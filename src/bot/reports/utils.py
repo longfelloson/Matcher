@@ -2,8 +2,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.app.keyboards import manage_user_keyboard
-from bot.app.loader import bot
+from bot.keyboards import manage_user_keyboard
+from bot.loader import bot
 from bot.reports import crud
 from bot.reports.schemas import Report
 from bot.users import crud as users_crud

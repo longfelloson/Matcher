@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.app.keyboards import main_keyboard, help_command_keyboard
+from bot.keyboards import main_keyboard, help_command_keyboard
 from bot.messages.registration.schemas import Answers as RegistrationAnswers
 from bot.messages.registration.states import RegistrationStates
 from bot.messages.schemas import Answers

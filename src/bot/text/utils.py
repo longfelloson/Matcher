@@ -1,12 +1,12 @@
 from bot.users.models import User
 
 
-def get_profile_text(user: User, points: int | float) -> str:
+def get_profile_text(user: User) -> str:
     """
     Returns user's formatted profile text
     """
     return f"🎫 Имя: {bold(user.name)}\n\n" \
-           f"🎈 Баллов: {bold(points)}\n\n" \
+           f"🎈 Баллов: {bold(int(user.points))}\n\n" \
            f"🔢 Возраст: {bold(user.age)}\n\n" \
            f"🌆 Город: {bold(user.city)}"
 

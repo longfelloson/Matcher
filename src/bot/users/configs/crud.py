@@ -1,8 +1,8 @@
 from sqlalchemy import update, select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.users.configs.models import UserConfig
 from bot.users.configs.schemas import UserConfig as UserConfigSchema
+from bot.users.models import UserConfig
 
 
 async def update_user_config(user_id: int, column: str, session: AsyncSession) -> UserConfig:

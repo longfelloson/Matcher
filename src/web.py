@@ -1,17 +1,22 @@
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 import database
 from config import settings
+from market.auth.utils import auth_guard
 from market.router import router as market_router
+from market.auth.router import router as auth_router
 
 app = FastAPI()
 
 app.mount('/static', StaticFiles(directory='../static'), name='static')
+
 app.include_router(market_router)
+app.include_router(auth_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -31,7 +36,7 @@ async def startup():
     await database.create_tables()
 
 
-@app.get('/')
+@app.get('/', dependencies=[Depends(auth_guard)])
 async def root_page(request: Request):
     """
     Root page for web app
@@ -39,5 +44,5 @@ async def root_page(request: Request):
     return templates.TemplateResponse('index.html', {'request': request})
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     uvicorn.run(app)

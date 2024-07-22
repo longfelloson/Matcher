@@ -27,6 +27,13 @@ async def validate_user_input(message: Message, keyboard: ReplyKeyboardMarkup):
     """
     Проверка пользовательского ввода, соответствует ли он кнопкам
     """
-    if message.text in [button.text for button in keyboard.keyboard[0]]:
+    rows = [row for row in keyboard.keyboard]
+    buttons_texts = []
+
+    for row in rows:
+        for button in row:
+            buttons_texts.append(button.text)
+
+    if message.text in buttons_texts:
         return True
     await message.answer(Answers.INCORRECT_BUTTON_TEXT, reply_markup=keyboard)

@@ -1,8 +1,8 @@
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from market.exchange.payments.models import Payment
-from market.exchange.payments.schemas import CreatePayment
+from market.payments.models import Payment
+from market.payments.schemas import CreatePayment
 
 
 async def get_payment(payment_id: int, session: AsyncSession) -> Payment:

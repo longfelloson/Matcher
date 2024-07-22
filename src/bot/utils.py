@@ -1,7 +1,7 @@
 from aiogram.types import BotCommand, BotCommandScopeChat
 
-from bot.app.loader import bot, dp
-from bot.app.middlewares import PayloadMiddleware, UserStatusMiddleware
+from bot.loader import bot, dp
+from bot.middlewares import PayloadMiddleware, UserStatusMiddleware
 from bot.guesses.router import router as guesses_router
 from bot.messages.commands.router import router as commands_router
 from bot.messages.registration.router import router as registration_router

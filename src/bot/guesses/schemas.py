@@ -21,8 +21,6 @@ class Answers:
 
 
 class Guess(BaseModel):
-    guess_id: int = Field(default=None)
     guesser: int
     guessed: int
-    guessed_at: datetime = Field(default=datetime.now())
     points: int | float

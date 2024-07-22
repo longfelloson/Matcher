@@ -1,10 +1,19 @@
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, Column, Float, Integer, BigInteger
+from sqlalchemy import String, DateTime, Column, Float, Integer, BigInteger, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 from bot.users.schemas import UserStatuses
 from database import Base
+
+
+class UserConfig(Base):
+    __tablename__ = 'user_config'
+
+    user_id = Column(BigInteger, ForeignKey("users.user_id"), primary_key=True)
+    guess_age = Column(Boolean)
+
+    user = relationship("User", back_populates="config")
 
 
 class User(Base):

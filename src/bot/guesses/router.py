@@ -3,13 +3,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.app.keyboards import main_keyboard
+from bot.keyboards import main_keyboard
 from bot.guesses.keyboards import ALL_GROUPS_AGES
 from bot.guesses.states import GuessesStates
 from bot.guesses.utils import react_for_user_guess
 from bot.messages.schemas import Answers
 from bot.users.models import User
-from bot.users.utils import send_photo
 
 router = Router(name="Guesses")
 
@@ -20,7 +19,7 @@ async def age_guess_button_handler(message: Message, session: AsyncSession, stat
     Обработка кнопок угадывания возрасты анкеты
     """
     await react_for_user_guess(message, user, session, state)
-    await send_photo(message, user, session, state)
+    # await send_photo(message, user, session, state)
 
 
 @router.message(GuessesStates.guess_user_age, F.text == "↩")

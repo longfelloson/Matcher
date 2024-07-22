@@ -59,3 +59,11 @@ async def get_users(session: AsyncSession, limit: int = DEFAULT_USERS_LIMIT, con
 
     users = await session.execute(stmt)
     return users.scalars().all()
+
+
+async def get_user_points(user_id: int, session: AsyncSession) -> int | float:
+    """
+    Returns user's exchange by given user ID
+    """
+    points = await session.execute(select(User.points).where(User.user_id == user_id))
+    return points.scalar_one()

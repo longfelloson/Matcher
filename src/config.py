@@ -3,7 +3,10 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
-load_dotenv()
+
+class S3Config(BaseModel):
+    ACCESS_KEY: str = os.getenv('AWS_ACCESS_KEY')
+    SECRET_KEY: str = os.getenv('AWS_ACCESS_KEY')
 
 
 class BotConfig(BaseModel):
@@ -30,13 +33,24 @@ class DatabaseConfig(BaseModel):
     URL: str = f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}"
 
 
-class Settings(BaseModel):
-    BOT: BotConfig = BotConfig()
-    DATABASE: DatabaseConfig = DatabaseConfig()
-
+class MarketConfig(BaseModel):
     TEMPLATES_PATH: str = '../templates'
     MARKET_LINK: str = os.getenv('MARKET_LINK')
     EXCHANGE_RATE: str = os.getenv('EXCHANGE_RATE')
+
+
+class AuthConfig(MarketConfig):
+    SECRET_KEY: str = os.getenv('JWT_SECRET_KEY')
+    ALGORITHM: str = os.getenv('ALGORITHM', "HS256")
+
+
+class Settings:
+    load_dotenv()
+
+    S3 = S3Config()
+    BOT: BotConfig = BotConfig()
+    DATABASE = DatabaseConfig()
+    MARKET = MarketConfig()
 
 
 settings = Settings()

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .box-error {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .box-error img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            font-size: 18px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="box-error">
+        <img src="/static/img/Flushed%20face.svg" alt="error picture">
+        <span class="error-message">
+            {{ message }}
+        </span>
+    </div>
+</body>
+</html>

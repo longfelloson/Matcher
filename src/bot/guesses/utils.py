@@ -5,6 +5,7 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.guesses import crud
+from bot.guesses.keyboards import rate_user_keyboard
 from bot.guesses.schemas import Answers, Guess
 from bot.users import crud as users_crud
 from bot.users.models import User
@@ -60,4 +61,4 @@ async def react_for_user_guess(message: Message, user: User, session: AsyncSessi
 
     await crud.add_guess(guess, session)
     await users_crud.increase_user_points(user.user_id, points, session)
-    # await app.(Answers.RATE_USER, user.user_id, message.message_id - 1)
+    await message.reply(answer, reply_markup=rate_user_keyboard())

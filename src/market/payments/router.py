@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from market.exchange.payments import utils, crud
-from market.exchange.payments.schemas import CreatePayment
+from market.payments import crud, utils
+from market.payments.schemas import CreatePayment
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
 

@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.app.keyboards import main_keyboard
+from bot.keyboards import main_keyboard
 from bot.guesses.keyboards import guess_user_age_keyboard, rate_user_keyboard
 from bot.guesses.schemas import Answers
 from bot.guesses.states import GuessesStates

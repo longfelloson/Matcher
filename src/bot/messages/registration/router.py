@@ -3,18 +3,33 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.app.keyboards import main_keyboard
-from bot.messages.registration.keyboards import select_gender_keyboard, select_preferred_gender_keyboard, \
-    select_age_group_keyboard, select_location_keyboard, back_button_keyboard
+from bot.keyboards import main_keyboard
+from bot.messages.registration.keyboards import (
+    select_gender_keyboard,
+    select_preferred_gender_keyboard,
+    select_age_group_keyboard,
+    select_location_keyboard,
+    back_button_keyboard,
+)
 from bot.messages.registration.schemas import IncorrectDataAnswer, Answers
 from bot.messages.registration.states import RegistrationStates
-from bot.messages.utils import validate_age, validate_user_name, validate_user_input
+from bot.messages.registration.utils import upload_user_photo_to_s3
+from bot.messages.utils import (
+    validate_age,
+    validate_user_name,
+    validate_user_input,
+)
 from bot.users import crud as users_crud
 from bot.users.configs import crud as configs_crud
 from bot.users.configs.schemas import UserConfig
 from bot.users.geo.schemas import Location
 from bot.users.geo.utils import reverse_geocode_user_location
-from bot.users.schemas import UserGender, PreferredAgeGroup, UserStatuses
+from bot.users.schemas import (
+    UserGender,
+    PreferredAgeGroup,
+    UserStatuses,
+)
+from s3 import s3_client
 
 router = Router(name="Registration")
 
@@ -125,12 +140,13 @@ async def location_state_handler(message: Message, state: FSMContext, session: A
     Получение фотографии пользователя
     """
     if message.content_type == "photo":
-        data = await state.get_data()
-        data['photo_file_id'] = message.photo[-1].file_id
+        user_reg_info = await state.get_data()
+        user_reg_info['photo_file_id'] = message.photo[-1].file_id
 
         config = UserConfig(user_id=message.chat.id, guess_age=True)
 
-        await users_crud.update_user(message.chat.id, session, **data, status=UserStatuses.ACTIVE)
+        await upload_user_photo_to_s3(user_reg_info['photo_file_id'])
+        await users_crud.update_user(message.chat.id, session, **user_reg_info, status=UserStatuses.ACTIVE)
         await configs_crud.add_user_config(config, session)
         await state.clear()
         await message.answer(Answers.COMPLETED_USER_INFO, reply_markup=main_keyboard())

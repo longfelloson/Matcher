@@ -1,7 +1,9 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from bot.app.keyboards import main_keyboard
+import s3
+from bot.files import get_file_from_telegram
+from bot.keyboards import main_keyboard
 from bot.messages.registration.keyboards import select_preferred_gender_keyboard, select_age_group_keyboard, \
     select_gender_keyboard, select_location_keyboard, back_button_keyboard
 from bot.messages.registration.schemas import Answers as RegAnswers
@@ -36,3 +38,11 @@ async def set_previous_state(message: Message, state: FSMContext) -> None:
         case _:
             await state.clear()
             await message.answer(Answers.GREETING, reply_markup=main_keyboard())
+
+
+async def upload_user_photo_to_s3(telegram_file_id: str) -> str:
+    """
+    Загружает фото полученное от пользователя в хранилище S3
+    """
+    file = await get_file_from_telegram(telegram_file_id)
+    await s3.s3_client.upload_file(telegram_file_id, file)

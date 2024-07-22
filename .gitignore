@@ -2,3 +2,7 @@
 migrations
 alembic.ini
 nginx.conf
+.idea
+bot/.idea
+/src/bot/.idea/
+src/s3.py

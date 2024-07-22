@@ -4,42 +4,45 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.users import crud as users_crud
+from bot.users.models import User
 from config import settings
 from database import get_async_session
-from market.points.payments.router import router as payment_router
-from market.points.schemas import ExchangeData
+from market.auth.utils import auth_guard, get_current_user
+from market.exchange.schemas import ExchangeData
 from market.transactions import crud as transactions_crud
 from market.transactions.schemas import TransactionType
 
-router = APIRouter(tags=["Exchange"])
-router.include_router(payment_router)
-
-templates = Jinja2Templates(directory=settings.TEMPLATES_PATH + "/points")
+router = APIRouter(tags=["Exchange"], dependencies=[Depends(auth_guard)])
+templates = Jinja2Templates(directory=settings.TEMPLATES_PATH)
 
 
-@router.get("/exchange-points", response_class=HTMLResponse)
-async def exchange_points_page(request: Request):
+@router.get("/exchange", response_class=HTMLResponse)
+async def exchange_page(request: Request):
     """
-    Return HTML page to exchange points
+    Return HTML exchange page
     """
-    return templates.TemplateResponse("points-points.html", {"request": request})
+    return templates.TemplateResponse("exchange.html", {"request": request})
 
 
 @router.post("/exchange-points", response_class=JSONResponse)
-async def exchange_points_endpoint(data: ExchangeData, session: AsyncSession = Depends(get_async_session)):
+async def exchange_points_endpoint(
+        data: ExchangeData,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(get_current_user)
+):
     """
-    Endpoint to points user points.
+    Endpoint to exchange user exchange.
     """
-    await users_crud.decrease_user_points(data.user_id, data.points, session)
+    await users_crud.decrease_user_points(user.user_id, data.points, session)
     await transactions_crud.create_transaction(TransactionType.PURCHASE, data.product_id, data.points, session)
 
     return JSONResponse({"message": "Points successfully exchanged"})
 
 
-@router.get("/exchange-rate", response_class=JSONResponse)
-async def get_exchange_points_rate_endpoint():
+@router.get("/get-exchange-rate", response_class=JSONResponse)
+async def get_exchange_rate_endpoint():
     """
-    Endpoint for getting exchange points rate.
+    Endpoint for getting points exchange rate.
     """
     return JSONResponse({"current-rate": settings.EXCHANGE_RATE})
 
@@ -47,6 +50,7 @@ async def get_exchange_points_rate_endpoint():
 @router.get('/get-user-points', response_class=JSONResponse)
 async def get_user_points_endpoint(user_id: int, session: AsyncSession = Depends(get_async_session)):
     """
-    Returns JSON with user points by his ID
+    Returns JSON with user points amount by his ID
     """
     user_points = await users_crud.get_user_points(user_id, session)
+    return JSONResponse({"user_points": user_points})

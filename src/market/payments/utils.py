@@ -2,34 +2,54 @@ import hashlib
 import hmac
 import json
 
-import httpx
+import aiohttp
 
 from config import settings
-from market.exchange.payments.schemas import CreatePayment
+from market.payments.schemas import CreatePayment
+
+KEY = settings.PAYMENTS.KEY
+KEY_ID = settings.PAYMENTS.KEY_ID
+SHOP_ID = settings.PAYMENTS.SHOP_ID
+MERCHANT_ID = settings.PAYMENTS.MERCHANT_ID
+
+PAYOUT_TOKEN = f"{KEY_ID}:{KEY}"
+
+DEFAULT_PAYMENT_METHOD = "withdraw"
+DEFAULT_PAYMENT_DESCRIPTION = "Выплата средств за обмен баллов в @GuessOrRateBot"
+DEFAULT_PAYMENT_COUNTRY = "Russia"
 
 
-async def send_money(data: CreatePayment) -> None:
+async def create_payment(create_payment_data: CreatePayment, currency: str = "RUB") -> bool:
     """
 
     """
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Signature": get_signature({"data": data})
+    signature = create_signature(
+        create_payment_data.invoice_id,
+        create_payment_data.amount,
+        method_id=DEFAULT_PAYMENT_METHOD,
+        key_1=KEY_ID
+    )
+    data = {
+        "shop_id": SHOP_ID,
+        "invoice_id": create_payment_data.invoice_id,
+        "amount": create_payment_data.amount,
+        "description": DEFAULT_PAYMENT_DESCRIPTION,
+        "method": DEFAULT_PAYMENT_METHOD,
+        "country": DEFAULT_PAYMENT_COUNTRY,
+        "currency": currency,
+        "signature": signature
     }
-    params = {
-        "amount": data.amount,
-        "signature": get_signature(data),
-        "shopId": settings.PAYMENTS.SHOP_ID,
-        "service": data.destination,
-        "subtract": 0
-    }
-    async with httpx.AsyncClient() as client:
-        response = await client.post("https://api.lava.ru/business/payoff/create", headers=headers, params=params)
-        return response.json()
+    async with aiohttp.ClientSession() as session:
+        response = await session.post(url="api.finpay.llc/payments", data=data)
+        json_response = await response.json()
+        return json_response['status']
 
 
-def get_signature(data: dict) -> str:
-    json_str = json.dumps(data).encode()
-    signature = hmac.new(bytes(settings.PAYMENTS.SECRET_KEY, 'UTF-8'), json_str, hashlib.sha256).hexdigest()
+def create_signature(invoice_id: str, amount: int, method_id: int, key_1: str) -> str:
+    """
+    Создание подписи для платежа
+    """
+    string = f"{MERCHANT_ID}:{invoice_id}:{amount}:{method_id}:{key_1}"
+    signature = hashlib.md5(string.encode("utf-8")).hexdigest()
+
     return signature
