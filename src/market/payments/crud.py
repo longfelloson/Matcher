@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from market.payments.models import Payment
@@ -21,3 +21,11 @@ async def create_payment(data: CreatePayment, session: AsyncSession) -> int:
     await session.commit()
 
     return id_.scalar_one()
+
+
+async def update_payment(payment_id: int, session: AsyncSession, **values):
+    """
+    Updates payment by payment id
+    """
+    await session.execute(update(Payment).where(Payment.id_ == payment_id).values(**values))
+    await session.commit()

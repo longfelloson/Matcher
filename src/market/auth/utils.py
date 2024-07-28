@@ -2,10 +2,10 @@ import jwt
 from fastapi import Request, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from bot.users import crud as users_crud
 from bot.users.models import User
 from database import get_async_session
 from market.auth.token import decode_token
-from bot.users import crud as users_crud
 
 
 class AuthGuard:

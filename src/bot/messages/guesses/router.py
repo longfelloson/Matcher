@@ -4,9 +4,9 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
-from bot.guesses.keyboards import ALL_GROUPS_AGES
-from bot.guesses.states import GuessesStates
-from bot.guesses.utils import react_for_user_guess
+from bot.messages.guesses.keyboards import ALL_GROUPS_AGES
+from bot.messages.guesses.states import GuessesStates
+from bot.messages.guesses.utils import react_for_user_guess
 from bot.messages.schemas import Answers
 from bot.users.models import User
 

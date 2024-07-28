@@ -18,7 +18,7 @@ class AdminActions:
     BLOCK = "block_user"
 
 
-class UserStatuses:
+class UserStatus:
     BLOCKED = "BLOCKED"
     ACTIVE = "ACTIVE"
     NOT_REGISTERED = "NOT_REGISTERED"
@@ -51,6 +51,6 @@ def get_user_schema_from_message(message: Message) -> User:
 
     """
     return User(
-        user_id=message.from_user.id,
-        username=message.from_user.username,
+        user_id=message.chat.id,
+        username=message.chat.username,
     )

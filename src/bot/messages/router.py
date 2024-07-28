@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -11,7 +13,7 @@ from bot.users.configs import crud as configs_crud
 from bot.users.keyboards import user_profile_keyboard, change_user_profile_section_keyboard
 from bot.users.models import User
 from bot.users.states import UserStates
-from bot.users.utils import send_photo
+from bot.users.utils import send_user_for_view
 
 router = Router(name='Messages')
 
@@ -29,7 +31,9 @@ async def rate_button_handler(message: Message, session: AsyncSession, state: FS
     """
     Обработка кнопки "Старт" и выдача фото для угадывания возраста или оценки
     """
-    await send_photo(message, user, session, state)
+    start = datetime.now()
+    await send_user_for_view(message, user, session, state)
+    print(datetime.now() - start)
 
 
 @router.message(F.text == "Магазин 🛍")
@@ -52,12 +56,12 @@ async def profile_button_handler(message: Message, user: User, session: AsyncSes
     caption = (
         f"Instagram:  <code>{user.instagram}</code>" if user.instagram else None
     )
-    photo = await message.answer_photo(user.photo_file_id, caption)
+    photo_message = await message.answer_photo(user.photo_url, caption)
     config = await configs_crud.get_user_config(user.user_id, session)
 
     profile_text = get_profile_text(user)
 
-    await photo.reply(profile_text, reply_markup=user_profile_keyboard(config))
+    await photo_message.reply(profile_text, reply_markup=user_profile_keyboard(config))
 
 
 @router.message(UserStates.profile, F.text.regexp('Угадывать возраст'))

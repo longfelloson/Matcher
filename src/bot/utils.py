@@ -1,12 +1,13 @@
 from aiogram.types import BotCommand, BotCommandScopeChat
 
+from bot.captcha.router import router as captcha_router
 from bot.loader import bot, dp
-from bot.middlewares import PayloadMiddleware, UserStatusMiddleware
-from bot.guesses.router import router as guesses_router
 from bot.messages.commands.router import router as commands_router
+from bot.messages.guesses.router import router as guesses_router
+from bot.messages.rates.router import router as rates_router
 from bot.messages.registration.router import router as registration_router
 from bot.messages.router import router as messages_router
-from bot.rates.router import router as rates_router
+from bot.middlewares import PayloadMiddleware, BlockedUserMiddleware
 from bot.reports.router import router as reports_router
 from bot.users.router import router as users_router
 from config import settings
@@ -18,12 +19,13 @@ async def start() -> None:
     Starts the bot and set necessary utils
     """
     dp.include_routers(
-        messages_router, registration_router,
-        commands_router, rates_router,
-        guesses_router, reports_router,
-        users_router
+        captcha_router, messages_router,
+        registration_router, commands_router,
+        rates_router, guesses_router,
+        reports_router, users_router
     )
-    set_middlewares()
+    set_middleware(PayloadMiddleware(), update=True, message=False)
+    set_middleware(BlockedUserMiddleware(), message=True, update=False)
 
     await create_tables()
     await set_commands()
@@ -41,7 +43,7 @@ async def set_commands() -> None:
             BotCommand(command="help", description="Поддержка")
         ]
     )
-    for ADMIN_ID in settings.BOT.ADMINS_IDS:
+    for ADMIN_ID in settings.BOT.admins_ids:
         await bot.set_my_commands(
             [
                 BotCommand(command="start", description="Запуск бота"),
@@ -52,9 +54,12 @@ async def set_commands() -> None:
         )
 
 
-def set_middlewares() -> None:
+def set_middleware(middleware, update=True, message=True):
     """
-    Sets up the middlewares
+    Sets up the middleware
     """
-    dp.update.outer_middleware(PayloadMiddleware())
-    dp.message.middleware(UserStatusMiddleware())
+    if update:
+        dp.update.outer_middleware(middleware)
+
+    if message:
+        dp.message.middleware(middleware)

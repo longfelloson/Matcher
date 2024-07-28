@@ -62,6 +62,6 @@ def market_link_keyboard(user_id: int) -> InlineKeyboard:
     """
     link_with_auth_token = get_link_with_token(user_id)
     builder = InlineBuilder().row(
-        InlineButton(text="🔗", web_app=WebAppInfo(url=settings.MARKET_LINK + link_with_auth_token))
+        InlineButton(text="🔗", web_app=WebAppInfo(url=settings.MARKET.LINK + link_with_auth_token))
     )
     return builder.as_markup()

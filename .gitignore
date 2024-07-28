@@ -5,4 +5,5 @@ nginx.conf
 .idea
 bot/.idea
 /src/bot/.idea/
-src/s3.py
+errors.log
+pytest.ini

@@ -13,7 +13,7 @@ from market.transactions import crud as transactions_crud
 from market.transactions.schemas import TransactionType
 
 router = APIRouter(tags=["Exchange"], dependencies=[Depends(auth_guard)])
-templates = Jinja2Templates(directory=settings.TEMPLATES_PATH)
+templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH)
 
 
 @router.get("/exchange", response_class=HTMLResponse)

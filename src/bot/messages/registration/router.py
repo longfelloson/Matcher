@@ -13,21 +13,18 @@ from bot.messages.registration.keyboards import (
 )
 from bot.messages.registration.schemas import IncorrectDataAnswer, Answers
 from bot.messages.registration.states import RegistrationStates
-from bot.messages.registration.utils import upload_user_photo_to_s3
+from bot.messages.registration.utils import complete_user_registration
 from bot.messages.utils import (
     validate_age,
     validate_user_name,
     validate_user_input,
 )
-from bot.users import crud as users_crud
-from bot.users.configs import crud as configs_crud
 from bot.users.configs.schemas import UserConfig
 from bot.users.geo.schemas import Location
 from bot.users.geo.utils import reverse_geocode_user_location
 from bot.users.schemas import (
     UserGender,
     PreferredAgeGroup,
-    UserStatuses,
 )
 from s3 import s3_client
 
@@ -137,18 +134,24 @@ async def location_state_handler(message: Message, state: FSMContext):
 @router.message(RegistrationStates.photo)
 async def location_state_handler(message: Message, state: FSMContext, session: AsyncSession):
     """
-    Получение фотографии пользователя
+    Получение фотографии пользователя и последующая загрузка в БД
     """
     if message.content_type == "photo":
         user_reg_info = await state.get_data()
-        user_reg_info['photo_file_id'] = message.photo[-1].file_id
 
-        config = UserConfig(user_id=message.chat.id, guess_age=True)
+        profile_photo_telegram_file_id = message.photo[-1].file_id
+        user_reg_info['photo_url'] = s3_client.get_file_url(file_name=profile_photo_telegram_file_id)
 
-        await upload_user_photo_to_s3(user_reg_info['photo_file_id'])
-        await users_crud.update_user(message.chat.id, session, **user_reg_info, status=UserStatuses.ACTIVE)
-        await configs_crud.add_user_config(config, session)
+        user_config_schema = UserConfig(user_id=message.chat.id, guess_age=True)
+
         await state.clear()
         await message.answer(Answers.COMPLETED_USER_INFO, reply_markup=main_keyboard())
+        await complete_user_registration(
+            user_config_schema,
+            profile_photo_telegram_file_id,
+            message,
+            user_reg_info,
+            session
+        )
     else:
         await message.answer(IncorrectDataAnswer.INVALID_PHOTO)

@@ -10,7 +10,7 @@ from market.products import crud
 from market.products.schemas import CreateUserProduct
 
 router = APIRouter(tags=["Products"], prefix="/products", dependencies=[Depends(auth_guard)])
-templates = Jinja2Templates(directory=settings.TEMPLATES_PATH + "/products")
+templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH + "/products")
 
 
 @router.get("/get-products", status_code=status.HTTP_200_OK)

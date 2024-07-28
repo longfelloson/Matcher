@@ -3,20 +3,19 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from market.payments import crud, utils
-from market.payments.schemas import CreatePayment
+from market.payments import (
+    crud,
+    schemas,
+)
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
 
 
 @router.post("/create-payment", response_class=JSONResponse)
-async def create_payment(data: CreatePayment, session: AsyncSession = Depends(get_async_session)):
+async def create_payment(data: schemas.CreatePayment, session: AsyncSession = Depends(get_async_session)):
     """
     Creates payment
     """
-    await utils.send_money(*data)
+    ...
 
-    return JSONResponse({
-        "status": "success",
-        "payment_id": await crud.create_payment(data, session)
-    })
+    return JSONResponse({"status": "success", "payment_id": await crud.create_payment(data, session)})

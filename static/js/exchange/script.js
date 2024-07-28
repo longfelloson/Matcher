@@ -42,26 +42,27 @@ function exchangePoints() {
             points: points,
             destination: destination,
             account_details: accountDetails
-        };fetch('/exchange-points', {
+        };
+        fetch('/exchange-points', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestData)
         })
-        .then(response => {
-            if (response.ok) {
-                document.getElementById('result-message').textContent = 'Успешно обменяно';
-            } else {
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('result-message').textContent = 'Успешно обменяно';
+                } else {
+                    document.getElementById('result-message').textContent = 'Ошибка при обмене';
+                    document.getElementById('result-message').style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
                 document.getElementById('result-message').textContent = 'Ошибка при обмене';
                 document.getElementById('result-message').style.color = 'red';
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            document.getElementById('result-message').textContent = 'Ошибка при обмене';
-            document.getElementById('result-message').style.color = 'red';
-        });
+            });
     } else {
         alert('Пожалуйста, введите сумму, реквизиты и выберите платежную систему.');
     }

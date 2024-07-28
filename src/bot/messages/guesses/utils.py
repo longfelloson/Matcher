@@ -4,9 +4,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.guesses import crud
-from bot.guesses.keyboards import rate_user_keyboard
-from bot.guesses.schemas import Answers, Guess
+from bot.messages.guesses import crud
+from bot.messages.guesses.keyboards import rate_user_keyboard
+from bot.messages.guesses.schemas import Answers, Guess
 from bot.users import crud as users_crud
 from bot.users.models import User
 

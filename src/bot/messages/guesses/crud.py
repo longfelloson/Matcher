@@ -3,9 +3,9 @@ from typing import Optional, List
 from sqlalchemy import insert, select, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.guesses.models import Guess
-from bot.guesses.schemas import Guess as GuessSchema
-from bot.rates.models import Rate
+from bot.messages.guesses.models import Guess
+from bot.messages.guesses.schemas import Guess as GuessSchema
+from bot.messages.rates.models import Rate
 from bot.users.models import User
 from config import settings
 

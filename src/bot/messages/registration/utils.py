@@ -1,14 +1,22 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
+from sqlalchemy.ext.asyncio import AsyncSession
 
-import s3
-from bot.files import get_file_from_telegram
+from bot.files import upload_user_photo_to_s3
 from bot.keyboards import main_keyboard
-from bot.messages.registration.keyboards import select_preferred_gender_keyboard, select_age_group_keyboard, \
-    select_gender_keyboard, select_location_keyboard, back_button_keyboard
+from bot.messages.registration.keyboards import (
+    select_preferred_gender_keyboard,
+    select_age_group_keyboard,
+    select_gender_keyboard,
+    select_location_keyboard,
+    back_button_keyboard
+)
 from bot.messages.registration.schemas import Answers as RegAnswers
 from bot.messages.registration.states import RegistrationStates
 from bot.messages.schemas import Answers
+from bot.users import crud as users_crud
+from bot.users.configs import crud as users_config_crud
+from bot.users.schemas import UserStatus
 
 
 async def set_previous_state(message: Message, state: FSMContext) -> None:
@@ -40,9 +48,13 @@ async def set_previous_state(message: Message, state: FSMContext) -> None:
             await message.answer(Answers.GREETING, reply_markup=main_keyboard())
 
 
-async def upload_user_photo_to_s3(telegram_file_id: str) -> str:
-    """
-    Загружает фото полученное от пользователя в хранилище S3
-    """
-    file = await get_file_from_telegram(telegram_file_id)
-    await s3.s3_client.upload_file(telegram_file_id, file)
+async def complete_user_registration(
+        user_config_schema,
+        profile_photo_telegram_file_id: str,
+        message: Message,
+        user_reg_info: dict,
+        session: AsyncSession,
+) -> None:
+    await upload_user_photo_to_s3(telegram_file_id=profile_photo_telegram_file_id)
+    await users_crud.update_user(message.chat.id, session, **user_reg_info, status=UserStatus.ACTIVE)
+    await users_config_crud.add_user_config(user_config_schema, session)

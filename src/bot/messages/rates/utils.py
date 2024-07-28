@@ -2,8 +2,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.rates import crud
-from bot.rates.schemas import Rate, RateType
+from bot.messages.rates import crud
+from bot.messages.rates.schemas import Rate, RateType
 from bot.users.models import User
 
 

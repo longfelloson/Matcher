@@ -1,52 +1,57 @@
+import math
 from datetime import datetime, timedelta
 from typing import List, Optional
 
 import httpx
-from geopy.distance import geodesic
 
 from bot.users.geo.schemas import Location
 from bot.users.models import User
 from config import settings
 
-DEFAULT_RADIUS = 500
+MAX_DISTANCE = 500
 DEFAULT_LIMIT = 1
 
 
-def get_user_location(user: User) -> Location:
+def get_distance_between_locations(first_location: str, second_location: str) -> float:
     """
-    Получение объекта пользовательской локации
+    Возвращает расстояние между двумя координатами
     """
-    longitude, latitude = map(float, user.location.split("*"))
-    return Location(longitude=longitude, latitude=latitude)
+    lat1, lon1 = map(float, first_location.split(','))
+    lat2, lon2 = map(float, second_location.split(','))
+
+    R = 6371  # Radius of the Earth in kilometers
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c
+
+    return round(distance * 1000)
 
 
-def get_nearest_user(current_user: User, users: List[User], radius: int = DEFAULT_RADIUS, limit: int = 1) -> User:
+def get_nearest_user(current_user: User, users: List[User], max_distance: int = MAX_DISTANCE) -> User:
     """
     Получение ближайшего пользователя к заданному из списка других пользователей.
     """
-    max_distance, nearest_user = radius, users[0]
+    nearest_user = users[0]
     max_search_time = datetime.now() + timedelta(seconds=0.1)
 
+    count = 0
     for other_user in users:
-        if (distance := get_distance_between_users(current_user, other_user)) < max_distance:
+        count += 1
+        distance = get_distance_between_locations(current_user.location, other_user.location)
+
+        if distance < max_distance:
             max_distance = distance
             nearest_user = other_user
 
         if datetime.now() > max_search_time:
-            nearest_user.distance = max_distance
-            return nearest_user
+            break
 
-    nearest_user.distance = max_distance
+    if nearest_user:
+        nearest_user.distance = max_distance
+
     return nearest_user
-
-
-def get_distance_between_users(first_user: User, second_user: User) -> float:
-    """
-    Получение расстояние между двумя точками
-    """
-    first_user_loc_values = tuple(get_user_location(first_user).model_dump().values())
-    second_user_loc_values = tuple(get_user_location(second_user).model_dump().values())
-    return geodesic(first_user_loc_values, second_user_loc_values).meters
 
 
 async def reverse_geocode_user_location(location: Location) -> Optional[str]:

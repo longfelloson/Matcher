@@ -11,17 +11,17 @@ def get_profile_text(user: User) -> str:
            f"🌆 Город: {bold(user.city)}"
 
 
-def get_user_profile_caption(user: User) -> str:
+def get_user_profile_caption(rater: User, rated: User) -> str:
     """
     Returns formatted user's caption of user's photo
     """
-    base_caption = f"{user.name}, {user.city}"
+    base_caption = f"{rated.name}, {rated.city}"
 
-    if user.instagram:
-        base_caption += f", Instagram: <code>{user.instagram}</code>"
+    if rater.instagram:
+        base_caption += f", Instagram: <code>{rated.instagram}</code>"
 
-    if not user.config.guess_age:
-        base_caption += f", "
+    if not rater.config.guess_age:
+        base_caption += f", {rater.age} лет"
 
     return base_caption
 

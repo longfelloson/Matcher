@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.rates.models import Rate
-from bot.rates.schemas import Rate as RateSchema
+from bot.messages.rates.models import Rate
+from bot.messages.rates.schemas import Rate as RateSchema
 
 
 async def add_rate(rate: RateSchema, session: AsyncSession) -> None:

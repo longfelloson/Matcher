@@ -6,9 +6,9 @@ from fastapi.templating import Jinja2Templates
 
 import database
 from config import settings
+from market.auth.router import router as auth_router
 from market.auth.utils import auth_guard
 from market.router import router as market_router
-from market.auth.router import router as auth_router
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-templates = Jinja2Templates(directory=settings.TEMPLATES_PATH)
+templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH)
 
 
 @app.on_event("startup")

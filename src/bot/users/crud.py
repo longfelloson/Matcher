@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Union
 
 from sqlalchemy import insert, update, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -49,19 +49,19 @@ async def decrease_user_points(user_id: int, points: int | float, session: Async
     await session.commit()
 
 
-async def get_users(session: AsyncSession, limit: int = DEFAULT_USERS_LIMIT, conditions: dict = None):
+async def get_users(session: AsyncSession, limit: int = DEFAULT_USERS_LIMIT, options: List = None) -> List[User]:
     """
     Получение пользователей
     """
     stmt = select(User).limit(limit)
-    if conditions:
-        stmt = stmt.where(and_(*conditions))
+    if options:
+        stmt = stmt.where(and_(*options))
 
     users = await session.execute(stmt)
     return users.scalars().all()
 
 
-async def get_user_points(user_id: int, session: AsyncSession) -> int | float:
+async def get_user_points(user_id: int, session: AsyncSession) -> Union[int, float]:
     """
     Returns user's exchange by given user ID
     """
