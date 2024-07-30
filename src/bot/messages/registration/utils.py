@@ -16,6 +16,7 @@ from bot.messages.registration.states import RegistrationStates
 from bot.messages.schemas import Answers
 from bot.users import crud as users_crud
 from bot.users.configs import crud as users_config_crud
+from bot.users.configs.schemas import UserConfig
 from bot.users.schemas import UserStatus
 
 
@@ -49,7 +50,7 @@ async def set_previous_state(message: Message, state: FSMContext) -> None:
 
 
 async def complete_user_registration(
-        user_config_schema,
+        user_config_schema: UserConfig,
         profile_photo_telegram_file_id: str,
         message: Message,
         user_reg_info: dict,

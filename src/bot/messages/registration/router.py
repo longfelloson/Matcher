@@ -78,7 +78,7 @@ async def user_gender_state_handler(message: Message, state: FSMContext):
 
 
 @router.message(RegistrationStates.preferred_gender)
-async def user_gender_state_handler(message: Message, state: FSMContext):
+async def user_preferred_gender_state_handler(message: Message, state: FSMContext):
     """
     Обработка пользовательского гендера анкет
     """
@@ -132,7 +132,7 @@ async def location_state_handler(message: Message, state: FSMContext):
 
 
 @router.message(RegistrationStates.photo)
-async def location_state_handler(message: Message, state: FSMContext, session: AsyncSession):
+async def photo_state_handler(message: Message, state: FSMContext, session: AsyncSession):
     """
     Получение фотографии пользователя и последующая загрузка в БД
     """

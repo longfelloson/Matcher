@@ -9,10 +9,9 @@ router = Router(name="Errors")
 @router.errors()
 async def errors_handler(error: ErrorEvent) -> None:
     """
-    Обработка всех ошибок
+    Роутер обработок всех ошибок. Отправляет уведомление админам об ошибке
     """
     exception_text = str(error.exception)
-    logger.error(exception_text)
 
     if not exception_text:
         exception_text = "Возникла непредвиденная ошибка в работе бота ⚠️"
@@ -21,3 +20,5 @@ async def errors_handler(error: ErrorEvent) -> None:
         await error.update.callback_query.message.reply(exception_text)
     else:
         await error.update.message.reply(exception_text)
+
+    logger.error(exception_text)

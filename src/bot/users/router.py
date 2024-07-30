@@ -26,14 +26,15 @@ async def change_config_button_handler(call: CallbackQuery, user: User, session:
     """
     Обработка кнопки "Изменить анкету пользователя"
     """
-    await users_configs_crud.update_user_config(user.user_id, call.data.split('*')[1], session)
+    user_config_table_column_name = call.data.split('*')[1]
+    await users_configs_crud.update_user_config(user.user_id, user_config_table_column_name, session)
 
     config = await users_configs_crud.get_user_config(user.user_id, session)
     await call.message.edit_reply_markup(user_profile_keyboard(config))
 
 
 @router.message(UserStates.change_profile)
-async def name_profile_section(message: Message, state: FSMContext):
+async def change_profile_handler(message: Message, state: FSMContext):
     """
     Обновление пользовательского имени
     """

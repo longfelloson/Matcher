@@ -21,7 +21,6 @@ from config import settings
 DEFAULT_AGE_GUESS_SCORE = 0.0
 CLOSE_AGE_GUESS_SCORE = 2.5
 SAME_AGE_GUESS_SCORE = 5
-DEFAULT_DELAY = 0.3
 LOCATION_SPLIT_SYMBOL = "*"
 
 
@@ -42,7 +41,7 @@ def get_search_options(user_rates: List[Rate], searcher: User) -> Tuple[List, Li
 
 async def get_users_for_view(user: User, session: AsyncSession) -> List[User]:
     """
-    Получает пользователей, из которых можно выбрать пользователя для просмотра
+    Получение пользователей, из которых можно выбрать пользователя для просмотра
     """
     user_rates = await rates_crud.get_user_rates(user.user_id, session)
     specific_search_options, common_search_options = get_search_options(user_rates, user)
@@ -79,8 +78,6 @@ async def send_user_for_view(message: Message, user: User, session: AsyncSession
 
     caption = get_user_profile_caption(user, user_for_view)
 
-    # await asyncio.sleep(DEFAULT_DELAY)
     await state.set_data({"user_for_rate": user_for_view})
-    print(user_for_view.user_id)
     photo = await message.answer_photo(user_for_view.photo_url, caption)
     await photo.reply(answer, reply_markup=keyboard)

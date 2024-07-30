@@ -22,8 +22,12 @@ def guess_user_age_keyboard(user: User) -> Keyboard:
     """
     Клавиатура с кнопками выбора возраста поиска анкет
     """
-    builder = Builder().row(*GROUPS_AGES_BUTTONS[user.preferred_age_group])
-    builder.row(*[Button(text=text) for text in USER_RATE_BUTTONS])
+    builder = Builder().row(
+        *GROUPS_AGES_BUTTONS[user.preferred_age_group]
+    )
+    builder.row(
+        *[Button(text=text) for text in USER_RATE_BUTTONS]
+    )
     return builder.row(Button(text='↩')).as_markup(resize_keyboard=True)
 
 
@@ -31,16 +35,26 @@ def report_keyboard(guesser: User, guessed: User) -> InlineKeyboard:
     """
     Клавиатура с кнопкой "Пожаловаться"
     """
-    return InlineKeyboard(inline_keyboard=[[InlineButton(
-        text="⚠️",
-        callback_data=f'{UserActions.REPORT}*{guesser.user_id}*{guessed.user_id}'
-    )]])
+    builder = Builder().row(
+        InlineButton(
+            text="⚠️",
+            callback_data=f'{UserActions.REPORT}*{guesser.user_id}*{guessed.user_id}'
+        )
+    )
+    return builder.as_markup()
 
 
 def rate_user_keyboard() -> Keyboard:
     """
     Кнопки оценки пользователя
     """
-    builder = Builder().row(*[Button(text=text) for text in USER_RATE_BUTTONS])
-    builder.row(Button(text='↩'))
+    rate_user_buttons = [
+        Button(text=text) for text in USER_RATE_BUTTONS
+    ]
+    builder = Builder().row(
+        *rate_user_buttons
+    )
+    builder.row(
+        Button(text='↩')
+    )
     return builder.as_markup(resize_keyboard=True)

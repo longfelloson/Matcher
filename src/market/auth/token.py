@@ -8,7 +8,7 @@ from config import settings
 
 def get_link_with_token(user_id: int) -> str:
     """
-    Gets a URL with hash in params
+    Получает ссылку для авторизации по JWT-токену в параметре
     """
     token = create_access_token({"sub": user_id})
     return f"/auth?token={token}"
@@ -16,7 +16,7 @@ def get_link_with_token(user_id: int) -> str:
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """
-    Create an access token
+    Выпускает JWT-токен
     """
     to_encode = data.copy()
 
@@ -32,6 +32,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def decode_token(token: str) -> dict:
     """
-    Decode JWT
+    Чтение JWT-токена
     """
     return jwt.decode(token, settings.AUTH.SECRET_KEY, algorithms=settings.AUTH.ALGORITHM)

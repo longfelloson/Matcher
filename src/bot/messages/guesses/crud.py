@@ -20,7 +20,7 @@ async def add_guess(guess: GuessSchema, session: AsyncSession) -> None:
 
 async def get_guess(guess_id: int, session: AsyncSession) -> Guess:
     """
-    Получение оценки из базы
+    Получение угадывания из базы
     """
     guess = await session.execute(select(Guess).where(Guess.id_ == guess_id))
     return guess.scalar_one()
@@ -28,7 +28,7 @@ async def get_guess(guess_id: int, session: AsyncSession) -> Guess:
 
 async def get_user_guesses(user_id: int, session: AsyncSession) -> Optional[List[Guess]]:
     """
-    Получение пользовательских оценок
+    Получение пользовательских угадываний от конкретного пользователя
     """
     rates = await session.execute(select(Guess).where(Guess.guesser == user_id))
     return rates.scalars().all()
@@ -36,7 +36,7 @@ async def get_user_guesses(user_id: int, session: AsyncSession) -> Optional[List
 
 async def get_user_for_rate(user: User, user_rates: List[Rate], session: AsyncSession):
     """
-    Получение анкеты пользователя для оценки
+    Получение пользователя по заданным условиям для просмотра
     """
     conditions = [
         User.user_id != user.user_id,

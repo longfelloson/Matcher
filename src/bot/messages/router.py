@@ -27,19 +27,17 @@ async def back_button_handler(message: Message, state: FSMContext):
 
 
 @router.message(F.text == "Начать ▶️")
-async def rate_button_handler(message: Message, session: AsyncSession, state: FSMContext, user: User):
+async def view_user_button_handler(message: Message, session: AsyncSession, state: FSMContext, user: User):
     """
     Обработка кнопки "Старт" и выдача фото для угадывания возраста или оценки
     """
-    start = datetime.now()
     await send_user_for_view(message, user, session, state)
-    print(datetime.now() - start)
 
 
 @router.message(F.text == "Магазин 🛍")
 async def market_button_handler(message: Message):
     """
-
+    Обработка кнопки "Магазин" в главном меню
     """
     await message.answer(
         text="Перейдите по ссылке ниже, чтобы обменять баллы.", reply_markup=market_link_keyboard(message.chat.id)
@@ -65,21 +63,21 @@ async def profile_button_handler(message: Message, user: User, session: AsyncSes
 
 
 @router.message(UserStates.profile, F.text.regexp('Угадывать возраст'))
-async def change_user_guess_age(message: Message, session: AsyncSession):
+async def change_user_guess_age_button_handler(message: Message, session: AsyncSession):
     """
     Обработка кнопки "Угадывать возраст"
     """
     new_value = False if message.text == 'Угадывать возраст: ✅' else True
     answer = Answers.USER_GUESSES_AGE if new_value else Answers.USER_NOT_GUESSES_AGE
 
-    await configs_crud.update_user_config(message.chat.id, 'guess_age', session)
+    await configs_crud.update_user_config(message.chat.id, column_name='guess_age', session=session)
 
     config = await configs_crud.get_user_config(message.chat.id, session)
     await message.answer(answer, reply_markup=user_profile_keyboard(config))
 
 
 @router.message(F.text == 'Изменить 📝')
-async def change_user_guess_rate(message: Message, state: FSMContext):
+async def change_user_profile_button_handler(message: Message, state: FSMContext):
     """
     Обработка кнопки "Изменить профиль"
     """

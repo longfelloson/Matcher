@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import (
 
 def captcha_keyboard(captcha: dict) -> InlineKeyboard:
     """
-    Returns keyboard with buttons with emojis as captcha for user
+    Возвращает клавиатуру с кнопками с эмодзи
     """
     buttons = [
         InlineButton(

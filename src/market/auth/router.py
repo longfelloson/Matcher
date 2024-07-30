@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get('/auth')
 async def root_page(token: str):
     """
-    Root page for web app
+    Обработка ручки авторизации
     """
     if not (payload := decode_token(token)):
         raise HTTPException(status_code=400, detail="Link expired")

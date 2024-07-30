@@ -8,7 +8,7 @@ from bot.users.models import User
 from config import settings
 from database import get_async_session
 from market.auth.utils import auth_guard, get_current_user
-from market.exchange.schemas import ExchangeData
+from market.exchange.schemas import ExchangePoints
 from market.transactions import crud as transactions_crud
 from market.transactions.schemas import TransactionType
 
@@ -19,19 +19,19 @@ templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH)
 @router.get("/exchange", response_class=HTMLResponse)
 async def exchange_page(request: Request):
     """
-    Return HTML exchange page
+    Возвращает страницу для обмена баллов
     """
     return templates.TemplateResponse("exchange.html", {"request": request})
 
 
 @router.post("/exchange-points", response_class=JSONResponse)
 async def exchange_points_endpoint(
-        data: ExchangeData,
+        data: ExchangePoints,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(get_current_user)
 ):
     """
-    Endpoint to exchange user exchange.
+    Ручка для обмена баллов пользователя
     """
     await users_crud.decrease_user_points(user.user_id, data.points, session)
     await transactions_crud.create_transaction(TransactionType.PURCHASE, data.product_id, data.points, session)
@@ -42,7 +42,7 @@ async def exchange_points_endpoint(
 @router.get("/get-exchange-rate", response_class=JSONResponse)
 async def get_exchange_rate_endpoint():
     """
-    Endpoint for getting points exchange rate.
+    Ручка получения текущего курса обмена баллов на рубли
     """
     return JSONResponse({"current-rate": settings.EXCHANGE_RATE})
 
@@ -50,7 +50,7 @@ async def get_exchange_rate_endpoint():
 @router.get('/get-user-points', response_class=JSONResponse)
 async def get_user_points_endpoint(user_id: int, session: AsyncSession = Depends(get_async_session)):
     """
-    Returns JSON with user points amount by his ID
+    Ручка для получения баллов пользователя
     """
     user_points = await users_crud.get_user_points(user_id, session)
     return JSONResponse({"user_points": user_points})

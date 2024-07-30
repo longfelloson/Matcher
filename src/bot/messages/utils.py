@@ -7,7 +7,7 @@ MIN_USER_NAME_LENGTH = 3
 
 def validate_age(text: str, min_age: int, max_age: int) -> bool:
     """
-    Проверка пользовательского возраста
+    Проверка валидности ввода пользователя как возраста
     """
     if not text.isdigit():
         return False
@@ -16,7 +16,7 @@ def validate_age(text: str, min_age: int, max_age: int) -> bool:
 
 def validate_user_name(text: str) -> bool:
     """
-    Проверка пользовательского имени
+    Проверка пользовательского ввода как имени
     """
     if text.isdigit() or len(text) < MIN_USER_NAME_LENGTH:
         return False
@@ -25,7 +25,7 @@ def validate_user_name(text: str) -> bool:
 
 async def validate_user_input(message: Message, keyboard: ReplyKeyboardMarkup):
     """
-    Проверка пользовательского ввода, соответствует ли он кнопкам
+    Проверка пользовательского ввода, соответствует ли он кнопкам в прикрепленной клавиатуре
     """
     rows = [row for row in keyboard.keyboard]
     buttons_texts = []

@@ -9,6 +9,7 @@ from bot.messages.guesses.states import GuessesStates
 from bot.messages.guesses.utils import react_for_user_guess
 from bot.messages.schemas import Answers
 from bot.users.models import User
+from bot.users.utils import send_user_for_view
 
 router = Router(name="Guesses")
 
@@ -19,7 +20,7 @@ async def age_guess_button_handler(message: Message, session: AsyncSession, stat
     Обработка кнопок угадывания возрасты анкеты
     """
     await react_for_user_guess(message, user, session, state)
-    # await send_photo(message, user, session, state)
+    await send_user_for_view(message, user, session, state)
 
 
 @router.message(GuessesStates.guess_user_age, F.text == "↩")

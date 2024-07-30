@@ -4,7 +4,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
 def select_gender_keyboard() -> Keyboard:
     """
-
+    Клавиатура выбора гендера пользователя
     """
     builder = Builder().row(
         Button(text="Парень"),
@@ -18,7 +18,7 @@ def select_gender_keyboard() -> Keyboard:
 
 def select_preferred_gender_keyboard() -> Keyboard:
     """
-
+    Клавиатура выбора пола анкет для поиска
     """
     builder = Builder().row(
         Button(text="Парней"),
@@ -34,7 +34,7 @@ def select_preferred_gender_keyboard() -> Keyboard:
 
 def select_age_group_keyboard() -> Keyboard:
     """
-
+    Клавиатура выбора группы поиска пользователей
     """
     builder = Builder().add(
         Button(text="14 - 18"),
@@ -49,7 +49,7 @@ def select_age_group_keyboard() -> Keyboard:
 
 def select_location_keyboard() -> Keyboard:
     """
-
+    Клавиатура выбора локации
     """
     builder = Builder().row(
         Button(text="Москва"), Button(text="Санкт-Петербург")
@@ -69,9 +69,9 @@ def select_location_keyboard() -> Keyboard:
 
 def back_button_keyboard() -> Keyboard:
     """
-
+    Кнопка возврата назад
     """
-    return Builder().row(Button(text="↩")).as_markup(
-        resize_keyboard=True,
-        one_time_keyboard=True
+    builder = Builder().row(
+        Button(text="↩")
     )
+    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)

@@ -9,7 +9,7 @@ from bot.captcha.keyboards import captcha_keyboard
 from bot.captcha.utils import decrypt_correctness, generate_captcha
 from bot.filters import NotSolvedCaptchaFilter
 from bot.messages.commands.router import command_start_handler
-# from bot.messages.commands.router import command_start_handler
+
 from bot.users.models import User
 
 router = Router()

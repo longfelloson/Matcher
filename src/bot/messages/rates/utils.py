@@ -9,7 +9,7 @@ from bot.users.models import User
 
 async def react_for_user_rate(message: Message, user: User, state: FSMContext, session: AsyncSession) -> None:
     """
-    Util method to react for user
+    Функция для реакции на пользовательскую оценку с помощью кнопок
     """
     data = await state.get_data()
     rate = Rate(

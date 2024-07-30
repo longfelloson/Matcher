@@ -21,7 +21,7 @@ async def get_products(
         session: AsyncSession = Depends(get_async_session)
 ):
     """
-    Get all products
+    Ручка для получения товаров
     """
     return await crud.get_products(offset, limit, user_id, session)
 
@@ -33,7 +33,7 @@ async def get_product_endpoint(
         user_id: int = None
 ):
     """
-    Return product info by given product id. If user_id is provided, return user products
+    Ручка для получения товара по его ID
     """
     return await crud.get_product(product_id, session, user_id)
 
@@ -41,7 +41,7 @@ async def get_product_endpoint(
 @router.get("/product/{product_id}", response_class=HTMLResponse)
 async def get_product_page(request: Request):
     """
-    Return HTML page with product info
+    Ручка для получения страницы товара
     """
     return templates.TemplateResponse("product.html", {"request": request})
 
@@ -49,7 +49,7 @@ async def get_product_page(request: Request):
 @router.get("/buy-product", response_class=HTMLResponse)
 async def buy_product_page(request: Request):
     """
-    Return HTML page with info to buy product
+    Ручка для получения страницы покупки товара за баллы
     """
     return templates.TemplateResponse("buy-product.html", {"request": request})
 
@@ -57,7 +57,7 @@ async def buy_product_page(request: Request):
 @router.post("/add-user-product", response_class=JSONResponse)
 async def buy_product_endpoint(data: CreateUserProduct, session: AsyncSession = Depends(get_async_session)):
     """
-    Exchange scores for a given product id
+    Ручка для добавления пользовательского товара полученного за баллы
     """
     await crud.create_user_product(data.user_id, data.product_id, session)
 

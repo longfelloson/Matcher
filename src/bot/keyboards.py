@@ -19,7 +19,7 @@ from market.auth.token import get_link_with_token
 
 def main_keyboard() -> Keyboard:
     """
-    Keyboard with main buttons
+    Клавиатура для главного меню
     """
     builder = Builder().row(
         Button(text="Начать ▶️")
@@ -35,7 +35,7 @@ def main_keyboard() -> Keyboard:
 
 def help_command_keyboard() -> InlineKeyboard:
     """
-    Help's command keyboard
+    Клавиатура ответа на команду вызова поддержки
     """
     keyboard = [[
         InlineButton(text="Поддержка ⚙", url=f"t.me/{settings.BOT.SUPPORT_ACCOUNT_USERNAME}")
@@ -45,7 +45,7 @@ def help_command_keyboard() -> InlineKeyboard:
 
 def manage_user_keyboard(reporter: int, reported: int) -> InlineKeyboard:
     """
-    User management keyboard
+    Клавиатура управления пользователем
     """
     builder = InlineBuilder().row(
         InlineButton(
@@ -58,7 +58,7 @@ def manage_user_keyboard(reporter: int, reported: int) -> InlineKeyboard:
 
 def market_link_keyboard(user_id: int) -> InlineKeyboard:
     """
-    Button with market auth link
+    Клавиатура из одной кнопки, содержащую ссылку на маркет
     """
     link_with_auth_token = get_link_with_token(user_id)
     builder = InlineBuilder().row(

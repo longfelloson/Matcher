@@ -19,7 +19,7 @@ async def create_user(user: UserSchema, session: AsyncSession) -> None:
 
 async def update_user(user_id: int, session: AsyncSession, **user_info) -> None:
     """
-    Обновление пользовательской информации
+    Обновление пользователя
     """
     await session.execute(update(User).where(User.user_id == user_id).values(**user_info))
     await session.commit()
@@ -51,7 +51,7 @@ async def decrease_user_points(user_id: int, points: int | float, session: Async
 
 async def get_users(session: AsyncSession, limit: int = DEFAULT_USERS_LIMIT, options: List = None) -> List[User]:
     """
-    Получение пользователей
+    Получение пользователей по заданным условиям
     """
     stmt = select(User).limit(limit)
     if options:
@@ -63,7 +63,7 @@ async def get_users(session: AsyncSession, limit: int = DEFAULT_USERS_LIMIT, opt
 
 async def get_user_points(user_id: int, session: AsyncSession) -> Union[int, float]:
     """
-    Returns user's exchange by given user ID
+    Возвращает количество очков пользователя
     """
     points = await session.execute(select(User.points).where(User.user_id == user_id))
     return points.scalar_one()

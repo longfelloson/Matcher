@@ -7,15 +7,12 @@ class PaymentCredentials(BaseModel):
 
 
 class CreatePayment(PaymentCredentials):
-    user_id: int
     amount: float | int
-    currency: str
+    sbp_bank_id: int
+    amount: float
+    payment_system_id: int
 
 
 class PaymentStatus:
     PENDING = 'PENDING'
     COMPLETED = 'COMPLETED'
-
-
-class WithdrawPaymentData(BaseModel):
-    ...

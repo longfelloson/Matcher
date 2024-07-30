@@ -3,7 +3,7 @@ from bot.users.models import User
 
 def get_profile_text(user: User) -> str:
     """
-    Returns user's formatted profile text
+    Текст анкеты пользователя в его профиле
     """
     return f"🎫 Имя: {bold(user.name)}\n\n" \
            f"🎈 Баллов: {bold(int(user.points))}\n\n" \
@@ -13,7 +13,7 @@ def get_profile_text(user: User) -> str:
 
 def get_user_profile_caption(rater: User, rated: User) -> str:
     """
-    Returns formatted user's caption of user's photo
+    Возвращает описание профиля пользовательской анкеты при просмотре другим пользователем
     """
     base_caption = f"{rated.name}, {rated.city}"
 

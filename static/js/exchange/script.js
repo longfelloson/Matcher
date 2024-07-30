@@ -41,7 +41,7 @@ function exchangePoints() {
         const requestData = {
             points: points,
             destination: destination,
-            account_details: accountDetails
+            account_details: accountDetails,
         };
         fetch('/exchange-points', {
             method: 'POST',

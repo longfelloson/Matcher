@@ -46,11 +46,11 @@ class PreferredAgeGroup:
         THIRD = "24 - 28"
 
 
-def get_user_schema_from_message(message: Message) -> User:
+def get_user_schema_from_message(user_message: Message) -> User:
     """
-
+    Получение схемы пользователя по его сообщению
     """
     return User(
-        user_id=message.chat.id,
-        username=message.chat.username,
+        user_id=user_message.chat.id,
+        username=user_message.chat.username,
     )

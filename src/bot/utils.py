@@ -16,7 +16,7 @@ from database import create_tables
 
 async def start() -> None:
     """
-    Starts the bot and set necessary utils
+    Устанавливает настройки для бота и запускает его
     """
     dp.include_routers(
         captcha_router, messages_router,
@@ -35,7 +35,7 @@ async def start() -> None:
 
 async def set_commands() -> None:
     """
-    Sets up the commands
+   Устанавливает команды в боте
     """
     await bot.set_my_commands(
         [
@@ -56,7 +56,7 @@ async def set_commands() -> None:
 
 def set_middleware(middleware, update=True, message=True):
     """
-    Sets up the middleware
+    Устанавливает "прослойки"
     """
     if update:
         dp.update.outer_middleware(middleware)

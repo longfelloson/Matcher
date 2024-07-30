@@ -9,7 +9,7 @@ from config import settings
 class NotSolvedCaptchaFilter(Filter):
     async def __call__(self, message: Message, session: AsyncSession) -> bool:
         """
-
+        Фильтр пользователей на предмет нерешенной капчи
         """
         user_id = message.chat.id
         user = await users_crud.get_user(user_id, session)
@@ -22,6 +22,6 @@ class NotSolvedCaptchaFilter(Filter):
 class UserAdminFilter(Filter):
     async def __call__(self, data: dict):
         """
-        Is user admin
+        Проверка, является ли пользователь админом
         """
         return data['user'].user_id in settings.bot.ADMINS_IDS

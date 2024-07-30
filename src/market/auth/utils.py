@@ -10,6 +10,9 @@ from market.auth.token import decode_token
 
 class AuthGuard:
     async def __call__(self, request: Request):
+        """
+        Миддлварь авторизации пользователя
+        """
         if not (token := request.cookies.get("token")):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
@@ -22,7 +25,7 @@ class AuthGuard:
 
 async def get_current_user(request: Request, session: AsyncSession = Depends(get_async_session)) -> User:
     """
-    Gets current user and returns it
+    Получает текущего пользователя по JWT-токену из cookies
     """
     payload = decode_token(request.cookies.get("token"))
     return await users_crud.get_user(payload['sub'], session)

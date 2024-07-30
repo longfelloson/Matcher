@@ -7,7 +7,7 @@ from market.payments.schemas import CreatePayment
 
 async def get_payment(payment_id: int, session: AsyncSession) -> Payment:
     """
-    Gets payment by payment id
+    Получение платежа по его ID
     """
     payment = await session.execute(select(Payment).where(Payment.id_ == payment_id))
     return payment.scalar_one()
@@ -15,7 +15,7 @@ async def get_payment(payment_id: int, session: AsyncSession) -> Payment:
 
 async def create_payment(data: CreatePayment, session: AsyncSession) -> int:
     """
-    Creates payment and returns its id
+    Создает платеж и возвращает его ID
     """
     id_ = await session.execute(insert(Payment).values(**data.model_dump()).returning(Payment.id_))
     await session.commit()
@@ -25,7 +25,7 @@ async def create_payment(data: CreatePayment, session: AsyncSession) -> int:
 
 async def update_payment(payment_id: int, session: AsyncSession, **values):
     """
-    Updates payment by payment id
+    Обновляет платеж
     """
     await session.execute(update(Payment).where(Payment.id_ == payment_id).values(**values))
     await session.commit()

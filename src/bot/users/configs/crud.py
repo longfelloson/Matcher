@@ -5,14 +5,14 @@ from bot.users.configs.schemas import UserConfig as UserConfigSchema
 from bot.users.models import UserConfig
 
 
-async def update_user_config(user_id: int, column: str, session: AsyncSession) -> UserConfig:
+async def update_user_config(user_id: int, column_name: str, session: AsyncSession) -> UserConfig:
     """
     Обновление колонки пользовательского конфига
     """
     config = await get_user_config(user_id, session)
-    new_value = False if getattr(config, column) else True
+    new_value = False if getattr(config, column_name) else True
 
-    await session.execute(update(UserConfig).where(UserConfig.user_id == user_id).values(**{column: new_value}))
+    await session.execute(update(UserConfig).where(UserConfig.user_id == user_id).values(**{column_name: new_value}))
     await session.commit()
 
 

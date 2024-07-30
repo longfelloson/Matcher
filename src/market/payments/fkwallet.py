@@ -1,13 +1,13 @@
 import hashlib
 import json
 import uuid
+from abc import ABC, abstractmethod
 from typing import Optional
 
 import aiohttp
 
 from config import settings
 from logger import logger
-from market.payments.service import PaymentSystem
 
 SBERBANK_ID_FOR_SPB = "1enc00000111"
 YOOMONEY_ID_FOR_SPB = "1enc00000022"
@@ -21,6 +21,21 @@ PAYMENT_SYSTEM_YOOMONEY_ID = 7
 
 FEE_FROM_BALANCE = 1
 FEE_FROM_PAYMENT = 0
+
+
+class PaymentSystem(ABC):
+    @property
+    @abstractmethod
+    def withdraw_endpoint_url(self) -> str:
+        pass
+
+    @abstractmethod
+    async def withdraw(self, *args, **kwargs):
+        pass
+
+    @abstractmethod
+    async def __request(self, *args, **kwargs):
+        pass
 
 
 class Wallet(PaymentSystem):
@@ -39,7 +54,7 @@ class Wallet(PaymentSystem):
     @property
     def withdraw_endpoint_url(self) -> str:
         """
-        Returns url to make request to withdraw money from wallet
+        Возвращает URL эндпоинта для отправки запроса для вывода средств с кошелька
         """
         return f"{self.base_url}/{self.public_key}/withdrawal"
 
@@ -52,7 +67,7 @@ class Wallet(PaymentSystem):
 
     def __create_sign(self, data: Optional[dict]) -> str:
         """
-        Create a signature using the private key
+        Создает подпись с помощью приватного ключа
         """
         sigh = hashlib.sha256(json.dumps(data).encode() + self.private_key.encode()).hexdigest()
         if not data:
@@ -62,7 +77,7 @@ class Wallet(PaymentSystem):
 
     async def __request(self, url: str, method: str = "POST", data: dict = None) -> dict:
         """
-        Make a GET request to the wallet API
+        Отправляет запрос с нужными данными
         """
         sign = self.__create_sign(data)
         headers = {
@@ -72,10 +87,9 @@ class Wallet(PaymentSystem):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(method, url, data=data, headers=headers) as response:
-                    print(response.status)
                     return await response.json()
         except Exception as e:
-            logger.error("Error request via payment system: %m", e)
+            logger.error("Ошибка при отправке запроса для создания платежа: %s", e)
 
     async def withdraw(
             self,
@@ -86,7 +100,7 @@ class Wallet(PaymentSystem):
             currency_id: int = RUB_CURRENCY_ID,
     ) -> dict:
         """
-        Withdraw an amount from wallet to card
+        Выводит средства с кошелька на указанные реквизиты
         """
         data = {
             "sbp_bank_id": sbp_bank_id,

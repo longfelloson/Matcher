@@ -49,7 +49,7 @@ class S3Client:
 
     async def update_file(self, file: bytes, file_name: str) -> None:
         """
-        Удаляет файл, а потом загружает его
+        Перезапись файла
         """
         await self.delete_file(file_name)
         await self.upload_file(file_name, file)

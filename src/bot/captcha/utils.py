@@ -11,6 +11,11 @@ CIPHER = Caesar(key=3)
 
 
 def generate_captcha(emojis_limit: int = DEFAULT_CAPTCHA_EMOJIS_LIMIT) -> dict:
+    """
+    Генерирует словарь с эмодзи и их верностью
+    :param emojis_limit:
+    :return:
+    """
     new_emojis = deepcopy(EMOJIS)
     random.shuffle(new_emojis)
 
@@ -23,6 +28,12 @@ def generate_captcha(emojis_limit: int = DEFAULT_CAPTCHA_EMOJIS_LIMIT) -> dict:
 
 
 def encrypt_correctness(emoji_: str, correct_emoji: str) -> str:
+    """
+    Шифрует верность эмодзи
+    :param emoji_:
+    :param correct_emoji:
+    :return:
+    """
     def get_captcha_correctness():
         return "CORRECT" if emoji_ == correct_emoji else "NOT_CORRECT"
 
@@ -31,4 +42,7 @@ def encrypt_correctness(emoji_: str, correct_emoji: str) -> str:
 
 
 def decrypt_correctness(encrypted_captcha_correctness: str) -> str:
+    """
+    Дешифрует верность эмодзи
+    """
     return CIPHER.decipher(encrypted_captcha_correctness)
