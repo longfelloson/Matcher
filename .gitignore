@@ -2,8 +2,9 @@
 migrations
 alembic.ini
 nginx.conf
-.idea
-bot/.idea
-/src/bot/.idea/
+./.idea
+./src/bot/.idea
+./src/bot/.idea/
 errors.log
 pytest.ini
+./tests

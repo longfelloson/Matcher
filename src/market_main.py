@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -31,7 +30,7 @@ templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH)
 @app.on_event("startup")
 async def startup():
     """
-    Создание таблиц
+    Создание таблиц перед запуском
     """
     await database.create_tables()
 
@@ -42,7 +41,3 @@ async def root_page(request: Request):
     Ручка для получения главной страницы
     """
     return templates.TemplateResponse('index.html', {'request': request})
-
-
-if __name__ == '__main__':
-    uvicorn.run(app)

@@ -6,4 +6,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /src
 
-CMD ["python3.10", "bot_.py"]
+CMD ["python3.10", "bot_main.py"]
