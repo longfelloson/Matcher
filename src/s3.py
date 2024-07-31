@@ -9,11 +9,11 @@ from logger import logger
 
 class S3Client:
     def __init__(
-            self,
-            access_key: str,
-            secret_key: str,
-            endpoint_url: str,
-            bucket_name: str,
+        self,
+        access_key: str,
+        secret_key: str,
+        endpoint_url: str,
+        bucket_name: str,
     ):
         self.config = {
             "aws_access_key_id": access_key,
@@ -32,10 +32,7 @@ class S3Client:
         try:
             async with self.get_client() as client:
                 await client.put_object(
-                    Bucket=self.bucket_name,
-                    Key=file_name,
-                    Body=file,
-                    ACL='public-read'
+                    Bucket=self.bucket_name, Key=file_name, Body=file, ACL="public-read"
                 )
         except ClientError as e:
             logger.error("Error uploading file via S3: %s", e)
@@ -55,7 +52,9 @@ class S3Client:
         await self.upload_file(file_name, file)
 
     def get_file_url(self, file_name: str, extension: str = "jpg") -> str:
-        return f"{self.config['endpoint_url']}/{self.bucket_name}/{file_name}.{extension}"
+        return (
+            f"{self.config['endpoint_url']}/{self.bucket_name}/{file_name}.{extension}"
+        )
 
 
 s3_client = S3Client(

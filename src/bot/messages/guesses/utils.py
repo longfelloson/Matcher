@@ -17,18 +17,12 @@ DEFAULT_DELAY = 0.3
 
 
 async def update_state_data(state: FSMContext, key: str, value: Any) -> None:
-    """
-    Обновление даты состояние
-    """
     data = await state.get_data()
     data[key] = value
     await state.update_data(data)
 
 
 def get_rate_schema(score: int | float, user_id: int, rated_user_id: int) -> Guess:
-    """
-    Получение схемы оценки
-    """
     return Guess(guesser=user_id, guessed=rated_user_id, score=score)
 
 
@@ -45,19 +39,19 @@ def get_guess_points(user_age_guess: int, user_for_rate: User) -> float | int:
     return score
 
 
-async def react_for_user_guess(message: Message, user: User, session: AsyncSession, state: FSMContext) -> None:
+async def react_for_user_guess(
+    message: Message, user: User, session: AsyncSession, state: FSMContext
+) -> None:
     """
-    Добавление пользовательского угадывания в базу
+    Добавление пользовательского угадывания в базу и нужная реакция на него
     """
     data = await state.get_data()
-    points = get_guess_points(int(message.text), data['user_for_rate'])
+    points = get_guess_points(int(message.text), data["user_for_rate"])
 
     guess = Guess(
-        guesser=user.user_id,
-        guessed=data['user_for_rate'].user_id,
-        points=points
+        guesser=user.user_id, guessed=data["user_for_rate"].user_id, points=points
     )
-    answer = Answers.get_age_guess_answer(user, data['user_for_rate'], points)
+    answer = Answers.get_age_guess_answer(user, data["user_for_rate"], points)
 
     await crud.add_guess(guess, session)
     await users_crud.increase_user_points(user.user_id, points, session)

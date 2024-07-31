@@ -9,7 +9,6 @@ from bot.captcha.keyboards import captcha_keyboard
 from bot.captcha.utils import decrypt_correctness, generate_captcha
 from bot.filters import NotSolvedCaptchaFilter
 from bot.messages.commands.router import command_start_handler
-
 from bot.users.models import User
 
 router = Router()
@@ -18,20 +17,22 @@ router = Router()
 @router.message(NotSolvedCaptchaFilter())
 async def captcha_handler(message: Message):
     """
-    Handles users without solved captcha
+    Обработка сообщений пользователей, у которых не решена каптча. В ответ присылает капчу
     """
     captcha = generate_captcha()
 
     await message.reply(
         text=f'Выберите эмодзи: <span class="tg-spoiler">{captcha["correct_emoji"]}</span>',
-        reply_markup=captcha_keyboard(captcha["emojis"])
+        reply_markup=captcha_keyboard(captcha["emojis"]),
     )
 
 
 @router.callback_query(F.data.startswith("select_captcha"))
-async def captcha_button_handler(call: CallbackQuery, session: AsyncSession, state: FSMContext, user: Optional[User]):
+async def captcha_button_handler(
+    call: CallbackQuery, session: AsyncSession, state: FSMContext, user: Optional[User]
+):
     """
-    Handles captcha button click.
+    Обработка решения капчи
     """
     encrypted_captcha_correctness = call.data.split("*")[1]
     decrypted_captcha_correctness = decrypt_correctness(encrypted_captcha_correctness)

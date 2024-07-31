@@ -9,16 +9,18 @@ from market.auth.utils import auth_guard
 from market.products import crud
 from market.products.schemas import CreateUserProduct
 
-router = APIRouter(tags=["Products"], prefix="/products", dependencies=[Depends(auth_guard)])
+router = APIRouter(
+    tags=["Products"], prefix="/products", dependencies=[Depends(auth_guard)]
+)
 templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH + "/products")
 
 
 @router.get("/get-products", status_code=status.HTTP_200_OK)
 async def get_products(
-        offset: int = 0,
-        limit: int = 100,
-        user_id: int = None,
-        session: AsyncSession = Depends(get_async_session)
+    offset: int = 0,
+    limit: int = 100,
+    user_id: int = None,
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
     Ручка для получения товаров
@@ -28,9 +30,9 @@ async def get_products(
 
 @router.get("/get-product")
 async def get_product_endpoint(
-        product_id: int,
-        session: AsyncSession = Depends(get_async_session),
-        user_id: int = None
+    product_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    user_id: int = None,
 ):
     """
     Ручка для получения товара по его ID
@@ -55,10 +57,14 @@ async def buy_product_page(request: Request):
 
 
 @router.post("/add-user-product", response_class=JSONResponse)
-async def buy_product_endpoint(data: CreateUserProduct, session: AsyncSession = Depends(get_async_session)):
+async def buy_product_endpoint(
+    data: CreateUserProduct, session: AsyncSession = Depends(get_async_session)
+):
     """
     Ручка для добавления пользовательского товара полученного за баллы
     """
     await crud.create_user_product(data.user_id, data.product_id, session)
 
-    return JSONResponse({"message": "User product successfully created"}, status.HTTP_201_CREATED)
+    return JSONResponse(
+        {"message": "User product successfully created"}, status.HTTP_201_CREATED
+    )

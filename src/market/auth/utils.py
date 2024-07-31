@@ -23,12 +23,14 @@ class AuthGuard:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
-async def get_current_user(request: Request, session: AsyncSession = Depends(get_async_session)) -> User:
+async def get_current_user(
+    request: Request, session: AsyncSession = Depends(get_async_session)
+) -> User:
     """
     Получает текущего пользователя по JWT-токену из cookies
     """
     payload = decode_token(request.cookies.get("token"))
-    return await users_crud.get_user(payload['sub'], session)
+    return await users_crud.get_user(payload["sub"], session)
 
 
 auth_guard = AuthGuard()

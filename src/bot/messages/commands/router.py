@@ -14,14 +14,13 @@ from bot.users import crud as users_crud
 from bot.users.models import User
 from bot.users.schemas import get_user_schema_from_message
 
-router = Router(name='Commands')
+router = Router(name="Commands")
 
 
-@router.message(Command('start'))
-async def command_start_handler(message: Message, session: AsyncSession, state: FSMContext, user: Optional[User]):
-    """
-    Обработка команды "/start"
-    """
+@router.message(Command("start"))
+async def command_start_handler(
+    message: Message, session: AsyncSession, state: FSMContext, user: Optional[User]
+):
     if not user:
         await users_crud.create_user(get_user_schema_from_message(message), session)
         await state.set_state(RegistrationStates.age)
@@ -30,17 +29,11 @@ async def command_start_handler(message: Message, session: AsyncSession, state: 
         await message.answer(Answers.GREETING, reply_markup=main_keyboard())
 
 
-@router.message(Command('help'))
+@router.message(Command("help"))
 async def command_help_handler(message: Message):
-    """
-    Обработка команды "/help"
-    """
     await message.answer(Answers.HELP_COMMAND, reply_markup=help_command_keyboard())
 
 
-@router.message(Command('admin'))
+@router.message(Command("admin"))
 async def command_help_handler(message: Message):
-    """
-    Обработка команды "/admin"
-    """
     await message.answer(Answers.ADMIN_COMMAND)

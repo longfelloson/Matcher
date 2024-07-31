@@ -26,15 +26,17 @@ async def exchange_page(request: Request):
 
 @router.post("/exchange-points", response_class=JSONResponse)
 async def exchange_points_endpoint(
-        data: ExchangePoints,
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(get_current_user)
+    data: ExchangePoints,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(get_current_user),
 ):
     """
     Ручка для обмена баллов пользователя
     """
     await users_crud.decrease_user_points(user.user_id, data.points, session)
-    await transactions_crud.create_transaction(TransactionType.PURCHASE, data.product_id, data.points, session)
+    await transactions_crud.create_transaction(
+        TransactionType.PURCHASE, data.product_id, data.points, session
+    )
 
     return JSONResponse({"message": "Points successfully exchanged"})
 
@@ -47,8 +49,10 @@ async def get_exchange_rate_endpoint():
     return JSONResponse({"current-rate": settings.EXCHANGE_RATE})
 
 
-@router.get('/get-user-points', response_class=JSONResponse)
-async def get_user_points_endpoint(user_id: int, session: AsyncSession = Depends(get_async_session)):
+@router.get("/get-user-points", response_class=JSONResponse)
+async def get_user_points_endpoint(
+    user_id: int, session: AsyncSession = Depends(get_async_session)
+):
     """
     Ручка для получения баллов пользователя
     """

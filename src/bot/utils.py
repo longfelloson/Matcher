@@ -19,10 +19,14 @@ async def start() -> None:
     Устанавливает настройки для бота и запускает его
     """
     dp.include_routers(
-        captcha_router, messages_router,
-        registration_router, commands_router,
-        rates_router, guesses_router,
-        reports_router, users_router
+        captcha_router,
+        messages_router,
+        registration_router,
+        commands_router,
+        rates_router,
+        guesses_router,
+        reports_router,
+        users_router,
     )
     set_middleware(PayloadMiddleware(), update=True, message=False)
     set_middleware(BlockedUserMiddleware(), message=True, update=False)
@@ -35,12 +39,12 @@ async def start() -> None:
 
 async def set_commands() -> None:
     """
-   Устанавливает команды в боте
+    Устанавливает команды в боте
     """
     await bot.set_my_commands(
         [
             BotCommand(command="start", description="Запуск бота"),
-            BotCommand(command="help", description="Поддержка")
+            BotCommand(command="help", description="Поддержка"),
         ]
     )
     for ADMIN_ID in settings.BOT.admins_ids:
@@ -48,9 +52,9 @@ async def set_commands() -> None:
             [
                 BotCommand(command="start", description="Запуск бота"),
                 BotCommand(command="help", description="Поддержка"),
-                BotCommand(command="admin", description="Панель администратора")
+                BotCommand(command="admin", description="Панель администратора"),
             ],
-            scope=BotCommandScopeChat(chat_id=ADMIN_ID)
+            scope=BotCommandScopeChat(chat_id=ADMIN_ID),
         )
 
 

@@ -12,7 +12,9 @@ router = Router(name="Rates")
 
 
 @router.message(F.text.in_(USER_RATE_BUTTONS))
-async def rate_user_button_handler(message: Message, session: AsyncSession, state: FSMContext, user: User):
+async def rate_user_button_handler(
+    message: Message, session: AsyncSession, state: FSMContext, user: User
+):
     """
     Обработка кнопок оценки и угадывания возрасты анкеты
     """

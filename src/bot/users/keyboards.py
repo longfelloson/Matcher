@@ -11,12 +11,8 @@ def user_profile_keyboard(config: UserConfig):
     builder = Builder().row(
         Button(text=f"Угадывать возраст: {'✅' if config.guess_age else '❌'}"),
     )
-    builder.row(
-        Button(text="Изменить 📝")
-    )
-    builder.row(
-        Button(text="↩")
-    )
+    builder.row(Button(text="Изменить 📝"))
+    builder.row(Button(text="↩"))
     return builder.as_markup(resize_keyboard=True)
 
 

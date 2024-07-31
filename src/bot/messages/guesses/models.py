@@ -6,7 +6,7 @@ from database import Base
 
 
 class Guess(Base):
-    __tablename__ = 'guesses'
+    __tablename__ = "guesses"
 
     id_ = Column(Integer, primary_key=True)
     guesser = Column(BigInteger, nullable=False)

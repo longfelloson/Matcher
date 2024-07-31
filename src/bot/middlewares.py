@@ -15,9 +15,9 @@ class PayloadMiddleware(BaseMiddleware):
         """
         message = update.callback_query if update.callback_query else update.message
         async for session in get_async_session():
-            data['session'] = session
-            data['user'] = await users_crud.get_user(message.from_user.id, session)
-            data['data'] = {}
+            data["session"] = session
+            data["user"] = await users_crud.get_user(message.from_user.id, session)
+            data["data"] = {}
             return await handler(update, data)
 
 
@@ -27,7 +27,7 @@ class BlockedUserMiddleware(BaseMiddleware):
         "Прослойка" для заблокированных пользователей
         """
         user_id = message.chat.id
-        user = await users_crud.get_user(user_id, data['session'])
+        user = await users_crud.get_user(user_id, data["session"])
         if not user or user.status != UserStatus.BLOCKED:
             return await handler(message, data)
         await message.answer("Вы заблокированы в боте ⛔️")

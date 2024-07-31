@@ -24,9 +24,9 @@ class BotConfig(BaseSettings):
     GEOCODER_API_KEY: str
 
     GROUPS_AGES: dict = {
-        'FIRST': [14, 15, 16, 17, 18],
-        'SECOND': [19, 20, 21, 22, 23],
-        'THIRD': [24, 25, 26, 27, 28]
+        "FIRST": [14, 15, 16, 17, 18],
+        "SECOND": [19, 20, 21, 22, 23],
+        "THIRD": [24, 25, 26, 27, 28],
     }
 
     @property
@@ -47,7 +47,7 @@ class DatabaseConfig(BaseSettings):
 
 
 class MarketConfig(BaseSettings):
-    TEMPLATES_PATH: str = '../templates'
+    TEMPLATES_PATH: str = "../templates"
     MARKET_LINK: str
     MARKET_EXCHANGE_RATE: str
 

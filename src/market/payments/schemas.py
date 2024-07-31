@@ -14,5 +14,5 @@ class CreatePayment(PaymentCredentials):
 
 
 class PaymentStatus:
-    PENDING = 'PENDING'
-    COMPLETED = 'COMPLETED'
+    PENDING = "PENDING"
+    COMPLETED = "COMPLETED"

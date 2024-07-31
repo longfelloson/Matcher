@@ -6,7 +6,7 @@ import jwt
 from config import settings
 
 
-def get_link_with_token(user_id: int) -> str:
+def get_auth_link(user_id: int) -> str:
     """
     Получает ссылку для авторизации по JWT-токену в параметре
     """
@@ -15,9 +15,6 @@ def get_link_with_token(user_id: int) -> str:
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    """
-    Выпускает JWT-токен
-    """
     to_encode = data.copy()
 
     if expires_delta:
@@ -26,12 +23,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
 
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.AUTH.JWT_SECRET_KEY, algorithm=settings.AUTH.ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.AUTH.JWT_SECRET_KEY, algorithm=settings.AUTH.ALGORITHM
+    )
     return encoded_jwt
 
 
 def decode_token(token: str) -> dict:
-    """
-    Чтение JWT-токена
-    """
-    return jwt.decode(token, settings.AUTH.SECRET_KEY, algorithms=settings.AUTH.ALGORITHM)
+    return jwt.decode(
+        token, settings.AUTH.SECRET_KEY, algorithms=settings.AUTH.ALGORITHM
+    )

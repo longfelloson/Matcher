@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: "my_project_app"
+    container_name: "guesser_app"
     build: .
     depends_on:
       - db
@@ -17,7 +17,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: my_project_db
+    container_name: guesser_db
     ports:
       - "5432:5432"
     env_file:
@@ -30,7 +30,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: my_project_nginx
+    container_name: guesser_nginx
     ports:
       - "80:80"
       - "443:443"

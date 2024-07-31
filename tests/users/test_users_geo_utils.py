@@ -18,23 +18,38 @@ class MockUser(BaseModel):
     distance: int | float = None
 
 
-names = ["Скоба", "Бульвар", "Горча", "Буня", "Гордей", "Кира", "Лев", "Мария", "Николай", "Ольга", "Петр", "Рита"]
-mock_users = [MockUser(name=random.choice(names), location=generate_random_location()) for _ in range(300000)]
+names = [
+    "Скоба",
+    "Бульвар",
+    "Горча",
+    "Буня",
+    "Гордей",
+    "Кира",
+    "Лев",
+    "Мария",
+    "Николай",
+    "Ольга",
+    "Петр",
+    "Рита",
+]
+mock_users = [
+    MockUser(name=random.choice(names), location=generate_random_location())
+    for _ in range(300000)
+]
 
 
 @pytest.mark.parametrize(
-    'user', [
+    "user",
+    [
         (random.choice(mock_users)),
         (random.choice(mock_users)),
         (random.choice(mock_users)),
         (random.choice(mock_users)),
         (random.choice(mock_users)),
-    ]
+    ],
 )
 def test_get_nearest_user(user):
-    filtered_users = [
-        user_ for user_ in mock_users if user_.name != user.name
-    ]
+    filtered_users = [user_ for user_ in mock_users if user_.name != user.name]
     nearest_user = get_nearest_user(user, filtered_users)
 
     assert nearest_user.distance <= 500

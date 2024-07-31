@@ -44,7 +44,9 @@ async def user_age_state_handler(message: Message, state: FSMContext):
     else:
         await state.update_data(age=int(message.text))
         await state.set_state(RegistrationStates.name)
-        await message.answer(Answers.USER_NAME_SECTION, reply_markup=back_button_keyboard())
+        await message.answer(
+            Answers.USER_NAME_SECTION, reply_markup=back_button_keyboard()
+        )
 
 
 @router.message(RegistrationStates.name)
@@ -58,7 +60,9 @@ async def user_name_state_handler(message: Message, state: FSMContext):
 
     await state.update_data(name=message.text)
     await state.set_state(RegistrationStates.gender)
-    await message.answer(Answers.USER_GENDER_SECTION, reply_markup=select_gender_keyboard())
+    await message.answer(
+        Answers.USER_GENDER_SECTION, reply_markup=select_gender_keyboard()
+    )
 
 
 @router.message(RegistrationStates.gender)
@@ -74,7 +78,10 @@ async def user_gender_state_handler(message: Message, state: FSMContext):
 
     await state.update_data(gender=gender)
     await state.set_state(RegistrationStates.preferred_gender)
-    await message.answer(Answers.PREFERRED_GENDER_SECTION, reply_markup=select_preferred_gender_keyboard())
+    await message.answer(
+        Answers.PREFERRED_GENDER_SECTION,
+        reply_markup=select_preferred_gender_keyboard(),
+    )
 
 
 @router.message(RegistrationStates.preferred_gender)
@@ -86,15 +93,21 @@ async def user_preferred_gender_state_handler(message: Message, state: FSMContex
     if not await validate_user_input(message, keyboard):
         return
 
-    preferred_gender = UserGender.MALE if message.text == "Парней" else UserGender.FEMALE
+    preferred_gender = (
+        UserGender.MALE if message.text == "Парней" else UserGender.FEMALE
+    )
 
     await state.update_data(preferred_gender=preferred_gender)
     await state.set_state(RegistrationStates.preferred_age_group)
-    await message.answer(Answers.PREFERRED_AGE_GROUP_SECTION, reply_markup=select_age_group_keyboard())
+    await message.answer(
+        Answers.PREFERRED_AGE_GROUP_SECTION, reply_markup=select_age_group_keyboard()
+    )
 
 
 @router.message(RegistrationStates.preferred_age_group)
-async def preferred_age_group_state_handler(message: Message, state: FSMContext, data: dict):
+async def preferred_age_group_state_handler(
+    message: Message, state: FSMContext, data: dict
+):
     """
     Получение выбранной возрастной группы
     """
@@ -104,15 +117,17 @@ async def preferred_age_group_state_handler(message: Message, state: FSMContext,
 
     match message.text:
         case PreferredAgeGroup.Age.FIRST:
-            data['preferred_age_group'] = PreferredAgeGroup.FIRST
+            data["preferred_age_group"] = PreferredAgeGroup.FIRST
         case PreferredAgeGroup.Age.SECOND:
-            data['preferred_age_group'] = PreferredAgeGroup.SECOND
+            data["preferred_age_group"] = PreferredAgeGroup.SECOND
         case PreferredAgeGroup.Age.THIRD:
-            data['preferred_age_group'] = PreferredAgeGroup.THIRD
+            data["preferred_age_group"] = PreferredAgeGroup.THIRD
 
-    await state.update_data(preferred_age_group=data['preferred_age_group'])
+    await state.update_data(preferred_age_group=data["preferred_age_group"])
     await state.set_state(RegistrationStates.location)
-    await message.answer(Answers.LOCATION_SECTION, reply_markup=select_location_keyboard())
+    await message.answer(
+        Answers.LOCATION_SECTION, reply_markup=select_location_keyboard()
+    )
 
 
 @router.message(RegistrationStates.location)
@@ -123,7 +138,9 @@ async def location_state_handler(message: Message, state: FSMContext):
     city = message.text
     location = message.location
     if location:
-        city = await reverse_geocode_user_location(Location(**message.location.model_dump()))
+        city = await reverse_geocode_user_location(
+            Location(**message.location.model_dump())
+        )
         location = f"{location.longitude}*{location.latitude}"
 
     await state.update_data(location=location, city=city)
@@ -132,7 +149,9 @@ async def location_state_handler(message: Message, state: FSMContext):
 
 
 @router.message(RegistrationStates.photo)
-async def photo_state_handler(message: Message, state: FSMContext, session: AsyncSession):
+async def photo_state_handler(
+    message: Message, state: FSMContext, session: AsyncSession
+):
     """
     Получение фотографии пользователя и последующая загрузка в БД
     """
@@ -140,7 +159,9 @@ async def photo_state_handler(message: Message, state: FSMContext, session: Asyn
         user_reg_info = await state.get_data()
 
         profile_photo_telegram_file_id = message.photo[-1].file_id
-        user_reg_info['photo_url'] = s3_client.get_file_url(file_name=profile_photo_telegram_file_id)
+        user_reg_info["photo_url"] = s3_client.get_file_url(
+            file_name=profile_photo_telegram_file_id
+        )
 
         user_config_schema = UserConfig(user_id=message.chat.id, guess_age=True)
 
@@ -151,7 +172,7 @@ async def photo_state_handler(message: Message, state: FSMContext, session: Asyn
             profile_photo_telegram_file_id,
             message,
             user_reg_info,
-            session
+            session,
         )
     else:
         await message.answer(IncorrectDataAnswer.INVALID_PHOTO)

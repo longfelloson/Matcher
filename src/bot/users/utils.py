@@ -35,7 +35,9 @@ def get_search_options(user_rates: List[Rate], searcher: User) -> Tuple[List, Li
         User.gender == searcher.preferred_gender,
         User.age.in_(settings.BOT.GROUPS_AGES[searcher.preferred_age_group]),
     ]
-    specific_options = common_options + [User.city == searcher.city, ]
+    specific_options = common_options + [
+        User.city == searcher.city,
+    ]
     return specific_options, common_options
 
 
@@ -44,7 +46,9 @@ async def get_users_for_view(user: User, session: AsyncSession) -> List[User]:
     Получение пользователей, из которых можно выбрать пользователя для просмотра
     """
     user_rates = await rates_crud.get_user_rates(user.user_id, session)
-    specific_search_options, common_search_options = get_search_options(user_rates, user)
+    specific_search_options, common_search_options = get_search_options(
+        user_rates, user
+    )
 
     users = await users_crud.get_users(session, options=specific_search_options)
     if not users:
@@ -53,7 +57,9 @@ async def get_users_for_view(user: User, session: AsyncSession) -> List[User]:
     return users
 
 
-async def send_user_for_view(message: Message, user: User, session: AsyncSession, state: FSMContext) -> None:
+async def send_user_for_view(
+    message: Message, user: User, session: AsyncSession, state: FSMContext
+) -> None:
     """
     Отправка фотографии пользователя на оценку
     """

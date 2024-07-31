@@ -12,7 +12,10 @@ from bot.messages.schemas import ChangeProfileAnswers
 from bot.messages.utils import validate_user_name, validate_user_input, validate_age
 from bot.users import crud
 from bot.users.configs import crud as users_configs_crud
-from bot.users.keyboards import user_profile_keyboard, change_user_profile_section_keyboard
+from bot.users.keyboards import (
+    user_profile_keyboard,
+    change_user_profile_section_keyboard,
+)
 from bot.users.models import User
 from bot.users.schemas import UserActions
 from bot.users.states import UserStates
@@ -22,12 +25,16 @@ router = Router(name="Users")
 
 
 @router.callback_query(F.data.regexp(UserActions.CHANGE_CONFIG))
-async def change_config_button_handler(call: CallbackQuery, user: User, session: AsyncSession):
+async def change_config_button_handler(
+    call: CallbackQuery, user: User, session: AsyncSession
+):
     """
     Обработка кнопки "Изменить анкету пользователя"
     """
-    user_config_table_column_name = call.data.split('*')[1]
-    await users_configs_crud.update_user_config(user.user_id, user_config_table_column_name, session)
+    user_config_table_column_name = call.data.split("*")[1]
+    await users_configs_crud.update_user_config(
+        user.user_id, user_config_table_column_name, session
+    )
 
     config = await users_configs_crud.get_user_config(user.user_id, session)
     await call.message.edit_reply_markup(user_profile_keyboard(config))
@@ -51,14 +58,19 @@ async def change_profile_handler(message: Message, state: FSMContext):
             await message.reply(ChangeProfileAnswers.CHANGE_AGE)
         case "Город":
             await state.set_state(UserStates.change_location)
-            await message.reply(ChangeProfileAnswers.CHANGE_LOCATION, reply_markup=select_location_keyboard())
+            await message.reply(
+                ChangeProfileAnswers.CHANGE_LOCATION,
+                reply_markup=select_location_keyboard(),
+            )
         case "Фото":
             await state.set_state(UserStates.change_photo)
             await message.reply(ChangeProfileAnswers.CHANGE_PHOTO)
 
 
 @router.message(UserStates.change_name)
-async def change_name_state_handler(message: Message, user: User, session: AsyncSession, state: FSMContext):
+async def change_name_state_handler(
+    message: Message, user: User, session: AsyncSession, state: FSMContext
+):
     """
     Обновление пользовательского имени
     """
@@ -72,17 +84,23 @@ async def change_name_state_handler(message: Message, user: User, session: Async
 
 
 @router.message(UserStates.change_location)
-async def change_location_state_handler(message: Message, user: User, session: AsyncSession, state: FSMContext):
+async def change_location_state_handler(
+    message: Message, user: User, session: AsyncSession, state: FSMContext
+):
     """
     Обновление пользовательской локации
     """
     await crud.update_user(user.user_id, session, name=message.text)
     await state.set_state(UserStates.profile)
-    await message.reply(ChangeProfileAnswers.LOCATION_UPDATED, reply_markup=main_keyboard())
+    await message.reply(
+        ChangeProfileAnswers.LOCATION_UPDATED, reply_markup=main_keyboard()
+    )
 
 
 @router.message(UserStates.change_photo)
-async def change_photo_state_handler(message: Message, session: AsyncSession, state: FSMContext):
+async def change_photo_state_handler(
+    message: Message, session: AsyncSession, state: FSMContext
+):
     """
     Обновление пользовательской фотографии
     """
@@ -92,11 +110,15 @@ async def change_photo_state_handler(message: Message, session: AsyncSession, st
     await state.clear()
     await upload_user_photo_to_s3(file_name)
     await crud.update_user(message.chat.id, session, photo_url=photo_url)
-    await message.answer(ChangeProfileAnswers.PHOTO_UPDATED, reply_markup=main_keyboard())
+    await message.answer(
+        ChangeProfileAnswers.PHOTO_UPDATED, reply_markup=main_keyboard()
+    )
 
 
 @router.message(UserStates.change_age)
-async def change_age_state_handler(message: Message, user: User, session: AsyncSession, state: FSMContext):
+async def change_age_state_handler(
+    message: Message, user: User, session: AsyncSession, state: FSMContext
+):
     """
     Смена возраста в профиле
     """
@@ -104,5 +126,7 @@ async def change_age_state_handler(message: Message, user: User, session: AsyncS
         await message.answer(IncorrectDataAnswer.INVALID_AGE)
     else:
         await state.clear()
-        await message.answer(ChangeProfileAnswers.AGE_UPDATED, reply_markup=main_keyboard())
+        await message.answer(
+            ChangeProfileAnswers.AGE_UPDATED, reply_markup=main_keyboard()
+        )
         await crud.update_user(user.user_id, session, age=int(message.text))

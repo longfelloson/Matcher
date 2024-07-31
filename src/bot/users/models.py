@@ -1,6 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, Column, Float, Integer, BigInteger, Boolean, ForeignKey
+from sqlalchemy import (
+    String,
+    DateTime,
+    Column,
+    Float,
+    Integer,
+    BigInteger,
+    Boolean,
+    ForeignKey,
+)
 from sqlalchemy.orm import relationship
 
 from bot.users.schemas import UserStatus
@@ -8,7 +17,7 @@ from database import Base
 
 
 class UserConfig(Base):
-    __tablename__ = 'user_config'
+    __tablename__ = "user_config"
 
     user_id = Column(BigInteger, ForeignKey("users.user_id"), primary_key=True)
     guess_age = Column(Boolean)
@@ -17,7 +26,7 @@ class UserConfig(Base):
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     user_id = Column(BigInteger, primary_key=True)
     name = Column(String)
@@ -35,4 +44,6 @@ class User(Base):
     points = Column(Float, default=0.0)
     is_captcha_solved = Column(Boolean, default=True)
 
-    config = relationship("UserConfig", back_populates="user", uselist=False, lazy="selectin")
+    config = relationship(
+        "UserConfig", back_populates="user", uselist=False, lazy="selectin"
+    )

@@ -11,7 +11,9 @@ router = Router(name="Reports")
 
 
 @router.callback_query(F.data.regexp(UserActions.REPORT))
-async def report_button_handler(call: CallbackQuery, user: User, session: AsyncSession, state: FSMContext):
+async def report_button_handler(
+    call: CallbackQuery, user: User, session: AsyncSession, state: FSMContext
+):
     """
     Обработка нажатия кнопки "Отправить жалобу"
     """
@@ -23,7 +25,7 @@ async def send_photo_button_handler(call: CallbackQuery, session: AsyncSession):
     """
     Обработка кнопки "Заблокировать пользователя"
     """
-    user_id = call.data.split('*')[1]
+    user_id = call.data.split("*")[1]
 
     await block_user(call.data, session)
     await call.message.edit_text(f"Пользователь <b>#{user_id}</b> заблокирован")

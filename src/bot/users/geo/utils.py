@@ -16,20 +16,27 @@ def get_distance_between_locations(first_location: str, second_location: str) ->
     """
     Возвращает расстояние между двумя координатами
     """
-    lat1, lon1 = map(float, first_location.split(','))
-    lat2, lon2 = map(float, second_location.split(','))
+    lat1, lon1 = map(float, first_location.split(","))
+    lat2, lon2 = map(float, second_location.split(","))
 
     R = 6371  # Radius of the Earth in kilometers
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    a = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(dlon / 2) ** 2
+    )
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c
 
     return round(distance * 1000)
 
 
-def get_nearest_user(current_user: User, users: List[User], max_distance: int = MAX_DISTANCE) -> User:
+def get_nearest_user(
+    current_user: User, users: List[User], max_distance: int = MAX_DISTANCE
+) -> User:
     """
     Получение ближайшего пользователя к заданному из списка других пользователей.
     """
@@ -39,7 +46,9 @@ def get_nearest_user(current_user: User, users: List[User], max_distance: int = 
     count = 0
     for other_user in users:
         count += 1
-        distance = get_distance_between_locations(current_user.location, other_user.location)
+        distance = get_distance_between_locations(
+            current_user.location, other_user.location
+        )
 
         if distance < max_distance:
             max_distance = distance
@@ -62,11 +71,13 @@ async def reverse_geocode_user_location(location: Location) -> Optional[str]:
         "key": settings.BOT.GEOCODER_API_KEY,
         "lat": location.latitude,
         "lon": location.longitude,
-        "format": "json"
+        "format": "json",
     }
     headers = {
-        'accept-language': 'ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7',
+        "accept-language": "ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7",
     }
     async with httpx.AsyncClient(params=params, headers=headers) as client:
-        response = await client.get('https://us1.locationiq.com/v1/reverse')
-        return response.json()['address']['town'] if response.status_code == 200 else None
+        response = await client.get("https://us1.locationiq.com/v1/reverse")
+        return (
+            response.json()["address"]["town"] if response.status_code == 200 else None
+        )

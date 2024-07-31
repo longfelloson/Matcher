@@ -6,7 +6,7 @@ from database import Base
 
 
 class Rate(Base):
-    __tablename__ = 'rates'
+    __tablename__ = "rates"
 
     rate_id = Column(Integer, primary_key=True, autoincrement=True)
     rater = Column(BigInteger, nullable=False)

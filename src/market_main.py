@@ -11,7 +11,7 @@ from market.router import router as market_router
 
 app = FastAPI()
 
-app.mount('/static', StaticFiles(directory='../static'), name='static')
+app.mount("/static", StaticFiles(directory="../static"), name="static")
 
 app.include_router(market_router)
 app.include_router(auth_router)
@@ -35,9 +35,9 @@ async def startup():
     await database.create_tables()
 
 
-@app.get('/', dependencies=[Depends(auth_guard)])
+@app.get("/", dependencies=[Depends(auth_guard)])
 async def root_page(request: Request):
     """
     Ручка для получения главной страницы
     """
-    return templates.TemplateResponse('index.html', {'request': request})
+    return templates.TemplateResponse("index.html", {"request": request})

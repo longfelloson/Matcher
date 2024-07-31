@@ -39,13 +39,7 @@ class PaymentSystem(ABC):
 
 
 class Wallet(PaymentSystem):
-    def __init__(
-            self,
-            base_url: str,
-            private_key: str,
-            public_key: str,
-            account: str
-    ):
+    def __init__(self, base_url: str, private_key: str, public_key: str, account: str):
         self.private_key = private_key
         self.public_key = public_key
         self.base_url = base_url
@@ -60,44 +54,48 @@ class Wallet(PaymentSystem):
 
     @staticmethod
     def __idempotence_key() -> str:
-        """
-
-        """
+        """ """
         return str(uuid.uuid4())
 
     def __create_sign(self, data: Optional[dict]) -> str:
         """
         Создает подпись с помощью приватного ключа
         """
-        sigh = hashlib.sha256(json.dumps(data).encode() + self.private_key.encode()).hexdigest()
+        sigh = hashlib.sha256(
+            json.dumps(data).encode() + self.private_key.encode()
+        ).hexdigest()
         if not data:
             sigh = hashlib.sha256(self.private_key.encode()).hexdigest()
 
         return sigh
 
-    async def __request(self, url: str, method: str = "POST", data: dict = None) -> dict:
+    async def __request(
+        self, url: str, method: str = "POST", data: dict = None
+    ) -> dict:
         """
         Отправляет запрос с нужными данными
         """
         sign = self.__create_sign(data)
         headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {sign}',
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {sign}",
         }
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.request(method, url, data=data, headers=headers) as response:
+                async with session.request(
+                    method, url, data=data, headers=headers
+                ) as response:
                     return await response.json()
         except Exception as e:
             logger.error("Ошибка при отправке запроса для создания платежа: %s", e)
 
     async def withdraw(
-            self,
-            sbp_bank_id: int,
-            amount: float,
-            payment_system_id: int,
-            fee_from_balance: int = FEE_FROM_PAYMENT,
-            currency_id: int = RUB_CURRENCY_ID,
+        self,
+        sbp_bank_id: int,
+        amount: float,
+        payment_system_id: int,
+        fee_from_balance: int = FEE_FROM_PAYMENT,
+        currency_id: int = RUB_CURRENCY_ID,
     ) -> dict:
         """
         Выводит средства с кошелька на указанные реквизиты

@@ -14,22 +14,16 @@ from aiogram.utils.keyboard import (
 
 from bot.users.schemas import AdminActions
 from config import settings
-from market.auth.token import get_link_with_token
+from market.auth.token import get_auth_link
 
 
 def main_keyboard() -> Keyboard:
     """
     Клавиатура для главного меню
     """
-    builder = Builder().row(
-        Button(text="Начать ▶️")
-    )
-    builder.row(
-        Button(text="Профиль 📱")
-    )
-    builder.row(
-        Button(text="Магазин 🛍")
-    )
+    builder = Builder().row(Button(text="Начать ▶️"))
+    builder.row(Button(text="Профиль 📱"))
+    builder.row(Button(text="Магазин 🛍"))
     return builder.as_markup(resize_keyboard=True)
 
 
@@ -37,9 +31,13 @@ def help_command_keyboard() -> InlineKeyboard:
     """
     Клавиатура ответа на команду вызова поддержки
     """
-    keyboard = [[
-        InlineButton(text="Поддержка ⚙", url=f"t.me/{settings.BOT.SUPPORT_ACCOUNT_USERNAME}")
-    ]]
+    keyboard = [
+        [
+            InlineButton(
+                text="Поддержка ⚙", url=f"t.me/{settings.BOT.SUPPORT_ACCOUNT_USERNAME}"
+            )
+        ]
+    ]
     return InlineKeyboard(inline_keyboard=keyboard)
 
 
@@ -50,7 +48,7 @@ def manage_user_keyboard(reporter: int, reported: int) -> InlineKeyboard:
     builder = InlineBuilder().row(
         InlineButton(
             text="Заблокировать 🔐",
-            callback_data=f'{AdminActions.BLOCK}*{reporter}*{reported}'
+            callback_data=f"{AdminActions.BLOCK}*{reporter}*{reported}",
         )
     )
     return builder.as_markup()
@@ -60,8 +58,11 @@ def market_link_keyboard(user_id: int) -> InlineKeyboard:
     """
     Клавиатура из одной кнопки, содержащую ссылку на маркет
     """
-    link_with_auth_token = get_link_with_token(user_id)
+    link_with_auth_token = get_auth_link(user_id)
     builder = InlineBuilder().row(
-        InlineButton(text="🔗", web_app=WebAppInfo(url=settings.MARKET.LINK + link_with_auth_token))
+        InlineButton(
+            text="🔗",
+            web_app=WebAppInfo(url=settings.MARKET.LINK + link_with_auth_token),
+        )
     )
     return builder.as_markup()

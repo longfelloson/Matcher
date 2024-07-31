@@ -8,9 +8,6 @@ router = Router(name="Errors")
 
 @router.errors()
 async def errors_handler(error: ErrorEvent) -> None:
-    """
-    Роутер обработок всех ошибок. Отправляет уведомление админам об ошибке
-    """
     exception_text = str(error.exception)
 
     if not exception_text:

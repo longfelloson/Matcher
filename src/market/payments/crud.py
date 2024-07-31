@@ -6,9 +6,6 @@ from market.payments.schemas import CreatePayment
 
 
 async def get_payment(payment_id: int, session: AsyncSession) -> Payment:
-    """
-    Получение платежа по его ID
-    """
     payment = await session.execute(select(Payment).where(Payment.id_ == payment_id))
     return payment.scalar_one()
 
@@ -24,8 +21,5 @@ async def create_payment(data: CreatePayment, session: AsyncSession) -> int:
 
 
 async def update_payment(payment_id: int, session: AsyncSession, **values):
-    """
-    Обновляет платеж
-    """
     await session.execute(update(Payment).where(Payment.id_ == payment_id).values(**values))
     await session.commit()

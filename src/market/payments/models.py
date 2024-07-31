@@ -7,10 +7,10 @@ from market.payments.schemas import PaymentStatus
 
 
 class Payment(Base):
-    __tablename__ = 'payments'
+    __tablename__ = "payments"
 
     id_ = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     amount = Column(Integer, nullable=False)
     account = Column(String, nullable=False)
     currency = Column(String, nullable=False)

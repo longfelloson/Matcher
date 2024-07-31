@@ -13,7 +13,9 @@ async def get_file_from_telegram(file_id: str) -> bytes:
     file: File = await bot.get_file(file_id)
 
     async with aiohttp.ClientSession() as session:
-        response = await session.get(f"https://api.telegram.org/file/bot{settings.BOT.BOT_TOKEN}/{file.file_path}")
+        response = await session.get(
+            f"https://api.telegram.org/file/bot{settings.BOT.BOT_TOKEN}/{file.file_path}"
+        )
         return await response.read()
 
 
