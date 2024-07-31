@@ -7,4 +7,4 @@ __pycache__
 tests
 
 errors.log
-./pytest.ini
+pytest.ini
