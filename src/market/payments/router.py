@@ -11,7 +11,7 @@ router = APIRouter(prefix="/payments", tags=["Payments"])
 
 @router.post("/create-payment", response_class=JSONResponse)
 async def create_payment(
-    data: schemas.CreatePayment, session: AsyncSession = Depends(get_async_session)
+        data: schemas.CreatePayment, session: AsyncSession = Depends(get_async_session)
 ):
     """
     Ручка для создания платежа и вывода средств на указанные реквизиты

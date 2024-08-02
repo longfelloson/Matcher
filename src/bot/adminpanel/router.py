@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.adminpanel import actions
-from bot.adminpanel.schemas import AdminAction
+from bot.adminpanel.enums import AdminAction
 
 router = Router()
 
@@ -16,7 +16,7 @@ async def admin_action_button_handler(call: CallbackQuery, session: AsyncSession
     action, user_id = call.data.split("*")[1:]
 
     match action:
-        case AdminAction.BAN_USER:
+        case AdminAction.ban_user:
             await actions.ban_user(call.message, user_id, session)
-        case AdminAction.UNBAN_USER:
+        case AdminAction.unban_user:
             await actions.unban_user(call.message, user_id, session)

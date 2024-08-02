@@ -1,6 +1,6 @@
 from aiogram.types import Message, ReplyKeyboardMarkup
 
-from bot.messages.schemas import Answers
+from bot.messages.registration.schemas import IncorrectDataAnswer
 
 MIN_USER_NAME_LENGTH = 3
 
@@ -36,4 +36,4 @@ async def validate_user_input(message: Message, keyboard: ReplyKeyboardMarkup):
 
     if message.text in buttons_texts:
         return True
-    await message.answer(Answers.INCORRECT_BUTTON_TEXT, reply_markup=keyboard)
+    await message.answer(IncorrectDataAnswer.input, reply_markup=keyboard)

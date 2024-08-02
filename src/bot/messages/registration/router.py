@@ -11,7 +11,7 @@ from bot.messages.registration.keyboards import (
     select_location_keyboard,
     back_button_keyboard,
 )
-from bot.messages.registration.schemas import IncorrectDataAnswer, Answers
+from bot.messages.registration.schemas import IncorrectDataAnswer, Answer, RegistrationSectionAnswer
 from bot.messages.registration.states import RegistrationStates
 from bot.messages.registration.utils import complete_user_registration
 from bot.messages.utils import (
@@ -20,12 +20,12 @@ from bot.messages.utils import (
     validate_user_input,
 )
 from bot.users.configs.schemas import UserConfig
-from bot.users.geo.schemas import Location
-from bot.users.geo.utils import reverse_geocode_user_location
-from bot.users.schemas import (
+from bot.users.enums import (
     UserGender,
     PreferredAgeGroup,
 )
+from bot.users.geo.schemas import Location
+from bot.users.geo.utils import reverse_geocode_user_location
 from s3 import s3_client
 
 router = Router(name="Registration")
@@ -40,12 +40,12 @@ async def user_age_state_handler(message: Message, state: FSMContext):
     Обработка пользовательского возраста
     """
     if not validate_age(message.text, MIN_USER_AGE, MAX_USER_AGE):
-        await message.answer(IncorrectDataAnswer.INVALID_AGE)
+        await message.answer(IncorrectDataAnswer.age)
     else:
         await state.update_data(age=int(message.text))
         await state.set_state(RegistrationStates.name)
         await message.answer(
-            Answers.USER_NAME_SECTION, reply_markup=back_button_keyboard()
+            RegistrationSectionAnswer.name, reply_markup=back_button_keyboard()
         )
 
 
@@ -55,13 +55,13 @@ async def user_name_state_handler(message: Message, state: FSMContext):
     Обработка пользовательского имени
     """
     if not validate_user_name(message.text):
-        await message.answer(IncorrectDataAnswer.INVALID_NAME)
+        await message.answer(IncorrectDataAnswer.name)
         return
 
     await state.update_data(name=message.text)
     await state.set_state(RegistrationStates.gender)
     await message.answer(
-        Answers.USER_GENDER_SECTION, reply_markup=select_gender_keyboard()
+        RegistrationSectionAnswer.gender, reply_markup=select_gender_keyboard()
     )
 
 
@@ -74,12 +74,12 @@ async def user_gender_state_handler(message: Message, state: FSMContext):
     if not await validate_user_input(message, keyboard):
         return
 
-    gender = UserGender.MALE if message.text == "Парень" else UserGender.FEMALE
+    gender = UserGender.male if message.text == "Парень" else UserGender.female
 
     await state.update_data(gender=gender)
     await state.set_state(RegistrationStates.preferred_gender)
     await message.answer(
-        Answers.PREFERRED_GENDER_SECTION,
+        RegistrationSectionAnswer.preferred_gender,
         reply_markup=select_preferred_gender_keyboard(),
     )
 
@@ -94,19 +94,19 @@ async def user_preferred_gender_state_handler(message: Message, state: FSMContex
         return
 
     preferred_gender = (
-        UserGender.MALE if message.text == "Парней" else UserGender.FEMALE
+        UserGender.male if message.text == "Парней" else UserGender.female
     )
 
     await state.update_data(preferred_gender=preferred_gender)
     await state.set_state(RegistrationStates.preferred_age_group)
     await message.answer(
-        Answers.PREFERRED_AGE_GROUP_SECTION, reply_markup=select_age_group_keyboard()
+        RegistrationSectionAnswer.preferred_age_group, reply_markup=select_age_group_keyboard()
     )
 
 
 @router.message(RegistrationStates.preferred_age_group)
 async def preferred_age_group_state_handler(
-    message: Message, state: FSMContext, data: dict
+        message: Message, state: FSMContext, data: dict
 ):
     """
     Получение выбранной возрастной группы
@@ -116,17 +116,17 @@ async def preferred_age_group_state_handler(
         return
 
     match message.text:
-        case PreferredAgeGroup.Age.FIRST:
-            data["preferred_age_group"] = PreferredAgeGroup.FIRST
-        case PreferredAgeGroup.Age.SECOND:
-            data["preferred_age_group"] = PreferredAgeGroup.SECOND
-        case PreferredAgeGroup.Age.THIRD:
-            data["preferred_age_group"] = PreferredAgeGroup.THIRD
+        case PreferredAgeGroup.Age.first:
+            data["preferred_age_group"] = PreferredAgeGroup.first
+        case PreferredAgeGroup.Age.second:
+            data["preferred_age_group"] = PreferredAgeGroup.second
+        case PreferredAgeGroup.Age.third:
+            data["preferred_age_group"] = PreferredAgeGroup.third
 
     await state.update_data(preferred_age_group=data["preferred_age_group"])
     await state.set_state(RegistrationStates.location)
     await message.answer(
-        Answers.LOCATION_SECTION, reply_markup=select_location_keyboard()
+        RegistrationSectionAnswer.location, reply_markup=select_location_keyboard()
     )
 
 
@@ -145,12 +145,12 @@ async def location_state_handler(message: Message, state: FSMContext):
 
     await state.update_data(location=location, city=city)
     await state.set_state(RegistrationStates.photo)
-    await message.answer(Answers.USER_PHOTO, reply_markup=back_button_keyboard())
+    await message.answer(RegistrationSectionAnswer.photo, reply_markup=back_button_keyboard())
 
 
 @router.message(RegistrationStates.photo)
 async def photo_state_handler(
-    message: Message, state: FSMContext, session: AsyncSession
+        message: Message, state: FSMContext, session: AsyncSession
 ):
     """
     Получение фотографии пользователя и последующая загрузка в БД
@@ -166,7 +166,7 @@ async def photo_state_handler(
         user_config_schema = UserConfig(user_id=message.chat.id, guess_age=True)
 
         await state.clear()
-        await message.answer(Answers.COMPLETED_USER_INFO, reply_markup=main_keyboard())
+        await message.answer(Answer.completed_user_profile, reply_markup=main_keyboard())
         await complete_user_registration(
             user_config_schema,
             profile_photo_telegram_file_id,
@@ -175,4 +175,4 @@ async def photo_state_handler(
             session,
         )
     else:
-        await message.answer(IncorrectDataAnswer.INVALID_PHOTO)
+        await message.answer(IncorrectDataAnswer.photo)

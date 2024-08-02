@@ -7,14 +7,14 @@ from bot.loader import bot
 from bot.reports import crud
 from bot.reports.schemas import Report
 from bot.users import crud as users_crud
+from bot.users.enums import UserStatus
 from bot.users.models import User
-from bot.users.schemas import UserStatus
 from bot.users.utils import send_user_for_view
 from config import settings
 
 
 async def react_for_report(
-    call: CallbackQuery, user: User, state: FSMContext, session: AsyncSession
+        call: CallbackQuery, user: User, state: FSMContext, session: AsyncSession
 ) -> None:
     """
     Удаление сообщения на которое была отправлена жалоба и отправка сообщения жалобы модераторам на проверку
@@ -39,7 +39,7 @@ async def block_user(data: str, session: AsyncSession) -> None:
     reporter_user_id, reported_user_id = data.split("*")[1:]
     report = Report(reporter=reporter_user_id, reported=reported_user_id)
 
-    await users_crud.update_user(reported_user_id, session, status=UserStatus.BLOCKED)
+    await users_crud.update_user(reported_user_id, session, status=UserStatus.blocked)
     await users_crud.increase_user_points(
         reporter_user_id, settings.BOT.POINTS_FOR_BLOCKED_USER, session
     )

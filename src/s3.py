@@ -9,11 +9,11 @@ from logger import logger
 
 class S3Client:
     def __init__(
-        self,
-        access_key: str,
-        secret_key: str,
-        endpoint_url: str,
-        bucket_name: str,
+            self,
+            access_key: str,
+            secret_key: str,
+            endpoint_url: str,
+            bucket_name: str,
     ):
         self.config = {
             "aws_access_key_id": access_key,

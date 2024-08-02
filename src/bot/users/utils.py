@@ -5,23 +5,32 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
+from bot.messages.guesses.enums import Answer
 from bot.messages.guesses.keyboards import guess_user_age_keyboard, rate_user_keyboard
-from bot.messages.guesses.schemas import Answers
 from bot.messages.guesses.states import GuessesStates
 from bot.messages.rates import crud as rates_crud
 from bot.messages.rates.models import Rate
 from bot.messages.rates.states import RatesStates
 from bot.text.utils import get_user_profile_caption
 from bot.users import crud as users_crud
+from bot.users.enums import UserStatus
 from bot.users.geo.utils import get_nearest_user
 from bot.users.models import User
-from bot.users.schemas import UserStatus
 from config import settings
 
 DEFAULT_AGE_GUESS_SCORE = 0.0
 CLOSE_AGE_GUESS_SCORE = 2.5
 SAME_AGE_GUESS_SCORE = 5
-LOCATION_SPLIT_SYMBOL = "*"
+
+
+def get_user_schema_from_message(user_message: Message) -> User:
+    """
+    Получение схемы пользователя по его сообщению
+    """
+    return User(
+        user_id=user_message.chat.id,
+        username=user_message.chat.username,
+    )
 
 
 def get_search_options(user_rates: List[Rate], searcher: User) -> Tuple[List, List]:
@@ -30,7 +39,7 @@ def get_search_options(user_rates: List[Rate], searcher: User) -> Tuple[List, Li
     """
     common_options = [
         User.user_id != searcher.user_id,
-        User.status == UserStatus.ACTIVE,
+        User.status == UserStatus.active,
         User.user_id.not_in(set(rate.rated for rate in user_rates)),
         User.gender == searcher.preferred_gender,
         User.age.in_(settings.BOT.GROUPS_AGES[searcher.preferred_age_group]),
@@ -58,14 +67,14 @@ async def get_users_for_view(user: User, session: AsyncSession) -> List[User]:
 
 
 async def send_user_for_view(
-    message: Message, user: User, session: AsyncSession, state: FSMContext
+        message: Message, user: User, session: AsyncSession, state: FSMContext
 ) -> None:
     """
     Отправка фотографии пользователя на оценку
     """
     users_for_view = await get_users_for_view(user, session)
     if not users_for_view:
-        await message.answer(Answers.NOT_USER_FOR_GUESS, reply_markup=main_keyboard())
+        await message.answer(Answer.not_user_for_guess, reply_markup=main_keyboard())
         return
 
     user_for_view = users_for_view[0]
@@ -74,11 +83,11 @@ async def send_user_for_view(
         user_for_view = get_nearest_user(user, users_for_view)
 
     if user.config.guess_age:
-        answer = Answers.GUESS_AGE
+        answer = Answer.guess_age
         keyboard = guess_user_age_keyboard(user)
         await state.set_state(GuessesStates.guess_user_age)
     else:
-        answer = Answers.RATE_USER
+        answer = Answer.rate_user
         keyboard = rate_user_keyboard()
         await state.set_state(RatesStates.rate_user)
 

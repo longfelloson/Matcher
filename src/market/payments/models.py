@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 
 from database import Base
-from market.payments.schemas import PaymentStatus
+from market.payments.enums import PaymentStatus
 
 
 class Payment(Base):
@@ -16,4 +16,4 @@ class Payment(Base):
     currency = Column(String, nullable=False)
     destination = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
-    status = Column(String, default=PaymentStatus.PENDING)
+    status = Column(String, default=PaymentStatus.pending)

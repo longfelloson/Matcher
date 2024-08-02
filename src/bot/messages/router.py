@@ -4,8 +4,8 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import market_link_keyboard
+from bot.messages.enums import Answer, ChangeProfileAnswer
 from bot.messages.registration.utils import set_previous_state
-from bot.messages.schemas import Answers, ChangeProfileAnswers
 from bot.text.utils import get_profile_text
 from bot.users.configs import crud as configs_crud
 from bot.users.keyboards import (
@@ -29,7 +29,7 @@ async def back_button_handler(message: Message, state: FSMContext):
 
 @router.message(F.text == "Начать ▶️")
 async def view_user_button_handler(
-    message: Message, session: AsyncSession, state: FSMContext, user: User
+        message: Message, session: AsyncSession, state: FSMContext, user: User
 ):
     """
     Обработка кнопки "Старт" и выдача фото для угадывания возраста или оценки
@@ -50,7 +50,7 @@ async def market_button_handler(message: Message):
 
 @router.message(F.text == "Профиль 📱")
 async def profile_button_handler(
-    message: Message, user: User, session: AsyncSession, state: FSMContext
+        message: Message, user: User, session: AsyncSession, state: FSMContext
 ) -> None:
     """
     Обработка кнопки "Профиль"
@@ -72,7 +72,7 @@ async def change_user_guess_age_button_handler(message: Message, session: AsyncS
     Обработка кнопки "Угадывать возраст"
     """
     new_value = False if message.text == "Угадывать возраст: ✅" else True
-    answer = Answers.USER_GUESSES_AGE if new_value else Answers.USER_NOT_GUESSES_AGE
+    answer = Answer.user_guesses_age if new_value else Answer.user_not_guesses_age
 
     await configs_crud.update_user_config(
         message.chat.id, column_name="guess_age", session=session
@@ -89,6 +89,6 @@ async def change_user_profile_button_handler(message: Message, state: FSMContext
     """
     await state.set_state(UserStates.change_profile)
     await message.answer(
-        ChangeProfileAnswers.CHANGE_PROFILE,
+        ChangeProfileAnswer.change_profile,
         reply_markup=change_user_profile_section_keyboard(),
     )

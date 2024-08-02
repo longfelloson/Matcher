@@ -12,7 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from bot.users.schemas import UserStatus
+from bot.users.enums import UserStatus
 from database import Base
 
 
@@ -31,7 +31,7 @@ class User(Base):
     user_id = Column(BigInteger, primary_key=True)
     name = Column(String)
     username = Column(String, nullable=True)
-    status = Column(String, default=UserStatus.NOT_REGISTERED)
+    status = Column(String, default=UserStatus.not_registered)
     created_at = Column(DateTime, default=datetime.now)
     instagram = Column(String, nullable=True)
     age = Column(Integer)

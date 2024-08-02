@@ -4,18 +4,18 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder as InlineBuilder
 
-from bot.adminpanel.schemas import AdminAction
+from bot.adminpanel.enums import AdminAction
 
 
 def get_admin_actions_buttons() -> InlineKeyboard:
     buttons = [
         InlineButton(
             text="Заблокировать пользователя 👨‍⚖️",
-            callback_data=f"admin_action*{AdminAction.BAN_USER}",
+            callback_data=f"admin_action*{AdminAction.ban_user}",
         ),
         InlineButton(
             text="Разблокировать пользователя 🔓",
-            callback_data=f"admin_action*{AdminAction.UNBAN_USER}",
+            callback_data=f"admin_action*{AdminAction.unban_user}",
         ),
     ]
     return buttons

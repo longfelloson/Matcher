@@ -5,8 +5,9 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.messages.guesses import crud
+from bot.messages.guesses.enums import Answer
 from bot.messages.guesses.keyboards import rate_user_keyboard
-from bot.messages.guesses.schemas import Answers, Guess
+from bot.messages.guesses.schemas import Guess
 from bot.users import crud as users_crud
 from bot.users.models import User
 
@@ -20,10 +21,6 @@ async def update_state_data(state: FSMContext, key: str, value: Any) -> None:
     data = await state.get_data()
     data[key] = value
     await state.update_data(data)
-
-
-def get_rate_schema(score: int | float, user_id: int, rated_user_id: int) -> Guess:
-    return Guess(guesser=user_id, guessed=rated_user_id, score=score)
 
 
 def get_guess_points(user_age_guess: int, user_for_rate: User) -> float | int:
@@ -40,7 +37,7 @@ def get_guess_points(user_age_guess: int, user_for_rate: User) -> float | int:
 
 
 async def react_for_user_guess(
-    message: Message, user: User, session: AsyncSession, state: FSMContext
+        message: Message, user: User, session: AsyncSession, state: FSMContext
 ) -> None:
     """
     Добавление пользовательского угадывания в базу и нужная реакция на него
@@ -51,7 +48,7 @@ async def react_for_user_guess(
     guess = Guess(
         guesser=user.user_id, guessed=data["user_for_rate"].user_id, points=points
     )
-    answer = Answers.get_age_guess_answer(user, data["user_for_rate"], points)
+    answer = Answer.get_age_guess_answer(user, data["user_for_rate"], points)
 
     await crud.add_guess(guess, session)
     await users_crud.increase_user_points(user.user_id, points, session)

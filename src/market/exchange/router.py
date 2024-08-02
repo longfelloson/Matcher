@@ -10,7 +10,7 @@ from database import get_async_session
 from market.auth.utils import auth_guard, get_current_user
 from market.exchange.schemas import ExchangePoints
 from market.transactions import crud as transactions_crud
-from market.transactions.schemas import TransactionType
+from market.transactions.enums import TransactionType
 
 router = APIRouter(tags=["Exchange"], dependencies=[Depends(auth_guard)])
 templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH)
@@ -26,16 +26,16 @@ async def exchange_page(request: Request):
 
 @router.post("/exchange-points", response_class=JSONResponse)
 async def exchange_points_endpoint(
-    data: ExchangePoints,
-    session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(get_current_user),
+        data: ExchangePoints,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(get_current_user),
 ):
     """
     Ручка для обмена баллов пользователя
     """
     await users_crud.decrease_user_points(user.user_id, data.points, session)
     await transactions_crud.create_transaction(
-        TransactionType.PURCHASE, data.product_id, data.points, session
+        TransactionType.purchase, data.product_id, data.points, session
     )
 
     return JSONResponse({"message": "Points successfully exchanged"})
@@ -51,7 +51,7 @@ async def get_exchange_rate_endpoint():
 
 @router.get("/get-user-points", response_class=JSONResponse)
 async def get_user_points_endpoint(
-    user_id: int, session: AsyncSession = Depends(get_async_session)
+        user_id: int, session: AsyncSession = Depends(get_async_session)
 ):
     """
     Ручка для получения баллов пользователя

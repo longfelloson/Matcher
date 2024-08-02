@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message, Update
 
 from bot.users import crud as users_crud
-from bot.users.schemas import UserStatus
+from bot.users.enums import UserStatus
 from database import get_async_session
 
 
@@ -28,6 +28,6 @@ class BlockedUserMiddleware(BaseMiddleware):
         """
         user_id = message.chat.id
         user = await users_crud.get_user(user_id, data["session"])
-        if not user or user.status != UserStatus.BLOCKED:
+        if not user or user.status != UserStatus.blocked:
             return await handler(message, data)
         await message.answer("Вы заблокированы в боте ⛔️")

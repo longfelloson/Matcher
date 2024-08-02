@@ -5,7 +5,7 @@ from market.transactions.models import Transaction
 
 
 async def create_transaction(
-    type_: str, product_id: int, amount: int, session: AsyncSession
+        type_: str, product_id: int, amount: int, session: AsyncSession
 ) -> None:
     """
     Создает новую транзакцию (обмен баллов, покупка товаров и т.д.)

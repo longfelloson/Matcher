@@ -24,7 +24,7 @@ class AuthGuard:
 
 
 async def get_current_user(
-    request: Request, session: AsyncSession = Depends(get_async_session)
+        request: Request, session: AsyncSession = Depends(get_async_session)
 ) -> User:
     """
     Получает текущего пользователя по JWT-токену из cookies

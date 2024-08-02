@@ -11,8 +11,3 @@ class CreatePayment(PaymentCredentials):
     sbp_bank_id: int
     amount: float
     payment_system_id: int
-
-
-class PaymentStatus:
-    PENDING = "PENDING"
-    COMPLETED = "COMPLETED"

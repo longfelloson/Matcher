@@ -21,7 +21,7 @@ async def get_guess(guess_id: int, session: AsyncSession) -> Guess:
 
 
 async def get_user_guesses(
-    user_id: int, session: AsyncSession
+        user_id: int, session: AsyncSession
 ) -> List[Optional[Guess]]:
     rates = await session.execute(select(Guess).where(Guess.guesser == user_id))
     return rates.scalars().all()

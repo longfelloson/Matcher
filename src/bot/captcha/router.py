@@ -29,7 +29,7 @@ async def captcha_handler(message: Message):
 
 @router.callback_query(F.data.startswith("select_captcha"))
 async def captcha_button_handler(
-    call: CallbackQuery, session: AsyncSession, state: FSMContext, user: Optional[User]
+        call: CallbackQuery, session: AsyncSession, state: FSMContext, user: Optional[User]
 ):
     """
     Обработка решения капчи

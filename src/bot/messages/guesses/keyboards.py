@@ -7,8 +7,8 @@ from aiogram.types import (
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
+from bot.users.enums import UserAction
 from bot.users.models import User
-from bot.users.schemas import UserActions
 from config import settings
 
 GROUPS_AGES_BUTTONS = {
@@ -36,7 +36,7 @@ def report_keyboard(guesser: User, guessed: User) -> InlineKeyboard:
     builder = Builder().row(
         InlineButton(
             text="⚠️",
-            callback_data=f"{UserActions.REPORT}*{guesser.user_id}*{guessed.user_id}",
+            callback_data=f"{UserAction.report_user}*{guesser.user_id}*{guessed.user_id}",
         )
     )
     return builder.as_markup()

@@ -17,10 +17,10 @@ templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH + "/product
 
 @router.get("/get-products", status_code=status.HTTP_200_OK)
 async def get_products(
-    offset: int = 0,
-    limit: int = 100,
-    user_id: int = None,
-    session: AsyncSession = Depends(get_async_session),
+        offset: int = 0,
+        limit: int = 100,
+        user_id: int = None,
+        session: AsyncSession = Depends(get_async_session),
 ):
     """
     Ручка для получения товаров
@@ -30,9 +30,9 @@ async def get_products(
 
 @router.get("/get-product")
 async def get_product_endpoint(
-    product_id: int,
-    session: AsyncSession = Depends(get_async_session),
-    user_id: int = None,
+        product_id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user_id: int = None,
 ):
     """
     Ручка для получения товара по его ID
@@ -58,7 +58,7 @@ async def buy_product_page(request: Request):
 
 @router.post("/add-user-product", response_class=JSONResponse)
 async def buy_product_endpoint(
-    data: CreateUserProduct, session: AsyncSession = Depends(get_async_session)
+        data: CreateUserProduct, session: AsyncSession = Depends(get_async_session)
 ):
     """
     Ручка для добавления пользовательского товара полученного за баллы

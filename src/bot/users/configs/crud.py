@@ -6,7 +6,7 @@ from bot.users.models import UserConfig
 
 
 async def update_user_config(
-    user_id: int, column_name: str, session: AsyncSession
+        user_id: int, column_name: str, session: AsyncSession
 ) -> UserConfig:
     """
     Обновление колонки пользовательского конфига
@@ -33,7 +33,7 @@ async def get_user_config(user_id: int, session: AsyncSession) -> UserConfig:
 
 
 async def add_user_config(
-    user_config: UserConfigSchema, session: AsyncSession
+        user_config: UserConfigSchema, session: AsyncSession
 ) -> UserConfig:
     """
     Добавление пользовательского конфига

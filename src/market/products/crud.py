@@ -7,7 +7,7 @@ from market.products.models import UserProduct, Product
 
 
 async def create_user_product(
-    user_id: int, product_id: int, session: AsyncSession
+        user_id: int, product_id: int, session: AsyncSession
 ) -> None:
     """
     Добавляет товар пользователя полученный в результате обмена
@@ -19,7 +19,7 @@ async def create_user_product(
 
 
 async def get_products(
-    offset: int, limit: int, user_id: int | None, session: AsyncSession
+        offset: int, limit: int, user_id: int | None, session: AsyncSession
 ) -> List:
     """
     Получение всех товаров. Если указан ID пользователя - получение товаров пользователя
@@ -33,7 +33,7 @@ async def get_products(
 
 
 async def get_product(
-    product_id: int, session: AsyncSession, user_id: int = None
+        product_id: int, session: AsyncSession, user_id: int = None
 ) -> Product | UserProduct:
     """
     Получение товара. Если указан ID пользователя - получение пользовательского товара
