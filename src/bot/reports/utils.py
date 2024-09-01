@@ -9,7 +9,7 @@ from bot.reports.schemas import Report
 from bot.users import crud as users_crud
 from bot.users.enums import UserStatus
 from bot.users.models import User
-from bot.users.utils import send_user_for_view
+from bot.users.utils import send_user_to_react
 from config import settings
 
 
@@ -22,7 +22,7 @@ async def react_for_report(
     await bot.delete_messages(
         call.from_user.id, [call.message.message_id, call.message.message_id + 1]
     )
-    await send_user_for_view(call.message, user, session, state)
+    await send_user_to_react(call.message, user, session, state)
     for user_id in settings.BOT.MODERATOR_IDS:
         await bot.forward_message(
             chat_id=user_id,

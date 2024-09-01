@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 
 from aiogram.fsm.context import FSMContext
@@ -37,11 +38,12 @@ def get_guess_points(user_age_guess: int, user_for_rate: User) -> float | int:
 
 
 async def react_for_user_guess(
-        message: Message, user: User, session: AsyncSession, state: FSMContext
+    message: Message,
+    user: User,
+    session: AsyncSession,
+    state: FSMContext
 ) -> None:
-    """
-    Добавление пользовательского угадывания в базу и нужная реакция на него
-    """
+    """Добавление пользовательского угадывания в базу и нужная реакция на него"""
     data = await state.get_data()
     points = get_guess_points(int(message.text), data["user_for_rate"])
 
@@ -52,4 +54,9 @@ async def react_for_user_guess(
 
     await crud.add_guess(guess, session)
     await users_crud.increase_user_points(user.user_id, points, session)
-    await message.reply(answer, reply_markup=rate_user_keyboard())
+
+    answer_message = await message.answer(answer)
+
+    await asyncio.sleep(0.75)
+    await answer_message.delete()
+    await message.answer(f"Теперь оцени анкету ⤴️\n\n", reply_markup=rate_user_keyboard())

@@ -23,7 +23,7 @@ def main_keyboard() -> Keyboard:
     """
     builder = Builder().row(Button(text="Начать ▶️"))
     builder.row(Button(text="Профиль 📱"))
-    builder.row(Button(text="Магазин 🛍"))
+    #  builder.row(Button(texts="Магазин 🛍"))
     return builder.as_markup(resize_keyboard=True)
 
 
@@ -62,7 +62,7 @@ def market_link_keyboard(user_id: int) -> InlineKeyboard:
     builder = InlineBuilder().row(
         InlineButton(
             text="🔗",
-            web_app=WebAppInfo(url=settings.MARKET.LINK + link_with_auth_token),
+            web_app=WebAppInfo(url=settings.MARKET.MARKET_LINK + link_with_auth_token),
         )
     )
     return builder.as_markup()

@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -6,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.keyboards import market_link_keyboard
 from bot.messages.enums import Answer, ChangeProfileAnswer
 from bot.messages.registration.utils import set_previous_state
-from bot.text.utils import get_profile_text
+from bot.texts.users import get_profile_text
 from bot.users.configs import crud as configs_crud
 from bot.users.keyboards import (
     user_profile_keyboard,
@@ -14,7 +16,7 @@ from bot.users.keyboards import (
 )
 from bot.users.models import User
 from bot.users.states import UserStates
-from bot.users.utils import send_user_for_view
+from bot.users.utils import send_user_to_react
 
 router = Router(name="Messages")
 
@@ -34,36 +36,39 @@ async def view_user_button_handler(
     """
     Обработка кнопки "Старт" и выдача фото для угадывания возраста или оценки
     """
-    await send_user_for_view(message, user, session, state)
+    await send_user_to_react(message, user, session, state)
 
 
-@router.message(F.text == "Магазин 🛍")
-async def market_button_handler(message: Message):
-    """
-    Обработка кнопки "Магазин" в главном меню
-    """
-    await message.answer(
-        text="Перейдите по ссылке ниже, чтобы обменять баллы.",
-        reply_markup=market_link_keyboard(message.chat.id),
-    )
+# @router.message(F.texts == "Магазин 🛍")
+# async def market_button_handler(message: Message):
+#     """
+#     Обработка кнопки "Магазин" в главном меню
+#     """
+#     await message.answer(
+#         texts="Перейдите по ссылке ниже, чтобы обменять баллы.",
+#         reply_markup=market_link_keyboard(message.chat.id),
+#     )
 
 
 @router.message(F.text == "Профиль 📱")
 async def profile_button_handler(
-        message: Message, user: User, session: AsyncSession, state: FSMContext
+    message: Message,
+    user: User,
+    state: FSMContext,
 ) -> None:
     """
     Обработка кнопки "Профиль"
     """
     await state.set_state(UserStates.profile)
 
-    caption = f"Instagram:  <code>{user.instagram}</code>" if user.instagram else None
-    photo_message = await message.answer_photo(user.photo_url, caption)
-    config = await configs_crud.get_user_config(user.user_id, session)
+    if not user.photo_url:
+        await asyncio.sleep(2)
 
-    profile_text = get_profile_text(user)
-
-    await photo_message.reply(profile_text, reply_markup=user_profile_keyboard(config))
+    await message.answer_photo(
+        photo=user.photo_url,
+        caption=get_profile_text(user),
+        reply_markup=user_profile_keyboard(user.config)
+    )
 
 
 @router.message(UserStates.profile, F.text.regexp("Угадывать возраст"))

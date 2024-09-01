@@ -14,8 +14,8 @@ async def errors_handler(error: ErrorEvent) -> None:
         exception_text = "Возникла непредвиденная ошибка в работе бота ⚠️"
 
     if error.update.callback_query:
-        await error.update.callback_query.message.reply(exception_text)
+        await error.update.callback_query.message.answer(exception_text)
     else:
-        await error.update.message.reply(exception_text)
+        await error.update.message.answer(exception_text)
 
     logger.error(exception_text)

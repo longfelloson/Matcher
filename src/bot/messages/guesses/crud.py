@@ -35,7 +35,7 @@ async def get_user_for_rate(user: User, user_rates: List[Rate], session: AsyncSe
         User.user_id != user.user_id,
         User.user_id.not_in(set(rate.rated for rate in user_rates)),
         User.gender == user.preferred_gender,
-        User.age.in_(settings.BOT.GROUPS_AGES[user.preferred_age_group]),
+        User.age.in_(settings.BOT.age_groups[user.preferred_age_group]),
     ]
     user_for_rate = await session.execute(
         select(User).where(and_(*conditions)).limit(1).order_by(func.random())

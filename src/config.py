@@ -1,3 +1,5 @@
+from typing import List, Union
+
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
@@ -14,20 +16,12 @@ class S3Config(BaseSettings):
 class BotConfig(BaseSettings):
     BOT_TOKEN: str
 
-    CAPTCHA_ENCRYPTION_KEY: str
-
     ADMINS_IDS: str
     MODERATOR_IDS: str
 
     SUPPORT_ACCOUNT_USERNAME: str
     POINTS_FOR_BLOCKED_USER: str
     GEOCODER_API_KEY: str
-
-    GROUPS_AGES: dict = {
-        "FIRST": [14, 15, 16, 17, 18],
-        "SECOND": [19, 20, 21, 22, 23],
-        "THIRD": [24, 25, 26, 27, 28],
-    }
 
     @property
     def admins_ids(self):
@@ -49,7 +43,7 @@ class DatabaseConfig(BaseSettings):
 class MarketConfig(BaseSettings):
     TEMPLATES_PATH: str = "../templates"
     MARKET_LINK: str
-    MARKET_EXCHANGE_RATE: str
+    MARKET_EXCHANGE_RATE: Union[int, float]
 
 
 class AuthConfig(BaseSettings):

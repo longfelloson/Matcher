@@ -52,19 +52,19 @@ async def change_profile_handler(message: Message, state: FSMContext):
     match message.text:
         case "Имя":
             await state.set_state(UserStates.change_name)
-            await message.reply(ChangeProfileAnswer.change_name)
+            await message.answer(ChangeProfileAnswer.change_name)
         case "Возраст":
             await state.set_state(UserStates.change_age)
-            await message.reply(ChangeProfileAnswer.change_age)
+            await message.answer(ChangeProfileAnswer.change_age)
         case "Город":
             await state.set_state(UserStates.change_location)
-            await message.reply(
+            await message.answer(
                 ChangeProfileAnswer.change_location,
                 reply_markup=select_location_keyboard(),
             )
         case "Фото":
             await state.set_state(UserStates.change_photo)
-            await message.reply(ChangeProfileAnswer.change_photo)
+            await message.answer(ChangeProfileAnswer.change_photo)
 
 
 @router.message(UserStates.change_name)
@@ -75,12 +75,12 @@ async def change_name_state_handler(
     Обновление пользовательского имени
     """
     if not validate_user_name(message.text):
-        await message.reply(IncorrectDataAnswer.INVALID_NAME)
+        await message.answer(IncorrectDataAnswer.name)
         return
 
     await crud.update_user(user.user_id, session, name=message.text)
     await state.set_state(UserStates.profile)
-    await message.reply(ChangeProfileAnswer.name_updated, reply_markup=main_keyboard())
+    await message.answer(ChangeProfileAnswer.name_updated, reply_markup=main_keyboard())
 
 
 @router.message(UserStates.change_location)
@@ -92,41 +92,38 @@ async def change_location_state_handler(
     """
     await crud.update_user(user.user_id, session, name=message.text)
     await state.set_state(UserStates.profile)
-    await message.reply(
+    await message.answer(
         ChangeProfileAnswer.location_updated, reply_markup=main_keyboard()
     )
 
 
 @router.message(UserStates.change_photo)
 async def change_photo_state_handler(
-        message: Message, session: AsyncSession, state: FSMContext
+    message: Message,
+    session: AsyncSession,
+    state: FSMContext,
 ):
-    """
-    Обновление пользовательской фотографии
-    """
+    """Обновление пользовательской фотографии"""
     file_name = message.photo[-1].file_id
     photo_url = s3_client.get_file_url(file_name)
 
     await state.clear()
     await upload_user_photo_to_s3(file_name)
     await crud.update_user(message.chat.id, session, photo_url=photo_url)
-    await message.answer(
-        ChangeProfileAnswer.photo_updated, reply_markup=main_keyboard()
-    )
+    await message.answer(ChangeProfileAnswer.photo_updated, reply_markup=main_keyboard())
 
 
 @router.message(UserStates.change_age)
 async def change_age_state_handler(
-        message: Message, user: User, session: AsyncSession, state: FSMContext
+    message: Message,
+    user: User,
+    session: AsyncSession,
+    state: FSMContext,
 ):
-    """
-    Смена возраста в профиле
-    """
+    """Смена возраста в профиле"""
     if not validate_age(message.text, MIN_USER_AGE, MAX_USER_AGE):
-        await message.answer(IncorrectDataAnswer.INVALID_AGE)
+        await message.answer(IncorrectDataAnswer.age)
     else:
         await state.clear()
-        await message.answer(
-            ChangeProfileAnswer.age_updated, reply_markup=main_keyboard()
-        )
+        await message.answer(ChangeProfileAnswer.age_updated, reply_markup=main_keyboard())
         await crud.update_user(user.user_id, session, age=int(message.text))

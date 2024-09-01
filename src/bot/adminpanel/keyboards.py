@@ -4,26 +4,34 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder as InlineBuilder
 
-from bot.adminpanel.enums import AdminAction
+from bot.adminpanel.enums import AdminPanelSection, AdminAction
 
 
-def get_admin_actions_buttons() -> InlineKeyboard:
-    buttons = [
+def admin_panel_keyboard() -> InlineKeyboard:
+    builder = InlineBuilder().row(
         InlineButton(
-            text="Заблокировать пользователя 👨‍⚖️",
-            callback_data=f"admin_action*{AdminAction.ban_user}",
+            text="Статистика",
+            callback_data=f"admin_panel_section*{AdminPanelSection.stats.value}"
         ),
         InlineButton(
-            text="Разблокировать пользователя 🔓",
-            callback_data=f"admin_action*{AdminAction.unban_user}",
+            text="Пользователи",
+            callback_data=f"admin_panel_section*{AdminPanelSection.stats.value}"
         ),
-    ]
-    return buttons
+    )
+    return builder.as_markup()
 
 
-def main_admin_keyboard() -> InlineKeyboard:
-    """
-    Главная клавиатура админпанели
-    """
-    builder = InlineBuilder().add(*get_admin_actions_buttons())
+def stats_section_keyboard() -> InlineKeyboard:
+    builder = InlineBuilder().row(
+        InlineButton(
+            text="Все пользователи",
+            callback_data=f"admin_action*{AdminAction.view_users_amount.value}"
+        )
+    )
+    # builder.row(
+    #     InlineButton(
+    #         texts="↩️",
+    #         callback_data="back_to_admin_panel"
+    #     )
+    # )
     return builder.as_markup()

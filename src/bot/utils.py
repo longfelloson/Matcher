@@ -1,5 +1,6 @@
 from aiogram.types import BotCommand, BotCommandScopeChat
 
+from bot.adminpanel.router import router as admin_panel_router
 from bot.captcha.router import router as captcha_router
 from bot.loader import bot, dp
 from bot.messages.commands.router import router as commands_router
@@ -27,13 +28,13 @@ async def start() -> None:
         guesses_router,
         reports_router,
         users_router,
+        admin_panel_router,
     )
     set_middleware(PayloadMiddleware(), update=True, message=False)
     set_middleware(BlockedUserMiddleware(), message=True, update=False)
 
     await create_tables()
     await set_commands()
-    await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 

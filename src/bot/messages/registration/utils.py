@@ -64,11 +64,11 @@ async def set_previous_state(message: Message, state: FSMContext) -> None:
 
 
 async def complete_user_registration(
-        user_config_schema: UserConfig,
-        profile_photo_telegram_file_id: str,
-        message: Message,
-        user_reg_info: dict,
-        session: AsyncSession,
+    user_config_schema: UserConfig,
+    profile_photo_telegram_file_id: str,
+    message: Message,
+    user_reg_info: dict,
+    session: AsyncSession,
 ) -> None:
     await upload_user_photo_to_s3(telegram_file_id=profile_photo_telegram_file_id)
     await users_crud.update_user(

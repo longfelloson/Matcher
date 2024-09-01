@@ -106,7 +106,7 @@ async def user_preferred_gender_state_handler(message: Message, state: FSMContex
 
 @router.message(RegistrationStates.preferred_age_group)
 async def preferred_age_group_state_handler(
-        message: Message, state: FSMContext, data: dict
+        message: Message, state: FSMContext
 ):
     """
     Получение выбранной возрастной группы
@@ -115,19 +115,19 @@ async def preferred_age_group_state_handler(
     if not await validate_user_input(message, keyboard):
         return
 
+    state_data = await state.get_data()
+
     match message.text:
         case PreferredAgeGroup.Age.first:
-            data["preferred_age_group"] = PreferredAgeGroup.first
+            state_data["preferred_age_group"] = PreferredAgeGroup.first
         case PreferredAgeGroup.Age.second:
-            data["preferred_age_group"] = PreferredAgeGroup.second
+            state_data["preferred_age_group"] = PreferredAgeGroup.second
         case PreferredAgeGroup.Age.third:
-            data["preferred_age_group"] = PreferredAgeGroup.third
+            state_data["preferred_age_group"] = PreferredAgeGroup.third
 
-    await state.update_data(preferred_age_group=data["preferred_age_group"])
+    await state.update_data(state_data)
     await state.set_state(RegistrationStates.location)
-    await message.answer(
-        RegistrationSectionAnswer.location, reply_markup=select_location_keyboard()
-    )
+    await message.answer(RegistrationSectionAnswer.location, reply_markup=select_location_keyboard())
 
 
 @router.message(RegistrationStates.location)
@@ -156,23 +156,21 @@ async def photo_state_handler(
     Получение фотографии пользователя и последующая загрузка в БД
     """
     if message.content_type == "photo":
-        user_reg_info = await state.get_data()
-
         profile_photo_telegram_file_id = message.photo[-1].file_id
+        user_reg_info = await state.get_data()
         user_reg_info["photo_url"] = s3_client.get_file_url(
             file_name=profile_photo_telegram_file_id
         )
-
         user_config_schema = UserConfig(user_id=message.chat.id, guess_age=True)
 
         await state.clear()
-        await message.answer(Answer.completed_user_profile, reply_markup=main_keyboard())
         await complete_user_registration(
-            user_config_schema,
-            profile_photo_telegram_file_id,
-            message,
-            user_reg_info,
-            session,
+            user_config_schema=user_config_schema,
+            profile_photo_telegram_file_id=profile_photo_telegram_file_id,
+            message=message,
+            user_reg_info=user_reg_info,
+            session=session,
         )
+        await message.answer(Answer.completed_user_profile, reply_markup=main_keyboard())
     else:
         await message.answer(IncorrectDataAnswer.photo)

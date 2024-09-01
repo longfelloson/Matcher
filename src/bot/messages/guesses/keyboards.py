@@ -7,28 +7,36 @@ from aiogram.types import (
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
-from bot.users.enums import UserAction
-from bot.users.models import User
-from config import settings
-
-GROUPS_AGES_BUTTONS = {
-    "FIRST": [Button(text=str(age)) for age in settings.BOT.GROUPS_AGES["FIRST"]],
-    "SECOND": [Button(text=str(age)) for age in settings.BOT.GROUPS_AGES["SECOND"]],
-    "THIRD": [Button(text=str(age)) for age in settings.BOT.GROUPS_AGES["THIRD"]],
-}
-ALL_GROUPS_AGES = list(
-    map(str, itertools.chain.from_iterable(settings.BOT.GROUPS_AGES.values()))
+from bot.users.enums import (
+    UserAction,
+    AgeGroup,
 )
+from bot.users.models import User
+
+
+# Словарь с кнопками возрастов групп
+AGE_GROUPS_BUTTONS = {
+    group: [
+        Button(text=str(age)) for age in group.ages
+    ]
+    for group in AgeGroup
+}
+
+# Список со всеми возрастами со всех возрастных групп
+ALL_AGE_GROUPS = list(map(str, itertools.chain.from_iterable([group.ages for group in AgeGroup])))
+
 USER_RATE_BUTTONS = ["❤", "👎"]
-USER_GUESS_BUTTONS = ALL_GROUPS_AGES
+USER_GUESS_BUTTONS = ALL_AGE_GROUPS
 
 
-def guess_user_age_keyboard(user: User) -> Keyboard:
-    """
-    Клавиатура с кнопками выбора возраста поиска анкет
-    """
-    builder = Builder().row(*GROUPS_AGES_BUTTONS[user.preferred_age_group])
-    builder.row(*[Button(text=text) for text in USER_RATE_BUTTONS])
+def guess_user_age_keyboard(age_group: AgeGroup) -> Keyboard:
+    """Клавиатура с кнопками выбора возраста поиска анкет"""
+    builder = Builder().row(
+        *AGE_GROUPS_BUTTONS[age_group]
+    )
+    builder.row(
+        *[Button(text=text) for text in USER_RATE_BUTTONS]
+    )
     return builder.row(Button(text="↩")).as_markup(resize_keyboard=True)
 
 
@@ -43,10 +51,14 @@ def report_keyboard(guesser: User, guessed: User) -> InlineKeyboard:
 
 
 def rate_user_keyboard() -> Keyboard:
-    """
-    Кнопки оценки пользователя
-    """
-    rate_user_buttons = [Button(text=text) for text in USER_RATE_BUTTONS]
-    builder = Builder().row(*rate_user_buttons)
-    builder.row(Button(text="↩"))
+    """Кнопки оценки пользователя"""
+    rate_user_buttons = [
+        Button(text=text) for text in USER_RATE_BUTTONS
+    ]
+    builder = Builder().row(
+        *rate_user_buttons
+    )
+    builder.row(
+        Button(text="↩")
+    )
     return builder.as_markup(resize_keyboard=True)

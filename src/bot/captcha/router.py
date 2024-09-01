@@ -21,7 +21,7 @@ async def captcha_handler(message: Message):
     """
     captcha = generate_captcha()
 
-    await message.reply(
+    await message.answer(
         text=f'Выберите эмодзи: <span class="tg-spoiler">{captcha["correct_emoji"]}</span>',
         reply_markup=captcha_keyboard(captcha["emojis"]),
     )
