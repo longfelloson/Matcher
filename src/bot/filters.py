@@ -24,4 +24,4 @@ class UserAdminFilter(Filter):
         """
         Проверка, является ли пользователь админом
         """
-        return data["user"].user_id in settings.bot.ADMINS_IDS
+        return data["user"].user_id in settings.admins_ids

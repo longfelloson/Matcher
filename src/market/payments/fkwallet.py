@@ -34,7 +34,7 @@ class PaymentSystem(ABC):
         pass
 
     @abstractmethod
-    async def __request(self, *args, **kwargs):
+    async def _request(self, *args, **kwargs):
         pass
 
 
@@ -69,7 +69,7 @@ class Wallet(PaymentSystem):
 
         return sigh
 
-    async def __request(
+    async def _request(
         self,
         url: str,
         method: str = "POST",
@@ -110,12 +110,12 @@ class Wallet(PaymentSystem):
             "fee_from_balance": fee_from_balance,
             "account": self.account,
         }
-        return await self.__request(self.withdraw_endpoint_url, data=data)
+        return await self._request(self.withdraw_endpoint_url, data=data)
 
 
 wallet = Wallet(
-    base_url=settings.PAYMENTS.PAYMENTS_BASE_URL,
-    private_key=settings.PAYMENTS.PAYMENTS_PRIVATE_KEY,
-    public_key=settings.PAYMENTS.PAYMENTS_PUBLIC_KEY,
-    account=settings.PAYMENTS.PAYMENTS_ACCOUNT,
+    base_url=settings.PAYMENTS_BASE_URL,
+    private_key=settings.PAYMENTS_PRIVATE_KEY,
+    public_key=settings.PAYMENTS_PUBLIC_KEY,
+    account=settings.PAYMENTS_ACCOUNT,
 )

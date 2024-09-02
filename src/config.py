@@ -55,15 +55,18 @@ class PaymentsConfig(BaseSettings):
     PAYMENTS_BASE_URL: str
     PAYMENTS_PRIVATE_KEY: str
     PAYMENTS_PUBLIC_KEY: str
+    PAYMENTS_ACCOUNT: str
 
 
-class Settings:
-    AUTH = AuthConfig()
-    S3 = S3Config()
-    BOT = BotConfig()
-    DATABASE = DatabaseConfig()
-    MARKET = MarketConfig()
-    PAYMENTS = PaymentsConfig()
+class Settings(
+    AuthConfig,
+    S3Config,
+    BotConfig,
+    DatabaseConfig,
+    MarketConfig,
+    PaymentsConfig,
+):
+    ...
 
 
 settings = Settings()

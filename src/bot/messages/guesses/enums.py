@@ -13,7 +13,7 @@ class Answer(str, Enum):
 
     @staticmethod
     def convert_score_to_currency(score: Union[int, float]) -> float:
-        return score / settings.MARKET.MARKET_EXCHANGE_RATE
+        return score / settings.MARKET_EXCHANGE_RATE
 
     @classmethod
     def get_age_guess_answer(

@@ -1,6 +1,6 @@
 async function fetchExchangeRate() {
     try {
-        const response = await fetch('/get-exchange-rate');
+        const response = await fetch('/exchange/rate');
         const data = await response.json();
         return data['current-rate'];
     } catch (error) {
@@ -20,50 +20,68 @@ async function calculateMoney() {
     }
 }
 
-function selectImage(id) {
-    // Remove 'selected' class from all images
+async function selectImage(id) {
     const images = document.querySelectorAll('.carousel-item');
     images.forEach(image => image.classList.remove('selected'));
 
-    // Add 'selected' class to clicked image
     const selectedImage = document.getElementById(id);
     selectedImage.classList.add('selected');
 }
 
-function exchangePoints() {
+async function exchangePoints() {
     const points = document.getElementById('points').value;
     const selectedImage = document.querySelector('.carousel-item.selected');
     const destination = selectedImage ? selectedImage.id : '';
-
     const accountDetails = document.getElementById('account-details').value;
 
     if (points && destination && accountDetails) {
-        const requestData = {
-            points: points,
-            destination: destination,
-            account_details: accountDetails,
-        };
-        fetch('/exchange-points', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-        })
-            .then(response => {
-                if (response.ok) {
-                    document.getElementById('result-message').textContent = 'Успешно обменяно';
-                } else {
-                    document.getElementById('result-message').textContent = 'Ошибка при обмене';
-                    document.getElementById('result-message').style.color = 'red';
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                document.getElementById('result-message').textContent = 'Ошибка при обмене';
-                document.getElementById('result-message').style.color = 'red';
+        try {
+            const balanceResponse = await fetch(`/exchange/user-points`);
+            if (!balanceResponse.ok) {
+                const errorData = await balanceResponse.json();
+                alert('Ошибка при получении баланса: ' + (errorData.message || 'Ошибка.'));
+                return;
+            }
+
+            const balanceData = await balanceResponse.json();
+            const userPoints = balanceData.user_points;
+
+            if (parseInt(points) >= userPoints) {
+                alert('Недостаточно баллов для обмена');
+                return;
+            }
+
+            const requestData = {
+                points: points,
+                destination: destination,
+                account_details: accountDetails,
+            };
+
+            const exchangeResponse = await fetch('/exchange', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
             });
+
+            if (exchangeResponse.ok) {
+                alert("Вы успешно обменяли баллы!");
+
+                document.getElementById('points').value = '';
+                document.getElementById('account-details').value = '';
+                document.getElementById('money').value = '';
+
+                const carouselItems = document.querySelectorAll('.carousel-item');
+                carouselItems.forEach(item => item.classList.remove('selected'));
+            } else {
+                const errorData = await exchangeResponse.json();
+                alert(errorData.message || 'Ошибка при обмене баллов');
+            }
+        } catch (error) {
+            alert('Произошла ошибка: ' + error.message);
+        }
     } else {
-        alert('Пожалуйста, введите сумму, реквизиты и выберите платежную систему.');
+        alert('Пожалуйста, введите сумму, реквизиты и выберите платежную систему');
     }
 }

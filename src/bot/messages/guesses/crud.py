@@ -5,9 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.messages.guesses.models import Guess
 from bot.messages.guesses.schemas import Guess as GuessSchema
-from bot.messages.rates.models import Rate
-from bot.users.models import User
-from config import settings
 
 
 async def add_guess(guess: GuessSchema, session: AsyncSession) -> None:
@@ -25,19 +22,3 @@ async def get_user_guesses(
 ) -> List[Optional[Guess]]:
     rates = await session.execute(select(Guess).where(Guess.guesser == user_id))
     return rates.scalars().all()
-
-
-async def get_user_for_rate(user: User, user_rates: List[Rate], session: AsyncSession):
-    """
-    Получение пользователя по заданным условиям для просмотра
-    """
-    conditions = [
-        User.user_id != user.user_id,
-        User.user_id.not_in(set(rate.rated for rate in user_rates)),
-        User.gender == user.preferred_gender,
-        User.age.in_(settings.BOT.age_groups[user.preferred_age_group]),
-    ]
-    user_for_rate = await session.execute(
-        select(User).where(and_(*conditions)).limit(1).order_by(func.random())
-    )
-    return user_for_rate.scalar_one_or_none()

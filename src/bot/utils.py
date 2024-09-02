@@ -48,7 +48,7 @@ async def set_commands() -> None:
             BotCommand(command="help", description="Поддержка"),
         ]
     )
-    for ADMIN_ID in settings.BOT.admins_ids:
+    for ADMIN_ID in settings.admins_ids:
         await bot.set_my_commands(
             [
                 BotCommand(command="start", description="Запуск бота"),

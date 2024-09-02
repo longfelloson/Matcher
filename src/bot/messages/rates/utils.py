@@ -1,3 +1,4 @@
+from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,5 +39,6 @@ async def send_notification(rated: User, text: str, keyboard=None) -> None:
     await bot.send_message(
         chat_id=rated.user_id,
         text=text,
-        reply_markup=keyboard
+        reply_markup=keyboard,
+        parse_mode=ParseMode.HTML,
     )

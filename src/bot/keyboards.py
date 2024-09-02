@@ -21,9 +21,15 @@ def main_keyboard() -> Keyboard:
     """
     Клавиатура для главного меню
     """
-    builder = Builder().row(Button(text="Начать ▶️"))
-    builder.row(Button(text="Профиль 📱"))
-    #  builder.row(Button(texts="Магазин 🛍"))
+    builder = Builder().row(
+        Button(text="Начать ▶️")
+    )
+    builder.row(
+        Button(text="Профиль 📱")
+    )
+    builder.row(
+        Button(text="Магазин 🛍")
+    )
     return builder.as_markup(resize_keyboard=True)
 
 
@@ -34,7 +40,7 @@ def help_command_keyboard() -> InlineKeyboard:
     keyboard = [
         [
             InlineButton(
-                text="Поддержка ⚙", url=f"t.me/{settings.BOT.SUPPORT_ACCOUNT_USERNAME}"
+                text="Поддержка ⚙", url=f"t.me/{settings.SUPPORT_ACCOUNT_USERNAME}"
             )
         ]
     ]
@@ -54,15 +60,14 @@ def manage_user_keyboard(reporter: int, reported: int) -> InlineKeyboard:
     return builder.as_markup()
 
 
-def market_link_keyboard(user_id: int) -> InlineKeyboard:
+def market_link_keyboard(link: str) -> InlineKeyboard:
     """
     Клавиатура из одной кнопки, содержащую ссылку на маркет
     """
-    link_with_auth_token = get_auth_link(user_id)
     builder = InlineBuilder().row(
         InlineButton(
             text="🔗",
-            web_app=WebAppInfo(url=settings.MARKET.MARKET_LINK + link_with_auth_token),
+            web_app=WebAppInfo(url=settings.MARKET_LINK + link),
         )
     )
     return builder.as_markup()

@@ -17,6 +17,7 @@ from bot.users.keyboards import (
 from bot.users.models import User
 from bot.users.states import UserStates
 from bot.users.utils import send_user_to_react
+from market.auth.token import get_auth_link
 
 router = Router(name="Messages")
 
@@ -39,15 +40,15 @@ async def view_user_button_handler(
     await send_user_to_react(message, user, session, state)
 
 
-# @router.message(F.texts == "Магазин 🛍")
-# async def market_button_handler(message: Message):
-#     """
-#     Обработка кнопки "Магазин" в главном меню
-#     """
-#     await message.answer(
-#         texts="Перейдите по ссылке ниже, чтобы обменять баллы.",
-#         reply_markup=market_link_keyboard(message.chat.id),
-#     )
+@router.message(F.text == "Магазин 🛍")
+async def market_button_handler(message: Message):
+    """
+    Обработка кнопки "Магазин" в главном меню
+    """
+    await message.answer(
+        text="Перейди по ссылке ниже, чтобы обменять баллы ⤵️",
+        reply_markup=market_link_keyboard(link=get_auth_link(user_id=message.chat.id)),
+    )
 
 
 @router.message(F.text == "Профиль 📱")

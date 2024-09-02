@@ -23,7 +23,7 @@ async def react_for_report(
         call.from_user.id, [call.message.message_id, call.message.message_id + 1]
     )
     await send_user_to_react(call.message, user, session, state)
-    for user_id in settings.BOT.MODERATOR_IDS:
+    for user_id in settings.MODERATOR_IDS:
         await bot.forward_message(
             chat_id=user_id,
             from_chat_id=call.message.chat.id,
@@ -41,6 +41,6 @@ async def block_user(data: str, session: AsyncSession) -> None:
 
     await users_crud.update_user(reported_user_id, session, status=UserStatus.blocked)
     await users_crud.increase_user_points(
-        reporter_user_id, settings.BOT.POINTS_FOR_BLOCKED_USER, session
+        reporter_user_id, settings.POINTS_FOR_BLOCKED_USER, session
     )
     await crud.add_report(report, session)

@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.adminpanel.keyboards import admin_panel_keyboard
 from bot.keyboards import main_keyboard, help_command_keyboard
 from bot.messages.enums import Answer
-from bot.messages.registration.schemas import Answer as RegistrationAnswers, RegistrationSectionAnswer
+from bot.messages.registration.schemas import RegistrationSectionAnswer
 from bot.messages.registration.states import RegistrationStates
 from bot.users import crud as users_crud
 from bot.users.models import User

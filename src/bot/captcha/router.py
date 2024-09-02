@@ -39,6 +39,7 @@ async def captcha_button_handler(
 
     if decrypted_captcha_correctness == "CORRECT":
         await call.message.delete()
+        await users_crud
         await command_start_handler(call.message, session, state, user)
     else:
         await call.answer("Неправильный эмодзи 🤷‍♂️", show_alert=True)

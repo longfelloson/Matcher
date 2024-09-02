@@ -11,7 +11,7 @@ services:
       - "8000:8000"
     environment:
       - DB_HOST=db
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn web:app --host 0.0.0.0 --port 8000'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn market_main:app --host 0.0.0.0 --port 8000'
     networks:
       - guesser-network
 
@@ -38,8 +38,9 @@ services:
       - app
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./static:/root/Guesser/static
-      - ./certs:/etc/nginx/certs
+      - ./static:/root/Matcher/static/
+      - /etc/letsencrypt/live/matcher-market.shop/fullchain.pem:/etc/letsencrypt/live/matcher-market.shop/fullchain.pem
+      - /etc/letsencrypt/live/matcher-market.shop/privkey.pem:/etc/letsencrypt/live/matcher-market.shop/privkey.pem
     networks:
       - guesser-network
 

@@ -9,7 +9,7 @@ from market.auth.router import router as auth_router
 from market.auth.utils import auth_guard
 from market.router import router as market_router
 
-app = FastAPI()
+app = FastAPI(docs_url="", redoc_url="")
 
 app.mount("/static", StaticFiles(directory="../static"), name="static")
 
@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-templates = Jinja2Templates(directory=settings.MARKET.TEMPLATES_PATH)
+templates = Jinja2Templates(directory=settings.TEMPLATES_PATH)
 
 
 @app.on_event("startup")

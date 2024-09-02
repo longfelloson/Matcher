@@ -48,8 +48,8 @@ async def rate_respond_button_handler(call: CallbackQuery, session: AsyncSession
     reaction, rated_id = call.data.split("*")[1:]
     rated = await users_crud.get_user(int(rated_id), session)
 
-    rated_link = get_user_link(rated)
+    rated_link = get_user_link(rated, text="пользователь")
     rater_link = get_user_link(user)
 
-    await call.message.edit_caption(caption=f"Ссылка на лайкнутого пользователя: {rated_link} 💞")
-    await send_notification(rated, text=f"{rater_link} взаимно оценил Вас, общайтесь 💞")
+    await call.message.edit_caption(caption=f"Ссылка на лайкнутого пользователя: {rated_link} 💞", parse_mode="HTML")
+    await send_notification(rated, text=f'{rater_link} взаимно оценил Вас, общайтесь 💞')

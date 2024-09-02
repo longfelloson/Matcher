@@ -11,11 +11,15 @@
     <div class="input-container">
         <div class="input-field">
             <img src="/static/img/coin-svgrepo-com.svg" alt="Coin Icon" class="icon">
-            <input type="number" id="points" placeholder="Введите количество баллов" oninput="calculateMoney()">
+            <label for="points">
+                <input type="number" id="points" placeholder="Введите количество баллов" oninput="calculateMoney()">
+            </label>
         </div>
         <div class="input-field">
             <img src="/static/img/ruble-svgrepo-com.svg" alt="Coin Icon" class="icon">
-            <input type="text" id="money" placeholder="Вы получите в рублях" readonly>
+            <label for="money">
+                <input type="text" id="money" placeholder="Вы получите в рублях" readonly>
+            </label>
         </div>
     </div>
 
@@ -38,8 +42,6 @@
     <div class="button-container">
         <button id="exchange-button" onclick="exchangePoints()">Обменять</button>
     </div>
-
-    <div id="result-message"></div>
 </div>
 <script src="/static/js/exchange/script.js"></script>
 </body>

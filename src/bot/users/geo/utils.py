@@ -68,7 +68,7 @@ async def reverse_geocode_user_location(location: Location) -> Optional[str]:
     Получение информации о пользовательской локации
     """
     params = {
-        "key": settings.BOT.GEOCODER_API_KEY,
+        "key": settings.GEOCODER_API_KEY,
         "lat": location.latitude,
         "lon": location.longitude,
         "format": "json",
