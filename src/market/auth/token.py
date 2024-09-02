@@ -11,7 +11,6 @@ def get_auth_link(user_id: int) -> str:
     Получает ссылку для авторизации по JWT-токену в параметре
     """
     token = create_access_token({"sub": user_id})
-    print(f"/auth?token={token}")
     return f"/auth?token={token}"
 
 
