@@ -3,6 +3,7 @@ from typing import Callable, Dict
 from aiogram import BaseMiddleware
 from aiogram.types import Message, Update
 
+from bot.keyboards import help_command_keyboard
 from bot.users import crud as users_crud
 from bot.users.enums import UserStatus
 from database import get_async_session
@@ -30,4 +31,4 @@ class BlockedUserMiddleware(BaseMiddleware):
         user = await users_crud.get_user(user_id, data["session"])
         if not user or user.status != UserStatus.blocked:
             return await handler(message, data)
-        await message.answer("Вы заблокированы в боте ⛔️")
+        await message.answer("Вы заблокированы ⛔️", reply_markup=help_command_keyboard())

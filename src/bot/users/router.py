@@ -26,18 +26,18 @@ router = Router(name="Users")
 
 @router.callback_query(F.data.regexp(UserAction.change_config))
 async def change_config_button_handler(
-        call: CallbackQuery, user: User, session: AsyncSession
+        call: CallbackQuery,
+        user: User,
+        session: AsyncSession,
 ):
-    """
-    Обработка кнопки "Изменить анкету пользователя"
-    """
+    """Обработка кнопки "Изменить анкету пользователя"""
     user_config_table_column_name = call.data.split("*")[1]
     await users_configs_crud.update_user_config(
         user.user_id, user_config_table_column_name, session
     )
 
     config = await users_configs_crud.get_user_config(user.user_id, session)
-    await call.message.edit_reply_markup(user_profile_keyboard(config))
+    await call.message.edit_reply_markup(user_profile_keyboard(config.guess_age, user.status))
 
 
 @router.message(UserStates.change_profile)

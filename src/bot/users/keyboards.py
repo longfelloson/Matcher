@@ -1,18 +1,32 @@
 from aiogram.types import KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
-from bot.users.models import UserConfig
+from bot.users.enums import UserStatus
 
 
-def user_profile_keyboard(config: UserConfig):
+def user_profile_keyboard(guess_age: bool, user_status: UserStatus):
     """
     Клавиатура настройки пользовательского профиля
     """
     builder = Builder().row(
-        Button(text=f"Угадывать возраст: {'✅' if config.guess_age else '❌'}"),
+        Button(text=f"Угадывать возраст: {'✅' if guess_age else '❌'}"),
     )
-    builder.row(Button(text="Изменить 📝"))
-    builder.row(Button(text="↩"))
+    builder.row(
+        Button(text="Изменить 📝")
+    )
+
+    if user_status == UserStatus.active:
+        builder.row(
+            Button(text="Отключить анкету 😴")
+        )
+    else:
+        builder.row(
+            Button(text="Включить анкету 🚀")
+        )
+
+    builder.row(
+        Button(text="↩")
+    )
     return builder.as_markup(resize_keyboard=True)
 
 

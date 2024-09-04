@@ -25,9 +25,7 @@ async def update_state_data(state: FSMContext, key: str, value: Any) -> None:
 
 
 def get_guess_points(user_age_guess: int, user_for_rate: User) -> float | int:
-    """
-    Возвращает баллы, которые получит человек за его попытку угадать возраст
-    """
+    """Возвращает баллы, которые получит человек за его попытку угадать возраст"""
     score = DEFAULT_AGE_GUESS_SCORE
     if user_age_guess == user_for_rate.age:
         score = SAME_AGE_GUESS_SCORE

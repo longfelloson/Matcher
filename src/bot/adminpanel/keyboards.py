@@ -28,10 +28,4 @@ def stats_section_keyboard() -> InlineKeyboard:
             callback_data=f"admin_action*{AdminAction.view_users_amount.value}"
         )
     )
-    # builder.row(
-    #     InlineButton(
-    #         texts="↩️",
-    #         callback_data="back_to_admin_panel"
-    #     )
-    # )
     return builder.as_markup()

@@ -1,7 +1,9 @@
+from typing import Union
+
 from pydantic import BaseModel
 
 
 class Guess(BaseModel):
     guesser: int
     guessed: int
-    points: int | float
+    points: Union[int, float]

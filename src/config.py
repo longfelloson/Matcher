@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
@@ -20,7 +20,7 @@ class BotConfig(BaseSettings):
     MODERATOR_IDS: str
 
     SUPPORT_ACCOUNT_USERNAME: str
-    POINTS_FOR_BLOCKED_USER: str
+    POINTS_FOR_BLOCKED_USER: Union[int, float]
     GEOCODER_API_KEY: str
 
     @property

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.files import upload_user_photo_to_s3
 from bot.keyboards import main_keyboard
-from bot.messages.enums import Answer
+from bot.messages.commands.enums import CommandAnswer
 from bot.messages.registration.keyboards import (
     select_preferred_gender_keyboard,
     select_age_group_keyboard,
@@ -60,7 +60,7 @@ async def set_previous_state(message: Message, state: FSMContext) -> None:
             )
         case _:
             await state.clear()
-            await message.answer(Answer.greeting, reply_markup=main_keyboard())
+            await message.answer(CommandAnswer.start, reply_markup=main_keyboard())
 
 
 async def complete_user_registration(

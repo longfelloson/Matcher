@@ -1,8 +1,8 @@
-from aiogram.types import (
+from aiogram.utils.keyboard import (
+    InlineKeyboardBuilder as InlineBuilder,
     InlineKeyboardMarkup as InlineKeyboard,
     InlineKeyboardButton as InlineButton,
 )
-from aiogram.utils.keyboard import InlineKeyboardBuilder as InlineBuilder
 
 from bot.messages.rates.enums import RateType
 from bot.users.enums import UserAction

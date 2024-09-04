@@ -1,10 +1,11 @@
-from typing import List, Tuple, Sequence
+from typing import List, Tuple, Sequence, Union
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
+from bot.loader import bot
 from bot.messages.guesses.enums import Answer
 from bot.messages.guesses.keyboards import guess_user_age_keyboard, rate_user_keyboard
 from bot.messages.guesses.states import GuessesStates
@@ -14,8 +15,8 @@ from bot.texts.users import get_user_profile_caption
 from bot.users import crud as users_crud
 from bot.users.enums import UserStatus, AgeGroup
 from bot.users.geo.utils import get_nearest_user
-from bot.users.schemas import User as UserSchema
 from bot.users.models import User
+from bot.users.schemas import User as UserSchema
 
 DEFAULT_AGE_GUESS_SCORE = 0.0
 CLOSE_AGE_GUESS_SCORE = 2.5
@@ -91,7 +92,7 @@ async def send_user_to_react(
     if user.config.guess_age:
         answer = Answer.guess_age
         keyboard = guess_user_age_keyboard(age_group=AgeGroup.get_group_by_age(user_for_view.age))
-        await state.set_state(GuessesStates.guess_user_age)
+        await state.set_state(GuessesStates.user_age)
     else:
         answer = Answer.rate_user
         keyboard = rate_user_keyboard()
@@ -100,13 +101,20 @@ async def send_user_to_react(
     caption = get_user_profile_caption(user, user_for_view)
 
     await state.set_data({"user_for_rate": user_for_view})
-    photo = await send_user_to_view(message, user_for_view.photo_url, caption)
+    photo = await send_user_to_view(user_for_view.photo_url, caption, message=message)
     await photo.answer(answer, reply_markup=keyboard)
 
 
 async def send_user_to_view(
-    message: Message,
-    photo: str, caption,
-    keyboard=None,
+        photo: str,
+        caption: str,
+        keyboard=None,
+        chat_id: Union[str, int] = None,
+        message: Message = None,
 ) -> Message:
+    if not chat_id and not message:
+        raise ValueError("Какой-то из аргументов должен быть заполнен для отправки фото!")
+
+    if chat_id:
+        return await bot.send_photo(chat_id, photo, caption=caption, reply_markup=keyboard)
     return await message.answer_photo(photo, caption, reply_markup=keyboard)

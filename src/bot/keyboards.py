@@ -12,9 +12,7 @@ from aiogram.utils.keyboard import (
     ReplyKeyboardBuilder as Builder,
 )
 
-from bot.adminpanel.enums import AdminAction
 from config import settings
-from market.auth.token import get_auth_link
 
 
 def main_keyboard() -> Keyboard:
@@ -45,19 +43,6 @@ def help_command_keyboard() -> InlineKeyboard:
         ]
     ]
     return InlineKeyboard(inline_keyboard=keyboard)
-
-
-def manage_user_keyboard(reporter: int, reported: int) -> InlineKeyboard:
-    """
-    Клавиатура управления пользователем
-    """
-    builder = InlineBuilder().row(
-        InlineButton(
-            text="Заблокировать 🔐",
-            callback_data=f"{AdminAction.ban_user}*{reporter}*{reported}",
-        )
-    )
-    return builder.as_markup()
 
 
 def market_link_keyboard(link: str) -> InlineKeyboard:

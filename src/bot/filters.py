@@ -20,8 +20,9 @@ class NotSolvedCaptchaFilter(Filter):
 
 
 class UserAdminFilter(Filter):
-    async def __call__(self, data: dict):
+    async def __call__(self, message: Message):
         """
         Проверка, является ли пользователь админом
         """
-        return data["user"].user_id in settings.admins_ids
+        user_id = message.from_user.id
+        return user_id in settings.admins_ids

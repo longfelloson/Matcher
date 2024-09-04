@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from sqlalchemy import insert, select, and_, func
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.messages.guesses.models import Guess
@@ -17,8 +17,6 @@ async def get_guess(guess_id: int, session: AsyncSession) -> Guess:
     return guess.scalar_one()
 
 
-async def get_user_guesses(
-        user_id: int, session: AsyncSession
-) -> List[Optional[Guess]]:
+async def get_user_guesses(user_id: int, session: AsyncSession) -> List[Optional[Guess]]:
     rates = await session.execute(select(Guess).where(Guess.guesser == user_id))
     return rates.scalars().all()

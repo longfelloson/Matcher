@@ -1,18 +1,11 @@
 import itertools
 
-from aiogram.types import (
-    InlineKeyboardMarkup as InlineKeyboard,
-    InlineKeyboardButton as InlineButton,
-)
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
 from bot.users.enums import (
-    UserAction,
     AgeGroup,
 )
-from bot.users.models import User
-
 
 # Словарь с кнопками возрастов групп
 AGE_GROUPS_BUTTONS = {
@@ -38,16 +31,6 @@ def guess_user_age_keyboard(age_group: AgeGroup) -> Keyboard:
         *[Button(text=text) for text in USER_RATE_BUTTONS]
     )
     return builder.row(Button(text="↩")).as_markup(resize_keyboard=True)
-
-
-def report_keyboard(guesser: User, guessed: User) -> InlineKeyboard:
-    builder = Builder().row(
-        InlineButton(
-            text="⚠️",
-            callback_data=f"{UserAction.report_user}*{guesser.user_id}*{guessed.user_id}",
-        )
-    )
-    return builder.as_markup()
 
 
 def rate_user_keyboard() -> Keyboard:

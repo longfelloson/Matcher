@@ -1,6 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, DateTime, String, BigInteger
+from sqlalchemy import (
+    Column,
+    Integer,
+    DateTime,
+    String,
+    BigInteger,
+)
 
 from database import Base
 

@@ -9,8 +9,10 @@ class UserAction(str, Enum):
 
 
 class UserStatus(str, Enum):
+    reported = "reported"
     blocked = "blocked"
     active = "active"
+    not_active = "not_active"
     not_registered = "not_registered"
 
 
