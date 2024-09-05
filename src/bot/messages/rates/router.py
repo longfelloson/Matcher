@@ -59,6 +59,8 @@ async def rate_respond_button_handler(call: CallbackQuery, session: AsyncSession
         await call.message.edit_caption(
             caption=f"Ссылка на лайкнутого пользователя: {rated_link} 💞", parse_mode="HTML"
         )
-        await send_notification(rated, text=f'{rater_link} взаимно оценил Вас, общайтесь 💞')
+        await send_notification(
+            rated, text=f'{rater_link} взаимно оценил Вас, общайтесь 💞', session=session
+        )
     else:
         await call.message.delete()

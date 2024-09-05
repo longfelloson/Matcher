@@ -1,6 +1,7 @@
 from typing import Union
 
 from dotenv import load_dotenv
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -66,7 +67,7 @@ class Settings(
     MarketConfig,
     PaymentsConfig,
 ):
-    ...
+    LOGS_FILE_PATH: str = Field(default="../errors.log")
 
 
 settings = Settings()

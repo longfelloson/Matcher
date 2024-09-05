@@ -90,7 +90,7 @@ class Wallet(PaymentSystem):
                 ) as response:
                     return await response.json()
         except Exception as e:
-            logger.error("Ошибка при отправке запроса для создания платежа: %s", e)
+            logger.error(f"Ошибка при отправке запроса для создания платежа: {e}")
 
     async def withdraw(
         self,

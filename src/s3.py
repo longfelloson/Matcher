@@ -9,11 +9,11 @@ from logger import logger
 
 class S3Client:
     def __init__(
-            self,
-            access_key: str,
-            secret_key: str,
-            endpoint_url: str,
-            bucket_name: str,
+        self,
+        access_key: str,
+        secret_key: str,
+        endpoint_url: str,
+        bucket_name: str,
     ):
         self.config = {
             "aws_access_key_id": access_key,
@@ -35,14 +35,14 @@ class S3Client:
                     Bucket=self.bucket_name, Key=file_name, Body=file, ACL="public-read"
                 )
         except ClientError as e:
-            logger.error("Error uploading file via S3: %s", e)
+            logger.error(f"Error uploading file via S3: {e}")
 
     async def delete_file(self, object_name: str):
         try:
             async with self.get_client() as client:
                 await client.delete_object(Bucket=self.bucket_name, Key=object_name)
         except ClientError as e:
-            logger.error("Error deleting file via S3: %s", e)
+            logger.error(f"Error deleting file via S3: {e}")
 
     async def update_file(self, file: bytes, file_name: str) -> None:
         """

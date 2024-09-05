@@ -11,7 +11,6 @@ from bot.messages.router import router as messages_router
 from bot.middlewares import PayloadMiddleware, BlockedUserMiddleware
 from bot.reports.router import router as reports_router
 from bot.users.router import router as users_router
-from bot.errors.router import router as errors_router
 from config import settings
 from database import create_tables
 
@@ -21,7 +20,6 @@ async def start() -> None:
     Устанавливает настройки для бота и запускает его
     """
     dp.include_routers(
-        errors_router,
         captcha_router,
         messages_router,
         registration_router,

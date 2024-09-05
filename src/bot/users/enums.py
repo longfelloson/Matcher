@@ -14,6 +14,7 @@ class UserStatus(str, Enum):
     active = "active"
     not_active = "not_active"
     not_registered = "not_registered"
+    left = "left"
 
 
 class UserGender(str, Enum):
