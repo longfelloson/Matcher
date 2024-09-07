@@ -10,7 +10,7 @@ from bot.adminpanel.keyboards import admin_panel_keyboard
 from bot.filters import UserAdminFilter
 from bot.keyboards import main_keyboard, help_command_keyboard
 from bot.messages.commands.enums import CommandAnswer
-from bot.messages.registration.schemas import RegistrationSectionAnswer
+from bot.messages.registration.enums.answers import RegistrationSectionAnswer
 from bot.messages.registration.states import RegistrationStates
 from bot.reports.utils import react_for_report
 from bot.users import crud as users_crud

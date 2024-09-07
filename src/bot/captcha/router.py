@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.captcha.keyboards import captcha_keyboard
 from bot.captcha.utils import decrypt_correctness, generate_captcha
 from bot.filters import NotSolvedCaptchaFilter
+from bot.loader import bot
 from bot.messages.commands.router import command_start_handler
 from bot.users.models import User
 
@@ -37,6 +38,8 @@ async def captcha_button_handler(
     decrypted_captcha_correctness = decrypt_correctness(encrypted_captcha_correctness)
 
     if decrypted_captcha_correctness == "CORRECT":
+        await bot.answer_callback_query(call.id)
+        await call.message.delete()
         await command_start_handler(call.message, session, state, user)
     else:
         await call.answer("Неправильный эмодзи 🤷‍♂️", show_alert=True)

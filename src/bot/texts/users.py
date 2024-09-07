@@ -44,11 +44,11 @@ def get_user_profile_caption(rater: User, rated: User) -> str:
         base_caption += f", Instagram: <code>{rated.instagram}</code>"
 
     if not rater.config.guess_age:
-        age_suffix = get_age_suffix(rater.age)
-        base_caption += f", {rater.age} {age_suffix}"
+        age_suffix = get_age_suffix(rated.age)
+        base_caption += f", {rated.age} {age_suffix}"
 
     return base_caption
 
 
-def get_user_link(user: User, text: str = "Пользователь") -> str:
-    return f"@{user.username}" if user.username else f'<a href="tg://user?id={user.user_id}">{text}</a>'
+def get_user_link(user: User) -> str:
+    return f"@{user.username}" if user.username else f'<a href="tg://user?id={user.user_id}">{user.name}</a>'

@@ -8,7 +8,8 @@ from bot.messages.guesses.router import router as guesses_router
 from bot.messages.rates.router import router as rates_router
 from bot.messages.registration.router import router as registration_router
 from bot.messages.router import router as messages_router
-from bot.middlewares import PayloadMiddleware, BlockedUserMiddleware
+from bot.middlewares.payload import PayloadMiddleware
+from bot.middlewares.user import BlockedUserMiddleware
 from bot.reports.router import router as reports_router
 from bot.users.router import router as users_router
 from config import settings

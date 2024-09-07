@@ -22,7 +22,7 @@ def notification_keyboard(rater_id: int) -> InlineKeyboard:
 def respond_to_rate_keyboard(user_to_rate: User) -> InlineKeyboard:
     builder = InlineBuilder().row(
         InlineButton(
-            text="♥️",
+            text="❤",
             callback_data=f"rate_user*{RateType.positive}*{user_to_rate.user_id}"
         ),
         InlineButton(

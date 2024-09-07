@@ -1,49 +1,48 @@
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
-from bot.users.enums import PreferredAgeGroup
+from bot.messages.registration.enums.age import PreferredAgeGroupOption
+from bot.messages.registration.enums.gender import GenderOption, PreferredGenderOption
 
 
 def select_gender_keyboard() -> Keyboard:
+    buttons = [
+        Button(text=gender) for gender in GenderOption
+    ]
     builder = Builder().row(
-        Button(text="Парень"),
-        Button(text="Девушка")
+        *buttons
     )
     builder.row(
         Button(text="↩")
     )
-    return builder.as_markup(resize_keyboard=True, single_use=True)
+    return builder.as_markup(resize_keyboard=True)
 
 
 def select_preferred_gender_keyboard() -> Keyboard:
-    """Клавиатура выбора пола анкет для поиска"""
+    buttons = [
+        Button(text=preferred_gender) for preferred_gender in PreferredGenderOption
+    ]
     builder = Builder().row(
-        Button(text="Парней"),
-        Button(text="Девушек"),
+        *buttons
     )
     builder.row(
         Button(text="↩")
     )
-    return builder.as_markup(
-        resize_keyboard=True,
-        single_use=True,
-        placeholder="Выбери пол, который хочешь оценивать",
-    )
+    return builder.as_markup(resize_keyboard=True, placeholder="Выбери пол, который хочешь оценивать")
 
 
 def select_age_group_keyboard() -> Keyboard:
-    """
-    Клавиатура выбора группы поиска пользователей
-    """
+    """Клавиатура выбора группы поиска пользователей"""
+    buttons = [
+        Button(text=age_group) for age_group in PreferredAgeGroupOption
+    ]
     builder = Builder().add(
-        Button(text=PreferredAgeGroup.Age.first),
-        Button(text=PreferredAgeGroup.Age.second),
-        Button(text=PreferredAgeGroup.Age.third),
+        *buttons
     )
     builder.row(
         Button(text="↩")
     )
-    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+    return builder.as_markup(resize_keyboard=True)
 
 
 def select_location_keyboard() -> Keyboard:
@@ -57,15 +56,11 @@ def select_location_keyboard() -> Keyboard:
     builder.row(
         Button(text="↩")
     )
-    return builder.as_markup(
-        resize_keyboard=True,
-        one_time_keyboard=True,
-        input_field_placeholder="Введи название места, где ты живешь",
-    )
+    return builder.as_markup(resize_keyboard=True, input_field_placeholder="Введи название места, где ты живешь")
 
 
 def back_button_keyboard() -> Keyboard:
     builder = Builder().row(
         Button(text="↩")
     )
-    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+    return builder.as_markup(resize_keyboard=True)

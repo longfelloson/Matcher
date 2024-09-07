@@ -16,9 +16,7 @@ from config import settings
 
 
 def main_keyboard() -> Keyboard:
-    """
-    Клавиатура для главного меню
-    """
+    """Клавиатура для главного меню"""
     builder = Builder().row(
         Button(text="Начать ▶️")
     )
@@ -32,9 +30,7 @@ def main_keyboard() -> Keyboard:
 
 
 def help_command_keyboard() -> InlineKeyboard:
-    """
-    Клавиатура ответа на команду вызова поддержки
-    """
+    """Клавиатура ответа на команду вызова поддержки"""
     keyboard = [
         [
             InlineButton(
@@ -46,9 +42,7 @@ def help_command_keyboard() -> InlineKeyboard:
 
 
 def market_link_keyboard(link: str) -> InlineKeyboard:
-    """
-    Клавиатура из одной кнопки, содержащую ссылку на маркет
-    """
+    """Клавиатура из одной кнопки, содержащую ссылку на маркет"""
     builder = InlineBuilder().row(
         InlineButton(
             text="🔗",

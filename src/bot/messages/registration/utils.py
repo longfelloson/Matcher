@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.files import upload_user_photo_to_s3
 from bot.keyboards import main_keyboard
 from bot.messages.commands.enums import CommandAnswer
+from bot.messages.registration.enums.answers import RegistrationSectionAnswer
 from bot.messages.registration.keyboards import (
     select_preferred_gender_keyboard,
     select_age_group_keyboard,
@@ -12,7 +13,6 @@ from bot.messages.registration.keyboards import (
     select_location_keyboard,
     back_button_keyboard,
 )
-from bot.messages.registration.schemas import RegistrationSectionAnswer
 from bot.messages.registration.states import RegistrationStates
 from bot.users import crud as users_crud
 from bot.users.configs import crud as users_config_crud

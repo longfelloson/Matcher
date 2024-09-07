@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 COPY requirements.txt .
 
@@ -8,4 +8,4 @@ COPY . .
 
 WORKDIR /src
 
-CMD ["python3.10", "bot_main.py"]
+CMD ["python3.11", "bot_main.py"]
