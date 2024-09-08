@@ -5,9 +5,7 @@ from bot.users.enums import UserStatus, UserProfileSection
 
 
 def user_profile_keyboard(guess_age: bool, user_status: UserStatus):
-    """
-    Клавиатура настройки пользовательского профиля
-    """
+    """Клавиатура настройки пользовательского профиля"""
     # builder = Builder().row(
     #     Button(text=f"Угадывать возраст: {'✅' if guess_age else '❌'}"),
     # )

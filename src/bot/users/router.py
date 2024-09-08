@@ -1,7 +1,7 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.enums import ContentType
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
+from aiogram.types import Message
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,7 +12,6 @@ from bot.messages.registration.keyboards import select_location_keyboard, back_b
 from bot.messages.registration.schemas import UserAge, UserName, UserCity
 from bot.users import crud
 from bot.users.enums import UserProfileSection
-from bot.users.geo.schemas import Location
 from bot.users.geo.utils import reverse_geocode_user_location
 from bot.users.models import User
 from bot.users.states import UserChangeState
@@ -75,9 +74,7 @@ async def change_location_state_handler(
         location = message.location
 
         if location:
-            city = await reverse_geocode_user_location(
-                Location(**message.location.model_dump())
-            )
+            city = await reverse_geocode_user_location(location.latitude, location.longitude)
             location = f"{location.longitude}*{location.latitude}"
 
         await crud.update_user(user.user_id, session, city=city, location=location)
@@ -125,4 +122,3 @@ async def change_age_state_handler(
         await crud.update_user(user.user_id, session, age=age.age)
     except ValidationError:
         await message.answer("Твой возраст должен быть от 14 до 28")
-

@@ -14,6 +14,16 @@ class S3Config(BaseSettings):
     S3_BUCKET_NAME: str
 
 
+class RedisConfig(BaseSettings):
+    REDIS_PORT: int = 6379
+    REDIS_HOST: str
+    REDIS_DB: int = 0
+
+    @property
+    def redis_url(self) -> str:
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+
+
 class BotConfig(BaseSettings):
     BOT_TOKEN: str
 
@@ -30,7 +40,7 @@ class BotConfig(BaseSettings):
 
 
 class DatabaseConfig(BaseSettings):
-    DB_PORT: str
+    DB_PORT: int
     DB_HOST: str
     DB_NAME: str
     DB_PASSWORD: str
@@ -66,6 +76,7 @@ class Settings(
     DatabaseConfig,
     MarketConfig,
     PaymentsConfig,
+    RedisConfig,
 ):
     LOGS_FILE_PATH: str = Field(default="../errors.log")
 

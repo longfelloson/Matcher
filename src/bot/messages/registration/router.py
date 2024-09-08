@@ -25,7 +25,6 @@ from bot.messages.registration.schemas import (
 from bot.messages.registration.states import RegistrationStates
 from bot.messages.registration.utils import complete_user_registration
 from bot.users.configs.schemas import UserConfig
-from bot.users.geo.schemas import Location
 from bot.users.geo.utils import reverse_geocode_user_location
 from s3 import s3_client
 
@@ -110,17 +109,13 @@ async def preferred_age_group_state_handler(message: Message, state: FSMContext)
 
 @router.message(RegistrationStates.location)
 async def location_state_handler(message: Message, state: FSMContext):
-    """
-    Получение локации или города пользователя
-    """
+    """Получение локации или города пользователя"""
     try:
         city = UserCity(city=message.text)
         location = message.location
 
         if location:
-            city = await reverse_geocode_user_location(
-                Location(**message.location.model_dump())
-            )
+            city = await reverse_geocode_user_location(location.latitude, location.longitude)
             location = f"{location.longitude}*{location.latitude}"
 
         await state.update_data(location=location, city=city.city)

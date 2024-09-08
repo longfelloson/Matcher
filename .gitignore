@@ -1,7 +1,9 @@
 .env
+.env.development
 .git
 .idea
 .dockerignore
+.venv
 
 __pycache__
 tests
