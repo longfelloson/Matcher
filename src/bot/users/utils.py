@@ -14,7 +14,7 @@ from bot.messages.guesses.states import GuessesStates
 from bot.messages.guesses import crud as guesses_crud
 from bot.messages.guesses.utils import get_guessed_users_ids, was_user_guessed, send_user_to_guess
 from bot.messages.rates import crud as rates_crud
-from bot.messages.rates.states import RatesStates
+from bot.messages.rates.states import RateState
 from bot.messages.rates.utils import get_rated_users_ids, send_user_to_rate, was_user_rated
 from bot.messages.registration.enums.age import AgeGroup
 from bot.messages.registration.enums.gender import PreferredGender
@@ -68,6 +68,14 @@ def get_search_options(
     return specific_options, common_options, minimal_options
 
 
+async def get_user_for_view(state: FSMContext, session: AsyncSession) -> User:
+    """Получение пользователя для просмотра из Redis"""
+    data = await state.get_data()
+    user_for_view = await users_crud.get_user(data.get("user_for_view_id"), session)
+
+    return user_for_view
+
+
 async def get_users_for_view(
     rated_users_id: Sequence[int],
     guessed_users_ids: Sequence[int],
@@ -114,10 +122,10 @@ async def send_user_to_react(
         await state.set_state(GuessesStates.user_age)
         await send_user_to_guess(user, user_for_view, caption)
     else:
-        await state.set_state(RatesStates.rate_user)
+        await state.set_state(RateState.user)
         await send_user_to_rate(user, user_for_view, caption)
 
-    await state.set_data({"user_for_rate": user_for_view})
+    await state.set_data({"user_for_view_id": user_for_view.user_id})
 
 
 async def send_user_to_view(

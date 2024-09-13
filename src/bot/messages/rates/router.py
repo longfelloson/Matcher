@@ -7,19 +7,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.keyboards import main_keyboard
 from bot.loader import bot
 from bot.messages.commands.enums import CommandAnswer
+from bot.messages.guesses.enums import Answer
 from bot.messages.guesses.keyboards import USER_RATE_BUTTONS
 from bot.messages.rates.enums import RateType
+from bot.messages.rates.states import RateState
 from bot.messages.rates.keyboards import respond_to_rate_keyboard
 from bot.messages.rates.utils import react_for_user_rate, send_rate_notification
 from bot.texts.users import get_user_link
 from bot.users import crud as users_crud
 from bot.users.models import User
-from bot.users.utils import send_user_to_react, send_user_to_view
+from bot.users.utils import send_user_to_react, send_user_to_view, get_user_for_view
 
 router = Router(name="Rates")
 
 
-@router.message(F.text.in_(USER_RATE_BUTTONS))
+@router.message(RateState.user, F.text.in_(USER_RATE_BUTTONS))
 async def rate_user_button_handler(
     message: Message,
     session: AsyncSession,
@@ -27,14 +29,10 @@ async def rate_user_button_handler(
     user: User,
 ):
     """Обработка кнопок оценки и угадывания возрасты анкеты"""
-    data = await state.get_data()
-    user_for_rate = data.get("user_for_rate")
+    user_for_view = await get_user_for_view(state, session)
 
-    if not user_for_rate:
-        await message.answer(CommandAnswer.start, reply_markup=main_keyboard())
-    else:
-        await react_for_user_rate(message, user, user_for_rate, session)
-        await send_user_to_react(message, user, session, state)
+    await react_for_user_rate(message, user, user_for_view, session)
+    await send_user_to_react(message, user, session, state)
 
 
 @router.callback_query(F.data.startswith("view_rater_user"))

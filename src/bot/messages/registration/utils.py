@@ -13,6 +13,7 @@ from bot.messages.registration.keyboards import (
     select_location_keyboard,
     back_button_keyboard,
 )
+from bot.messages.registration.schemas import UserRegistrationInfo
 from bot.messages.registration.states import RegistrationStates
 from bot.users import crud as users_crud
 from bot.users.configs import crud as users_config_crud
@@ -65,13 +66,14 @@ async def set_previous_state(message: Message, state: FSMContext) -> None:
 
 async def complete_user_registration(
     user_config_schema: UserConfig,
-    profile_photo_telegram_file_id: str,
-    message: Message,
-    user_reg_info: dict,
+    photo_telegram_file_id: str,
+    user_registration_info: UserRegistrationInfo,
     session: AsyncSession,
 ) -> None:
-    await upload_user_photo_to_s3(telegram_file_id=profile_photo_telegram_file_id)
+    await upload_user_photo_to_s3(
+        telegram_file_id=photo_telegram_file_id
+    )
     await users_crud.update_user(
-        message.chat.id, session, **user_reg_info, status=UserStatus.active
+        user_config_schema.user_id, session, **user_registration_info.model_dump(), status=UserStatus.active
     )
     await users_config_crud.add_user_config(user_config_schema, session)

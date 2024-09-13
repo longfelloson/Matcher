@@ -19,9 +19,9 @@ async def add_report(report: ReportSchema, session: AsyncSession) -> None:
 
 
 async def update_report(
-        report_id: Union[UUID4, str],
-        session: AsyncSession,
-        **values,
+    report_id: Union[UUID4, str],
+    session: AsyncSession,
+    **values,
 ) -> None:
     await session.execute(update(Report).values(**values).where(Report.report_id == report_id))
     await session.commit()

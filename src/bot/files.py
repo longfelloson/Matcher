@@ -20,7 +20,7 @@ async def get_file_from_telegram(file_id: str) -> bytes:
         return await response.read()
 
 
-async def upload_user_photo_to_s3(telegram_file_id: str) -> str:
+async def upload_user_photo_to_s3(telegram_file_id: str) -> None:
     """Загружает фото полученное от пользователя в хранилище S3"""
     file = await get_file_from_telegram(telegram_file_id)
     filename = telegram_file_id + ".jpg"

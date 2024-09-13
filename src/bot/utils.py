@@ -9,17 +9,18 @@ from bot.messages.rates.router import router as rates_router
 from bot.messages.registration.router import router as registration_router
 from bot.messages.router import router as messages_router
 from bot.middlewares.payload import PayloadMiddleware
+from bot.middlewares.throttling import ThrottlingMiddleware
 from bot.middlewares.user import BlockedUserMiddleware
 from bot.reports.router import router as reports_router
 from bot.users.router import router as users_router
 from config import settings
 from database import create_tables
 
+DEFAULT_RATE_LIMIT = 0.5
+
 
 async def start() -> None:
-    """
-    Устанавливает настройки для бота и запускает его
-    """
+    """Устанавливает настройки для бота и запускает его"""
     dp.include_routers(
         captcha_router,
         messages_router,
@@ -31,8 +32,9 @@ async def start() -> None:
         users_router,
         admin_panel_router,
     )
-    set_middleware(PayloadMiddleware(), update=True, message=False)
-    set_middleware(BlockedUserMiddleware(), message=True, update=False)
+    set_middleware(ThrottlingMiddleware(rate_limit=DEFAULT_RATE_LIMIT), update=True)
+    set_middleware(PayloadMiddleware(), update=True,)
+    set_middleware(BlockedUserMiddleware(), message=True)
 
     await create_tables()
     await set_commands()
@@ -40,9 +42,7 @@ async def start() -> None:
 
 
 async def set_commands() -> None:
-    """
-    Устанавливает команды в боте
-    """
+    """Устанавливает команды в боте"""
     default_commands = [
         BotCommand(command="start", description="Запуск бота"),
         BotCommand(command="help", description="Поддержка"),
@@ -60,7 +60,7 @@ async def set_commands() -> None:
         ])
 
 
-def set_middleware(middleware, update=True, message=True):
+def set_middleware(middleware, update=False, message=False):
     """Устанавливает 'прослойки'"""
     if update:
         dp.update.outer_middleware(middleware)

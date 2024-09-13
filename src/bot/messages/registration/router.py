@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.enums import ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -20,7 +20,7 @@ from bot.messages.registration.schemas import (
     UserPreferredGender,
     UserGender,
     UserPreferredAgeGroup,
-    UserCity,
+    UserCity, UserRegistrationInfo,
 )
 from bot.messages.registration.states import RegistrationStates
 from bot.messages.registration.utils import complete_user_registration
@@ -29,9 +29,6 @@ from bot.users.geo.utils import reverse_geocode_user_location
 from s3 import s3_client
 
 router = Router(name="Registration")
-
-MIN_USER_AGE = 13
-MAX_USER_AGE = 29
 
 
 @router.message(RegistrationStates.age)
@@ -50,6 +47,7 @@ async def user_age_state_handler(message: Message, state: FSMContext):
 
 
 @router.message(RegistrationStates.name)
+@router.message(RegistrationStates.gender, F.text == "↩")
 async def user_name_state_handler(message: Message, state: FSMContext):
     """Обработка пользовательского имени"""
     try:
@@ -65,6 +63,7 @@ async def user_name_state_handler(message: Message, state: FSMContext):
 
 
 @router.message(RegistrationStates.gender)
+@router.message(RegistrationStates.preferred_gender, F.text == "↩")
 async def user_gender_state_handler(message: Message, state: FSMContext):
     """Обработка пользовательского гендера"""
     try:
@@ -80,6 +79,7 @@ async def user_gender_state_handler(message: Message, state: FSMContext):
 
 
 @router.message(RegistrationStates.preferred_gender)
+@router.message(RegistrationStates.preferred_age_group, F.text == "↩")
 async def user_preferred_gender_state_handler(message: Message, state: FSMContext):
     """Обработка предпочитаемого к просмотру гендера анкет"""
     try:
@@ -95,6 +95,7 @@ async def user_preferred_gender_state_handler(message: Message, state: FSMContex
 
 
 @router.message(RegistrationStates.preferred_age_group)
+@router.message(RegistrationStates.location, F.text == "↩")
 async def preferred_age_group_state_handler(message: Message, state: FSMContext):
     """Получение предпочитаемой группы возрастов анкет к просмотру"""
     try:
@@ -108,6 +109,7 @@ async def preferred_age_group_state_handler(message: Message, state: FSMContext)
 
 
 @router.message(RegistrationStates.location)
+@router.message(RegistrationStates.photo, F.text == "↩")
 async def location_state_handler(message: Message, state: FSMContext):
     """Получение локации или города пользователя"""
     try:
@@ -133,20 +135,17 @@ async def photo_state_handler(
 ):
     """Получение фотографии пользователя и последующая загрузка в БД"""
     if message.content_type == ContentType.PHOTO:
+        data = await state.get_data()
+
         profile_photo_telegram_file_id = message.photo[-1].file_id
-        user_reg_info = await state.get_data()
-        user_reg_info["photo_url"] = s3_client.get_file_url(
-            file_name=profile_photo_telegram_file_id
-        )
-        user_config_schema = UserConfig(user_id=message.chat.id, guess_age=True)
+        photo_url = s3_client.get_file_url(file_name=profile_photo_telegram_file_id)
+
+        user_registration_info = UserRegistrationInfo(**data, photo_url=photo_url)
+        user_config = UserConfig(user_id=message.chat.id, guess_age=True)
 
         await state.clear()
         await complete_user_registration(
-            user_config_schema=user_config_schema,
-            profile_photo_telegram_file_id=profile_photo_telegram_file_id,
-            message=message,
-            user_reg_info=user_reg_info,
-            session=session,
+            user_config, profile_photo_telegram_file_id, user_registration_info, session
         )
         await message.answer("Твоя анкета сохранена ✅", reply_markup=main_keyboard())
     else:

@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class RateType(str, Enum):
+class RateType(StrEnum):
     positive = "positive"
     negative = "negative"

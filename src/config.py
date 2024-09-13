@@ -16,7 +16,7 @@ class S3Config(BaseSettings):
 
 class RedisConfig(BaseSettings):
     REDIS_PORT: int = 6379
-    REDIS_HOST: str
+    REDIS_HOST: str = "redis"
     REDIS_DB: int = 0
 
     @property

@@ -15,7 +15,7 @@ class BlockedUserMiddleware(BaseMiddleware):
         message: Message,
         data: dict,
     ):
-        """'Прослойка" для заблокированных пользователей"""
+        """'Прослойка' для заблокированных пользователей"""
         user_id = message.chat.id
         user = await users_crud.get_user(user_id, data["session"])
         if not user or user.status != UserStatus.blocked:

@@ -11,9 +11,7 @@ CIPHER = Caesar(key=3)
 
 
 def generate_captcha(emojis_limit: int = DEFAULT_CAPTCHA_EMOJIS_LIMIT) -> dict:
-    """
-    Генерирует словарь с эмодзи и их верностью для капчи
-    """
+    """Генерирует словарь с эмодзи и их верностью для капчи"""
     new_emojis = deepcopy(EMOJIS)
     random.shuffle(new_emojis)
 

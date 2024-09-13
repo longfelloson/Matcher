@@ -52,3 +52,14 @@ class UserPreferredAgeGroup(BaseModel):
 
 class UserCity(BaseModel):
     city: str = Field(min_length=2, max_length=23)
+
+
+class UserRegistrationInfo(BaseModel):
+    age: int
+    name: str
+    gender: str
+    preferred_gender: str
+    preferred_age_group: str
+    photo_url: str
+    city: str
+    location: Optional[str]
