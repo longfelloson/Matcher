@@ -25,3 +25,5 @@ class UserProfileSection(StrEnum):
     age = "Возраст"
     city = "Город"
     photo = "Фото"
+    gender = "Пол"
+    preferred_gender = "Кого оценивать?"

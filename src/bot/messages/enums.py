@@ -10,13 +10,19 @@ class Answer(StrEnum):
 
 
 class ChangeProfileAnswer(StrEnum):
-    change_name = "Отправь новое имя ⤵️"
-    change_location = "Отправь локацию или город ⤵️"
-    change_age = "Отправь новый возраст ⤵️"
-    change_photo = "Отправь новое фото ⤵️"
-    change_profile = "Выбери раздел, чтобы изменить его ⤵️"
+    name = "Отправь новое имя ⤵️"
+    location = "Отправь локацию или город ⤵️"
+    age = "Отправь новый возраст ⤵️"
+    photo = "Отправь новое фото ⤵️"
+    profile = "Выбери раздел, чтобы изменить его ⤵️"
+    gender = "Выбери свой пол ⤵️"
+    preferred_gender = "Выбери пол для просмотра ⤵️"
 
-    name_updated = "Имя обновлено ✅"
-    photo_updated = "Фото обновлено ✅"
-    age_updated = "Возраст обновлен ✅"
-    location_updated = "Город обновлен ✅"
+
+class UpdatedProfileAnswer(StrEnum):
+    name = "Имя обновлено ✅"
+    photo = "Фото обновлено ✅"
+    age = "Возраст обновлен ✅"
+    location = "Город обновлен ✅"
+    gender = "Пол обновлен ✅"
+    preferred_gender = "Теперь ты ищешь другой пол ✅"

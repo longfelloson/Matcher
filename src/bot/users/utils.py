@@ -3,19 +3,15 @@ from typing import List, Tuple, Sequence, Union
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from sqlalchemy import or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
 from bot.loader import bot
 from bot.messages.guesses.enums import Answer
-from bot.messages.guesses.keyboards import guess_user_age_keyboard, rate_user_keyboard
 from bot.messages.guesses.states import GuessesStates
-from bot.messages.guesses import crud as guesses_crud
 from bot.messages.guesses.utils import get_guessed_users_ids, was_user_guessed, send_user_to_guess
-from bot.messages.rates import crud as rates_crud
 from bot.messages.rates.states import RateState
-from bot.messages.rates.utils import get_rated_users_ids, send_user_to_rate, was_user_rated
+from bot.messages.rates.utils import get_rated_users_ids, send_user_to_rate
 from bot.messages.registration.enums.age import AgeGroup
 from bot.messages.registration.enums.gender import PreferredGender
 from bot.texts.users import get_user_profile_caption
@@ -72,7 +68,6 @@ async def get_user_for_view(state: FSMContext, session: AsyncSession) -> User:
     """Получение пользователя для просмотра из Redis"""
     data = await state.get_data()
     user_for_view = await users_crud.get_user(data.get("user_for_view_id"), session)
-
     return user_for_view
 
 

@@ -12,8 +12,8 @@ botocore==1.34.131
 aiohttp==3.9.5
 emoji==2.12.1
 pycipher==0.5.2
-pydantic-settings
-asyncpg
-redis
-pydantic-extra-types
-phonenumbers
+pydantic-settings==2.4.0
+pydantic-extra-types==2.9.0
+aiologger==0.7.0
+aiopytesseract==0.14.0
+phonenumbers==8.13.45

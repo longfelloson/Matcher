@@ -21,9 +21,7 @@ def get_age_suffix(age):
 
 
 def get_profile_text(user: User) -> str:
-    """
-    Текст анкеты пользователя в его профиле
-    """
+    """Текст анкеты пользователя в его профиле"""
     currency = Answer.convert_score_to_currency(user.points)
     points_info = f"{int(user.points)} (~{currency} ₽)"
     return (
@@ -35,9 +33,7 @@ def get_profile_text(user: User) -> str:
 
 
 def get_user_profile_caption(rater: User, rated: User) -> str:
-    """
-    Возвращает описание профиля пользовательской анкеты при просмотре другим пользователем
-    """
+    """Возвращает описание профиля пользовательской анкеты при просмотре другим пользователем"""
     base_caption = f"{rated.name}, {rated.city}"
 
     if rater.instagram:

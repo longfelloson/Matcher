@@ -1,17 +1,17 @@
 import asyncio
 
 from aiogram import Router, F
-from aiogram.filters import or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import market_link_keyboard
-from bot.messages.enums import Answer, ChangeProfileAnswer
-from bot.messages.registration.utils import set_previous_state
+from bot.messages.enums import ChangeProfileAnswer
+from bot.messages.guesses.router import router as guesses_router
+from bot.messages.rates.router import router as rates_router
+from bot.messages.registration.router import router as registration_router
 from bot.texts.users import get_profile_text
 from bot.users import crud as users_crud
-from bot.users.configs import crud as configs_crud
 from bot.users.enums import UserStatus
 from bot.users.keyboards import (
     user_profile_keyboard,
@@ -23,6 +23,7 @@ from bot.users.utils import send_user_to_react
 from market.auth.token import get_auth_link
 
 router = Router(name="Messages")
+router.include_routers(registration_router, guesses_router, rates_router)
 
 
 @router.message(F.text == "Начать ▶️")
@@ -89,17 +90,22 @@ async def profile_button_handler(
 @router.message(UserChangeState.age, F.text == "↩")
 @router.message(UserChangeState.location, F.text == "↩")
 @router.message(UserChangeState.photo, F.text == "↩")
+@router.message(UserChangeState.gender, F.text == "↩")
 async def change_user_profile_button_handler(message: Message, state: FSMContext):
     """Обработка кнопки "Изменить профиль"""
     await state.set_state(UserChangeState.sections)
     await message.answer(
-        ChangeProfileAnswer.change_profile,
+        ChangeProfileAnswer.profile,
         reply_markup=change_user_profile_section_keyboard(),
     )
 
 
 @router.message(UserChangeState.profile, F.text == "Отключить анкету 😴")
-async def turn_off_user(message: Message, user: User, session: AsyncSession):
+async def turn_off_user(
+    message: Message,
+    user: User,
+    session: AsyncSession,
+):
     """Отключение анкеты из системы поиска"""
     await users_crud.update_user(user.user_id, session, status=UserStatus.not_active)
     await message.answer(
@@ -109,16 +115,14 @@ async def turn_off_user(message: Message, user: User, session: AsyncSession):
 
 
 @router.message(UserChangeState.profile, F.text == "Включить анкету 🚀")
-async def turn_off_user(message: Message, user: User, session: AsyncSession):
+async def turn_off_user(
+    message: Message,
+    user: User,
+    session: AsyncSession,
+):
     """Отключение анкеты из системы поиска"""
     await users_crud.update_user(user.user_id, session, status=UserStatus.active)
     await message.answer(
         text="Твоя анкета включена, быстрее начинай оценивать 🤩",
         reply_markup=user_profile_keyboard(user.config.guess_age, UserStatus.active)
     )
-
-
-@router.message(F.text.in_({"↩️", "↩"}))
-async def back_button_handler(message: Message, state: FSMContext):
-    """Обработка кнопки "Назад" в любом из состояний регистрации"""
-    await set_previous_state(message, state)

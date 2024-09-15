@@ -1,5 +1,4 @@
-import asyncio
-from typing import Any, List, Set
+from typing import List, Set
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -23,13 +22,7 @@ DEFAULT_DELAY = 0.3
 
 def get_guess_points(user_age_guess: int, user_for_view: User) -> float | int:
     """Возвращает баллы, которые получит человек за его попытку угадать возраст"""
-    score = DEFAULT_AGE_GUESS_SCORE
-    if user_age_guess == user_for_view.age:
-        score = SAME_AGE_GUESS_SCORE
-    elif user_age_guess in [user_for_view.age - 1, user_for_view.age + 1]:
-        score = CLOSE_AGE_GUESS_SCORE
-
-    return score
+    return SAME_AGE_GUESS_SCORE if user_age_guess == user_for_view.age else DEFAULT_AGE_GUESS_SCORE
 
 
 async def react_for_user_guess(
@@ -46,17 +39,16 @@ async def react_for_user_guess(
     guess = Guess(
         guesser=user.user_id, guessed=user_for_view.user_id, points=points
     )
-    answer = Answer.get_age_guess_answer(user, user_for_view, points)
+    answer = "Теперь оцени анкету ⤴️\n\n"
 
     await crud.add_guess(guess, session)
     await users_crud.increase_user_points(user.user_id, points, session)
 
-    answer_message = await message.answer(answer)
+    if points > 0:
+        answer = f"(+{points} 🎈) {answer}"
 
-    await asyncio.sleep(0.75)
-    await answer_message.delete()
     await state.set_state(RateState.user)
-    await message.answer(f"Теперь оцени анкету ⤴️\n\n", reply_markup=rate_user_keyboard())
+    await message.answer(answer, reply_markup=rate_user_keyboard())
 
 
 async def get_guessed_users_ids(user_id: int, session: AsyncSession) -> Set[int]:
@@ -64,16 +56,21 @@ async def get_guessed_users_ids(user_id: int, session: AsyncSession) -> Set[int]
     return set(guess.guessed for guess in guesses)
 
 
-async def send_user_to_guess(guesser: User, guessed: User, caption: str) -> None:
+async def send_user_to_guess(
+    guesser: User,
+    guessed: User,
+    caption: str,
+) -> None:
     """Отправляет пользователя для угадывания его возраста"""
     photo = await bot.send_photo(
         chat_id=guesser.user_id,
         caption=caption,
         photo=guessed.photo_url
     )
+    guessed_age_group_name = AgeGroup.get_group_by_age(guessed.age).name
     await photo.answer(
         text=Answer.guess_age,
-        reply_markup=guess_user_age_keyboard(AgeGroup.get_group_by_age(guessed.age).name)
+        reply_markup=guess_user_age_keyboard(guessed_age_group_name)
     )
 
 

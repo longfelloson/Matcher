@@ -9,7 +9,6 @@ from bot.messages.guesses.keyboards import ALL_AGE_GROUPS
 from bot.messages.guesses.states import GuessesStates
 from bot.messages.guesses.utils import react_for_user_guess
 from bot.users.models import User
-from bot.users import crud as users_crud
 from bot.users.utils import get_user_for_view
 
 router = Router(name="Guesses")

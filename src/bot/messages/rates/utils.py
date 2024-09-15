@@ -74,7 +74,11 @@ async def get_rated_users_ids(user_id: int, session: AsyncSession) -> List[int]:
     return set(rate.rated for rate in rates)
 
 
-async def send_user_to_rate(rater: User, rated: User, caption: str) -> Message:
+async def send_user_to_rate(
+    rater: User,
+    rated: User,
+    caption: str,
+) -> Message:
     """Отправляет пользователя для его оценки"""
     photo = await bot.send_photo(
         chat_id=rater.user_id,

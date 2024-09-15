@@ -3,9 +3,10 @@ from typing import Optional, List
 
 
 class AgeGroup(Enum):
-    first = range(14, 19)
-    second = range(19, 24)
-    third = range(24, 29)
+    first = range(10, 14)
+    second = range(14, 19)
+    third = range(19, 24)
+    fourth = range(24, 29)
 
     @classmethod
     def get_group_by_age(cls, age: int) -> Optional["AgeGroup"]:
@@ -20,12 +21,13 @@ class AgeGroup(Enum):
 
     @property
     def name(self) -> str:
-        if self.value == self.first.value:
-            return "first"
-        elif self.value == self.second.value:
-            return "second"
-        elif self.value == self.third.value:
-            return "third"
+        names = {
+            self.first.value: "first",
+            self.second.value: "second",
+            self.third.value: "third",
+            self.fourth.value: "fourth",
+        }
+        return names[self.value]
 
 
 class PreferredAgeGroupOption(StrEnum):

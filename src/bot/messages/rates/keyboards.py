@@ -13,7 +13,7 @@ def notification_keyboard(rater_id: int) -> InlineKeyboard:
     builder = InlineBuilder().row(
         InlineButton(
             text="Просмотреть 👀",
-            callback_data=f"{UserAction.view_rater_user.value}*{rater_id}"
+            callback_data=f"{UserAction.view_rater_user}*{rater_id}"
         )
     )
     return builder.as_markup()

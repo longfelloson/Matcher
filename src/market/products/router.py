@@ -15,10 +15,10 @@ templates = Jinja2Templates(directory=settings.TEMPLATES_PATH + "/products")
 
 @router.get("/products", status_code=status.HTTP_200_OK)
 async def get_products(
-    offset: int = 0,
-    limit: int = 100,
-    user_id: int = None,
-    session: AsyncSession = Depends(get_async_session),
+        offset: int = 0,
+        limit: int = 100,
+        user_id: int = None,
+        session: AsyncSession = Depends(get_async_session),
 ):
     """Ручка для получения товаров"""
     return await crud.get_products(offset, limit, user_id, session)
@@ -26,9 +26,9 @@ async def get_products(
 
 @router.get("/products/{product_id}")
 async def get_product_endpoint(
-    product_id: int,
-    session: AsyncSession = Depends(get_async_session),
-    user_id: int = None,
+        product_id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user_id: int = None,
 ):
     """Ручка для получения товара по его ID"""
     return await crud.get_product(product_id, session, user_id)

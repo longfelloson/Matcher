@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ReportStatus(str, Enum):
+class ReportStatus(StrEnum):
     viewed = "viewed"
     not_viewed = "not_viewed"

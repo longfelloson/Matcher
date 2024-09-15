@@ -32,5 +32,7 @@ async def get_user_config(user_id: int, session: AsyncSession) -> UserConfig:
 
 async def add_user_config(user_config: UserConfigSchema, session: AsyncSession) -> UserConfig:
     """Добавление пользовательского конфига"""
-    await session.execute(insert(UserConfig).values(**user_config.model_dump()))
+    await session.execute(
+        insert(UserConfig).values(**user_config.model_dump())
+    )
     await session.commit()

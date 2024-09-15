@@ -5,7 +5,6 @@ from bot.loader import bot
 from config import settings
 from s3 import s3_client
 
-
 BASE_TELEGRAM_FILE_URL = "https://api.telegram.org/file/bot"
 
 

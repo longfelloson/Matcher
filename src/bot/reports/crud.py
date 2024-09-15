@@ -1,7 +1,11 @@
 from typing import Union
 
 from pydantic import UUID4
-from sqlalchemy import select, insert, update
+from sqlalchemy import (
+    select,
+    insert,
+    update,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.reports.models import Report

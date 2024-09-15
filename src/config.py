@@ -1,7 +1,6 @@
 from typing import Union
 
 from dotenv import load_dotenv
-from pydantic import Field
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -33,6 +32,10 @@ class BotConfig(BaseSettings):
     SUPPORT_ACCOUNT_USERNAME: str
     POINTS_FOR_BLOCKED_USER: Union[int, float]
     GEOCODER_API_KEY: str
+
+    @property
+    def moderators_ids(self):
+        return list(map(int, self.MODERATOR_IDS.split(",")))
 
     @property
     def admins_ids(self):
@@ -78,7 +81,7 @@ class Settings(
     PaymentsConfig,
     RedisConfig,
 ):
-    LOGS_FILE_PATH: str = Field(default="../errors.log")
+    LOGS_FILE_PATH: str = "../errors.log"
 
 
 settings = Settings()

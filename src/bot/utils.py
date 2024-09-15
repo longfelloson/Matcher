@@ -2,11 +2,9 @@ from aiogram.types import BotCommand, BotCommandScopeChat
 
 from bot.adminpanel.router import router as admin_panel_router
 from bot.captcha.router import router as captcha_router
+from bot.errors.router import router as errors_router
 from bot.loader import bot, dp
 from bot.messages.commands.router import router as commands_router
-from bot.messages.guesses.router import router as guesses_router
-from bot.messages.rates.router import router as rates_router
-from bot.messages.registration.router import router as registration_router
 from bot.messages.router import router as messages_router
 from bot.middlewares.payload import PayloadMiddleware
 from bot.middlewares.throttling import ThrottlingMiddleware
@@ -22,19 +20,17 @@ DEFAULT_RATE_LIMIT = 0.5
 async def start() -> None:
     """Устанавливает настройки для бота и запускает его"""
     dp.include_routers(
+        errors_router,
         captcha_router,
         messages_router,
-        registration_router,
         commands_router,
-        rates_router,
-        guesses_router,
         reports_router,
         users_router,
         admin_panel_router,
     )
-    set_middleware(ThrottlingMiddleware(rate_limit=DEFAULT_RATE_LIMIT), update=True)
-    set_middleware(PayloadMiddleware(), update=True,)
-    set_middleware(BlockedUserMiddleware(), message=True)
+    set_middleware(ThrottlingMiddleware(rate_limit=DEFAULT_RATE_LIMIT), for_updates=True)
+    set_middleware(PayloadMiddleware(), for_updates=True)
+    set_middleware(BlockedUserMiddleware(), for_messages=True)
 
     await create_tables()
     await set_commands()
@@ -46,7 +42,6 @@ async def set_commands() -> None:
     default_commands = [
         BotCommand(command="start", description="Запуск бота"),
         BotCommand(command="help", description="Поддержка"),
-        BotCommand(command="report", description="Жалоба"),
     ]
     await bot.set_my_commands(default_commands)
 
@@ -60,10 +55,10 @@ async def set_commands() -> None:
         ])
 
 
-def set_middleware(middleware, update=False, message=False):
+def set_middleware(middleware, for_updates=False, for_messages=False):
     """Устанавливает 'прослойки'"""
-    if update:
+    if for_updates:
         dp.update.outer_middleware(middleware)
 
-    if message:
+    if for_messages:
         dp.message.middleware(middleware)

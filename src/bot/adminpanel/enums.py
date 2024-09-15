@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdminAction(str, Enum):
+class AdminAction(StrEnum):
     ban_user = "block_user"
     unban_user = "unban_user"
     view_users_amount = "view_users_amount"
@@ -9,6 +9,6 @@ class AdminAction(str, Enum):
     approve_report = "approve_report"
 
 
-class AdminPanelSection(str, Enum):
+class AdminPanelSection(StrEnum):
     stats = "stats"
     users = "users"

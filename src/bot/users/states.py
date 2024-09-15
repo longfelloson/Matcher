@@ -8,3 +8,5 @@ class UserChangeState(StatesGroup):
     location = State()
     age = State()
     photo = State()
+    preferred_gender = State()
+    gender = State()

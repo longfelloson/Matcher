@@ -29,9 +29,9 @@ async def exchange_page(request: Request):
 
 @router.post("/exchange", response_class=JSONResponse, status_code=status.HTTP_201_CREATED)
 async def exchange_points_endpoint(
-    data: ExchangePoints,
-    session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(get_current_user),
+        data: ExchangePoints,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(get_current_user),
 ):
     """Ручка для обмена баллов пользователя"""
     await users_crud.decrease_user_points(user.user_id, data.points, session)

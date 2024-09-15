@@ -70,10 +70,10 @@ class Wallet(PaymentSystem):
         return sigh
 
     async def _request(
-        self,
-        url: str,
-        method: str = "POST",
-        data: dict = None
+            self,
+            url: str,
+            method: str = "POST",
+            data: dict = None
     ) -> dict:
         """
         Отправляет запрос с нужными данными
@@ -86,19 +86,19 @@ class Wallet(PaymentSystem):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(
-                    method, url, data=data, headers=headers
+                        method, url, data=data, headers=headers
                 ) as response:
                     return await response.json()
         except Exception as e:
-            logger.error(f"Ошибка при отправке запроса для создания платежа: {e}")
+            await logger.error(f"Ошибка при отправке запроса для создания платежа: {e}")
 
     async def withdraw(
-        self,
-        sbp_bank_id: int,
-        amount: float,
-        payment_system_id: int,
-        fee_from_balance: int = FEE_FROM_PAYMENT,
-        currency_id: int = RUB_CURRENCY_ID,
+            self,
+            sbp_bank_id: int,
+            amount: float,
+            payment_system_id: int,
+            fee_from_balance: int = FEE_FROM_PAYMENT,
+            currency_id: int = RUB_CURRENCY_ID,
     ) -> dict:
         """
         Выводит средства с кошелька на указанные реквизиты
