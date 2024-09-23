@@ -3,8 +3,8 @@ from typing import Optional, List
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.messages.guesses.models import Guess
-from bot.messages.guesses.schemas import Guess as GuessSchema
+from bot.users.guesses.models import Guess
+from bot.users.guesses.schemas import Guess as GuessSchema
 
 
 async def add_guess(guess: GuessSchema, session: AsyncSession) -> None:

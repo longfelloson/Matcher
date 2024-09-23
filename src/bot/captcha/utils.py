@@ -1,8 +1,13 @@
 import random
 from copy import deepcopy
+from typing import Union
 
 import emoji
 from pycipher import Caesar
+
+from bot.captcha.keyboards import captcha_keyboard
+from bot.loader import bot
+from bot.texts.utils import spoiler
 
 DEFAULT_CAPTCHA_EMOJIS_LIMIT = 5
 EMOJIS = list(emoji.EMOJI_DATA.keys())
@@ -36,3 +41,15 @@ def encrypt_correctness(emoji_: str, correct_emoji: str) -> str:
 
 def decrypt_correctness(encrypted_captcha_correctness: str) -> str:
     return CIPHER.decipher(encrypted_captcha_correctness)
+
+
+async def send_captcha(
+    chat_id: Union[str, int],
+    captcha_emojis: dict,
+    hidden_correct_emoji: str
+) -> None:
+    await bot.send_message(
+        chat_id=chat_id,
+        text=f"Выберите эмодзи: {hidden_correct_emoji}",
+        reply_markup=captcha_keyboard(captcha_emojis),
+    )

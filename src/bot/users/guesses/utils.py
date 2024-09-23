@@ -5,12 +5,12 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.loader import bot
-from bot.messages.guesses import crud
-from bot.messages.guesses.enums import Answer
-from bot.messages.guesses.keyboards import rate_user_keyboard, guess_user_age_keyboard
-from bot.messages.guesses.schemas import Guess
-from bot.messages.rates.states import RateState
-from bot.messages.registration.enums.age import AgeGroup
+from bot.users.guesses import crud
+from bot.users.guesses.enums import Answer
+from bot.users.guesses.keyboards import rate_user_keyboard, guess_user_age_keyboard
+from bot.users.guesses.schemas import Guess
+from bot.users.rates.states import RateState
+from bot.users.registration.enums.age import AgeGroup
 from bot.users import crud as users_crud
 from bot.users.models import User
 

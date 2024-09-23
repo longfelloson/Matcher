@@ -20,7 +20,7 @@ DEFAULT_RATE_LIMIT = 0.5
 async def start() -> None:
     """Устанавливает настройки для бота и запускает его"""
     dp.include_routers(
-        errors_router,
+        # errors_router,
         captcha_router,
         messages_router,
         commands_router,

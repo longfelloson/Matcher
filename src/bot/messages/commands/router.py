@@ -4,42 +4,42 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.adminpanel.keyboards import admin_panel_keyboard
-from bot.filters import UserAdminFilter
+from bot.captcha.utils import send_captcha, generate_captcha
 from bot.keyboards import main_keyboard, help_command_keyboard
 from bot.messages.commands.enums import CommandAnswer
-from bot.messages.registration.enums.answers import RegistrationSectionAnswer
-from bot.messages.registration.states import RegistrationStates
-from bot.users import crud as users_crud
+from bot.texts.utils import spoiler
 from bot.users.models import User
-from bot.users.utils import get_user_schema_from_message
+from config import settings
 
 router = Router(name="Commands")
 
 
 @router.message(Command("start"))
 @router.message(F.text.in_({"↩️", "↩"}))
-async def command_start_handler(
+async def start_command_handler(
     message: Message,
-    session: AsyncSession,
     state: FSMContext,
     user: Optional[User]
 ):
     if not user:
-        await users_crud.create_user(get_user_schema_from_message(message), session)
-        await state.set_state(RegistrationStates.age)
-        await message.answer(RegistrationSectionAnswer.age)
+        user_id = message.chat.id
+        captcha = generate_captcha()
+
+        hidden_correct_emoji = spoiler(captcha["correct_emoji"])
+
+        await send_captcha(user_id, captcha["emojis"], hidden_correct_emoji)
     else:
+        await state.clear()
         await message.answer(CommandAnswer.start, reply_markup=main_keyboard())
 
 
 @router.message(Command("help"))
-async def command_help_handler(message: Message):
+async def help_command_handler(message: Message):
     await message.answer(CommandAnswer.help, reply_markup=help_command_keyboard())
 
 
-@router.message(UserAdminFilter(), Command("admin"))
-async def command_help_handler(message: Message):
+@router.message(F.from_user.id.in_(settings.admins_ids), Command("admin"))
+async def admin_command_handler(message: Message):
     await message.answer(CommandAnswer.admin, reply_markup=admin_panel_keyboard())

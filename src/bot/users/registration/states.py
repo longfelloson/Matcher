@@ -8,4 +8,4 @@ class RegistrationState(StatesGroup):
     preferred_gender = State()
     location = State()
     photo = State()
-    viewer_gender = State
+    viewer_gender = State()

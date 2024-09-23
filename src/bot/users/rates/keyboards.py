@@ -4,8 +4,8 @@ from aiogram.utils.keyboard import (
     InlineKeyboardButton as InlineButton,
 )
 
-from bot.messages.rates.enums import RateType
-from bot.users.enums import UserAction
+from bot.users.enums.actions import UserAction
+from bot.users.rates.enums import RateType
 from bot.users.models import User
 
 

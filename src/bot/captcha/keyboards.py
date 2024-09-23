@@ -5,10 +5,10 @@ from aiogram.utils.keyboard import (
 )
 
 
-def captcha_keyboard(captcha: dict) -> InlineKeyboard:
+def captcha_keyboard(captcha_emojis: dict) -> InlineKeyboard:
     """Возвращает клавиатуру с кнопками с эмодзи"""
     buttons = [
-        InlineButton(text=emoji, callback_data=f"select_captcha*{captcha[emoji]}")
-        for emoji in captcha
+        InlineButton(text=emoji, callback_data=f"select_captcha*{captcha_emojis[emoji]}")
+        for emoji in captcha_emojis
     ]
     return InlineBuilder().add(*buttons).as_markup()

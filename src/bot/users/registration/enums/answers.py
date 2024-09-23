@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class RegistrationSectionAnswer(StrEnum):
+class SectionAnswer(StrEnum):
     age = "Сколько тебе лет?"
     name = "Как тебя зовут?"
     gender = "Выбери свой пол ⤵️"
@@ -10,7 +10,3 @@ class RegistrationSectionAnswer(StrEnum):
     location = "Из какого ты города?"
     photo = "Отправь свое фото ⤵️"
     viewer_gender = "Кто будет просматривать тебя?"
-
-
-class RegistrationIncorrectInputAnswer(StrEnum):
-    

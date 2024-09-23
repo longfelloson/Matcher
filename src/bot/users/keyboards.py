@@ -1,7 +1,8 @@
 from aiogram.types import KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
-from bot.users.enums import UserStatus, UserProfileSection
+from bot.users.enums.sections import UserProfileSection
+from bot.users.enums.statuses import UserStatus
 
 
 def user_profile_keyboard(guess_age: bool, user_status: UserStatus):

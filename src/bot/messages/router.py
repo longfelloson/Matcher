@@ -7,12 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import market_link_keyboard
 from bot.messages.enums import ChangeProfileAnswer
-from bot.messages.guesses.router import router as guesses_router
-from bot.messages.rates.router import router as rates_router
-from bot.messages.registration.router import router as registration_router
+from bot.users.enums.statuses import UserStatus
+from bot.users.guesses.router import router as guesses_router
+from bot.users.rates.router import router as rates_router
+from bot.users.registration.router import router as registration_router
 from bot.texts.users import get_profile_text
 from bot.users import crud as users_crud
-from bot.users.enums import UserStatus
+
 from bot.users.keyboards import (
     user_profile_keyboard,
     change_user_profile_section_keyboard,
@@ -115,7 +116,7 @@ async def turn_off_user(
 
 
 @router.message(UserChangeState.profile, F.text == "Включить анкету 🚀")
-async def turn_off_user(
+async def turn_on_user(
     message: Message,
     user: User,
     session: AsyncSession,

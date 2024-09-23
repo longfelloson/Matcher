@@ -2,7 +2,7 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.users import crud as users_crud
-from bot.users.enums import UserStatus
+from bot.users.enums.statuses import UserStatus
 
 
 async def ban_user(message: Message, user_id: int, session: AsyncSession) -> None:

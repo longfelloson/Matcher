@@ -5,7 +5,7 @@ from aiogram.types import Message
 
 from bot.keyboards import help_command_keyboard
 from bot.users import crud as users_crud
-from bot.users.enums import UserStatus
+from bot.users.enums.statuses import UserStatus
 
 
 class BlockedUserMiddleware(BaseMiddleware):

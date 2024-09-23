@@ -1,5 +1,5 @@
 .env
-.env.development
+development.env
 .git
 .idea
 .dockerignore

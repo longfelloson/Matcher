@@ -6,14 +6,14 @@ from aiogram.types import Message, InlineKeyboardMarkup
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.loader import bot
-from bot.messages.guesses.enums import Answer
-from bot.messages.guesses.keyboards import rate_user_keyboard
-from bot.messages.rates import crud
-from bot.messages.rates.enums import RateType
-from bot.messages.rates.keyboards import notification_keyboard
-from bot.messages.rates.schemas import Rate
+from bot.users.enums.statuses import UserStatus
+from bot.users.guesses.enums import Answer
+from bot.users.guesses.keyboards import rate_user_keyboard
+from bot.users.rates import crud
+from bot.users.rates.enums import RateType
+from bot.users.rates.keyboards import notification_keyboard
+from bot.users.rates.schemas import Rate
 from bot.users import crud as users_crud
-from bot.users.enums import UserStatus
 from bot.users.models import User
 
 
@@ -65,7 +65,7 @@ async def send_rate_notification(
                 reply_markup=keyboard,
                 parse_mode=ParseMode.HTML,
             )
-    except (TelegramForbiddenError, TelegramBadRequest):
+    except TelegramForbiddenError:
         await users_crud.update_user(user_id, session, status=UserStatus.left)
 
 

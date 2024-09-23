@@ -3,7 +3,7 @@ import itertools
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
-from bot.messages.registration.enums.age import AgeGroup
+from bot.users.registration.enums.age import AgeGroup
 
 # Словарь с кнопками возрастов групп
 AGE_GROUPS_BUTTONS = {

@@ -10,3 +10,4 @@ class UserChangeState(StatesGroup):
     photo = State()
     preferred_gender = State()
     gender = State()
+    viewer_gender = State()

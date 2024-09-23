@@ -16,7 +16,8 @@ class ChangeProfileAnswer(StrEnum):
     photo = "Отправь новое фото ⤵️"
     profile = "Выбери раздел, чтобы изменить его ⤵️"
     gender = "Выбери свой пол ⤵️"
-    preferred_gender = "Выбери пол для просмотра ⤵️"
+    preferred_gender = "Кого будешь просматривать ⤵️"
+    viewer_gender = "Кто будет просматривать тебя ⤵️"
 
 
 class UpdatedProfileAnswer(StrEnum):
@@ -26,3 +27,4 @@ class UpdatedProfileAnswer(StrEnum):
     location = "Город обновлен ✅"
     gender = "Пол обновлен ✅"
     preferred_gender = "Теперь ты ищешь другой пол ✅"
+    viewer_gender = "Теперь тебя просматривает другой пол ✅"

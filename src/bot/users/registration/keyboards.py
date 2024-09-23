@@ -1,8 +1,8 @@
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
-from bot.messages.registration.enums.age import PreferredAgeGroupOption
-from bot.messages.registration.enums.gender import GenderOption, PreferredGenderOption
+from bot.users.registration.enums.age import PreferredAgeGroupOption
+from bot.users.registration.enums.gender import GenderOption, PreferredGenderOption, ViewerGenderOption
 
 
 def select_gender_keyboard() -> Keyboard:
@@ -61,6 +61,19 @@ def select_location_keyboard() -> Keyboard:
 
 def back_button_keyboard() -> Keyboard:
     builder = Builder().row(
+        Button(text="↩")
+    )
+    return builder.as_markup(resize_keyboard=True)
+
+
+def select_viewer_gender_keyboard() -> Keyboard:
+    buttons = [
+        Button(text=gender) for gender in ViewerGenderOption
+    ]
+    builder = Builder().row(
+        *buttons
+    )
+    builder.row(
         Button(text="↩")
     )
     return builder.as_markup(resize_keyboard=True)

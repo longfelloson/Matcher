@@ -1,4 +1,4 @@
-from bot.messages.guesses.enums import Answer
+from bot.users.guesses.enums import Answer
 from bot.texts.utils import bold
 from bot.users.models import User
 

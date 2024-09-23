@@ -1,5 +1,4 @@
-from operator import and_
-from typing import List, Tuple, Sequence, Union
+from typing import List, Sequence, Union
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -7,61 +6,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
 from bot.loader import bot
-from bot.messages.guesses.enums import Answer
-from bot.messages.guesses.states import GuessesStates
-from bot.messages.guesses.utils import get_guessed_users_ids, was_user_guessed, send_user_to_guess
-from bot.messages.rates.states import RateState
-from bot.messages.rates.utils import get_rated_users_ids, send_user_to_rate
-from bot.messages.registration.enums.age import AgeGroup
-from bot.messages.registration.enums.gender import PreferredGender
+from bot.users.guesses.enums import Answer
+from bot.users.guesses.states import GuessesStates
+from bot.users.guesses.utils import (
+    get_guessed_users_ids,
+    was_user_guessed,
+    send_user_to_guess,
+)
+from bot.users.rates.states import RateState
+from bot.users.rates.utils import get_rated_users_ids, send_user_to_rate
 from bot.texts.users import get_user_profile_caption
 from bot.users import crud as users_crud
-from bot.users.enums import UserStatus
-from bot.users.geo.utils import get_nearest_user
+from bot.users.locations import get_nearest_user
 from bot.users.models import User
-from bot.users.schemas import User as UserSchema
-
-DEFAULT_AGE_GUESS_SCORE = 0.0
-CLOSE_AGE_GUESS_SCORE = 2.5
-SAME_AGE_GUESS_SCORE = 5
-
-
-def get_user_schema_from_message(user_message: Message) -> UserSchema:
-    """Получение схемы пользователя по его сообщению"""
-    return UserSchema(user_id=user_message.chat.id, username=user_message.chat.username)
-
-
-def get_search_options(
-    rated_users_ids: Sequence[int],
-    guessed_users_ids: Sequence[int],
-    searcher: User,
-) -> Tuple[List, List, List]:
-    """Получение условий поиска пользователей для просмотра"""
-    minimal_options = [
-        User.user_id != searcher.user_id,
-        User.status == UserStatus.active,
-    ]
-    if searcher.config.guess_age:
-        minimal_options += [
-            and_(User.user_id.not_in(guessed_users_ids), User.user_id.not_in(rated_users_ids))
-        ]
-    else:
-        minimal_options += [
-            User.user_id.not_in(rated_users_ids)
-        ]
-
-    if searcher.preferred_gender != PreferredGender.both:
-        minimal_options += [
-            User.gender == searcher.preferred_gender
-        ]
-
-    common_options = minimal_options + [
-        User.age.in_(AgeGroup.get_group_by_age(searcher.age).value)
-    ]
-    specific_options = common_options + [
-        User.city == searcher.city
-    ]
-    return specific_options, common_options, minimal_options
+from bot.users.search import get_search_options
 
 
 async def get_user_for_view(state: FSMContext, session: AsyncSession) -> User:

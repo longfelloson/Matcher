@@ -5,12 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.functions import count
 
 from bot.users.models import User
-from bot.users.schemas import User as UserSchema
+from bot.users.registration.schemas import UserRegistrationInfo
 
 DEFAULT_USERS_LIMIT = 100
 
 
-async def create_user(user: UserSchema, session: AsyncSession) -> None:
+async def create_user(user: UserRegistrationInfo, session: AsyncSession) -> None:
     await session.execute(insert(User).values(**user.model_dump()))
     await session.commit()
 

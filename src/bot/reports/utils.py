@@ -12,7 +12,7 @@ from bot.reports.models import Report
 from bot.reports.schemas import Report as ReportSchema
 from bot.texts.users import get_user_link
 from bot.users import crud as users_crud
-from bot.users.enums import UserStatus
+from bot.users.enums.statuses import UserStatus
 from bot.users.models import User
 from bot.users.utils import send_user_to_view
 from config import settings
