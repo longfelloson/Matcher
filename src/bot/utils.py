@@ -2,7 +2,6 @@ from aiogram.types import BotCommand, BotCommandScopeChat
 
 from bot.adminpanel.router import router as admin_panel_router
 from bot.captcha.router import router as captcha_router
-from bot.errors.router import router as errors_router
 from bot.loader import bot, dp
 from bot.messages.commands.router import router as commands_router
 from bot.messages.router import router as messages_router
@@ -11,6 +10,7 @@ from bot.middlewares.throttling import ThrottlingMiddleware
 from bot.middlewares.user import BlockedUserMiddleware
 from bot.reports.router import router as reports_router
 from bot.users.router import router as users_router
+from bot.errors.router import router as errors_router
 from config import settings
 from database import create_tables
 
@@ -20,7 +20,7 @@ DEFAULT_RATE_LIMIT = 0.5
 async def start() -> None:
     """Устанавливает настройки для бота и запускает его"""
     dp.include_routers(
-        # errors_router,
+        errors_router,
         captcha_router,
         messages_router,
         commands_router,

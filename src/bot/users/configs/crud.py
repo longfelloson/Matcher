@@ -6,9 +6,9 @@ from bot.users.models import UserConfig
 
 
 async def update_user_config(
-    user_id: int,
-    column_name: str,
-    session: AsyncSession,
+        user_id: int,
+        column_name: str,
+        session: AsyncSession,
 ) -> UserConfig:
     """Обновление колонки пользовательского конфига"""
     config = await get_user_config(user_id, session)

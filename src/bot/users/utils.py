@@ -1,4 +1,8 @@
-from typing import List, Sequence, Union
+from typing import (
+    List,
+    Sequence,
+    Union,
+)
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -6,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
 from bot.loader import bot
+from bot.texts.users import get_user_profile_caption
+from bot.users import crud as users_crud
 from bot.users.guesses.enums import Answer
 from bot.users.guesses.states import GuessesStates
 from bot.users.guesses.utils import (
@@ -13,12 +19,10 @@ from bot.users.guesses.utils import (
     was_user_guessed,
     send_user_to_guess,
 )
-from bot.users.rates.states import RateState
-from bot.users.rates.utils import get_rated_users_ids, send_user_to_rate
-from bot.texts.users import get_user_profile_caption
-from bot.users import crud as users_crud
 from bot.users.locations import get_nearest_user
 from bot.users.models import User
+from bot.users.rates.states import RateState
+from bot.users.rates.utils import get_rated_users_ids, send_user_to_rate
 from bot.users.search import get_search_options
 
 

@@ -2,6 +2,7 @@ from typing import Dict, Optional
 
 from pydantic import Field, BaseModel
 
+from bot.users.enums.genders import UserGender as UserGenderEnum, UserViewerGender as UserViewerGenderEnum
 from bot.users.registration.constants import MIN_AGE
 from bot.users.registration.enums.age import PreferredAgeGroupOption, AgeGroup
 from bot.users.registration.enums.gender import (
@@ -10,7 +11,6 @@ from bot.users.registration.enums.gender import (
     PreferredGender as PreferredGenderEnum,
     ViewerGenderOption,
 )
-from bot.users.enums.genders import UserGender as UserGenderEnum, UserViewerGender as UserViewerGenderEnum
 
 
 class UserAge(BaseModel):

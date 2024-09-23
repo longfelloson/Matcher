@@ -16,10 +16,10 @@ router = Router(name="Guesses")
 
 @router.message(GuessesStates.user_age, F.text.in_(ALL_AGE_GROUPS))
 async def age_guess_button_handler(
-    message: Message,
-    session: AsyncSession,
-    state: FSMContext,
-    user: User,
+        message: Message,
+        session: AsyncSession,
+        state: FSMContext,
+        user: User,
 ):
     """Обработка кнопок угадывания возрасты анкеты"""
     user_for_view = await get_user_for_view(state, session)

@@ -7,7 +7,6 @@ from pycipher import Caesar
 
 from bot.captcha.keyboards import captcha_keyboard
 from bot.loader import bot
-from bot.texts.utils import spoiler
 
 DEFAULT_CAPTCHA_EMOJIS_LIMIT = 5
 EMOJIS = list(emoji.EMOJI_DATA.keys())

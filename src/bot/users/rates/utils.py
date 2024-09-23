@@ -1,27 +1,27 @@
 from typing import Union, List
 
 from aiogram.enums import ParseMode, ContentType
-from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
+from aiogram.exceptions import TelegramForbiddenError
 from aiogram.types import Message, InlineKeyboardMarkup
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.loader import bot
+from bot.users import crud as users_crud
 from bot.users.enums.statuses import UserStatus
 from bot.users.guesses.enums import Answer
 from bot.users.guesses.keyboards import rate_user_keyboard
+from bot.users.models import User
 from bot.users.rates import crud
 from bot.users.rates.enums import RateType
 from bot.users.rates.keyboards import notification_keyboard
 from bot.users.rates.schemas import Rate
-from bot.users import crud as users_crud
-from bot.users.models import User
 
 
 async def react_for_user_rate(
-    message: Message,
-    user: User,
-    user_for_rate: User,
-    session: AsyncSession,
+        message: Message,
+        user: User,
+        user_for_rate: User,
+        session: AsyncSession,
 ) -> None:
     """Реакция на пользовательскую оценку с помощью кнопок"""
     rate = Rate(
@@ -41,12 +41,12 @@ async def react_for_user_rate(
 
 
 async def send_rate_notification(
-    user_id: Union[str, int],
-    text: str,
-    session: AsyncSession,
-    keyboard: InlineKeyboardMarkup = None,
-    content_type: ContentType = ContentType.TEXT,
-    photo: str = None,
+        user_id: Union[str, int],
+        text: str,
+        session: AsyncSession,
+        keyboard: InlineKeyboardMarkup = None,
+        content_type: ContentType = ContentType.TEXT,
+        photo: str = None,
 ) -> None:
     """Отправляет уведомление о том, что пользователь кому-то понравился"""
     try:
@@ -75,9 +75,9 @@ async def get_rated_users_ids(user_id: int, session: AsyncSession) -> List[int]:
 
 
 async def send_user_to_rate(
-    rater: User,
-    rated: User,
-    caption: str,
+        rater: User,
+        rated: User,
+        caption: str,
 ) -> Message:
     """Отправляет пользователя для его оценки"""
     photo = await bot.send_photo(

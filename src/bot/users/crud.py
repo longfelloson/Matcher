@@ -34,7 +34,7 @@ async def get_user(user_id: int, session: AsyncSession) -> Optional[User]:
 
 async def increase_user_points(
     user_id: int,
-    points: int | float,
+    points: Union[int, float],
     session: AsyncSession,
 ) -> None:
     """Увеличение очков пользователя"""
@@ -46,7 +46,7 @@ async def increase_user_points(
 
 async def decrease_user_points(
     user_id: int,
-    points: int | float,
+    points: Union[int, float],
     session: AsyncSession
 ) -> None:
     """Уменьшение очков пользователя"""

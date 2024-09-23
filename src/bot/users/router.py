@@ -1,4 +1,4 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.enums import ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
@@ -8,15 +8,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.files import upload_user_photo_to_s3
 from bot.keyboards import main_keyboard
 from bot.messages.enums import ChangeProfileAnswer, UpdatedProfileAnswer
+from bot.users import crud
 from bot.users.enums.answers import IncorrectInputAnswer
 from bot.users.enums.sections import UserProfileSection
 from bot.users.locations import reverse_geocode_user_location
-from bot.users.registration.keyboards import select_location_keyboard, back_button_keyboard, select_gender_keyboard, \
-    select_preferred_gender_keyboard, select_viewer_gender_keyboard
-from bot.users.registration.schemas import UserAge, UserName, UserCity, UserGender, UserPreferredGender, \
-    UserViewerGender
-from bot.users import crud
 from bot.users.models import User
+from bot.users.registration.keyboards import (
+    select_location_keyboard,
+    back_button_keyboard,
+    select_gender_keyboard,
+    select_preferred_gender_keyboard,
+    select_viewer_gender_keyboard,
+)
+from bot.users.registration.schemas import (
+    UserAge,
+    UserName,
+    UserCity,
+    UserGender,
+    UserPreferredGender,
+    UserViewerGender,
+)
 from bot.users.states import UserChangeState
 from s3 import s3_client
 

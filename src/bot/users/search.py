@@ -1,9 +1,11 @@
-from operator import and_
-from typing import Sequence, Tuple, Generator
+from typing import (
+    Sequence,
+    Tuple,
+    Generator,
+)
 
 from sqlalchemy import or_
 
-from bot.users.enums.genders import UserViewerGender
 from bot.users.enums.statuses import UserStatus
 from bot.users.models import User
 from bot.users.registration.enums.gender import PreferredGender

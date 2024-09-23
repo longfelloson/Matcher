@@ -7,18 +7,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import market_link_keyboard
 from bot.messages.enums import ChangeProfileAnswer
-from bot.users.enums.statuses import UserStatus
-from bot.users.guesses.router import router as guesses_router
-from bot.users.rates.router import router as rates_router
-from bot.users.registration.router import router as registration_router
 from bot.texts.users import get_profile_text
 from bot.users import crud as users_crud
-
+from bot.users.enums.statuses import UserStatus
+from bot.users.guesses.router import router as guesses_router
 from bot.users.keyboards import (
     user_profile_keyboard,
     change_user_profile_section_keyboard,
 )
 from bot.users.models import User
+from bot.users.rates.router import router as rates_router
+from bot.users.registration.router import router as registration_router
 from bot.users.states import UserChangeState
 from bot.users.utils import send_user_to_react
 from market.auth.token import get_auth_link

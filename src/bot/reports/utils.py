@@ -19,10 +19,10 @@ from config import settings
 
 
 async def react_for_report(
-    message: Message,
-    reporter_user_id: Union[str, int],
-    reported_user_id: Union[str, int],
-    session: AsyncSession,
+        message: Message,
+        reporter_user_id: Union[str, int],
+        reported_user_id: Union[str, int],
+        session: AsyncSession,
 ) -> None:
     report = Report(reporter=reporter_user_id, reported=reported_user_id)
     reported_user = await users_crud.get_user(report.reported, session)

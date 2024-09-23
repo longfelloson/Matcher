@@ -5,8 +5,8 @@ from aiogram.utils.keyboard import (
 )
 
 from bot.users.enums.actions import UserAction
-from bot.users.rates.enums import RateType
 from bot.users.models import User
+from bot.users.rates.enums import RateType
 
 
 def notification_keyboard(rater_id: int) -> InlineKeyboard:

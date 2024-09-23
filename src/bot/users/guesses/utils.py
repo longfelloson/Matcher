@@ -5,14 +5,14 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.loader import bot
+from bot.users import crud as users_crud
 from bot.users.guesses import crud
 from bot.users.guesses.enums import Answer
 from bot.users.guesses.keyboards import rate_user_keyboard, guess_user_age_keyboard
 from bot.users.guesses.schemas import Guess
+from bot.users.models import User
 from bot.users.rates.states import RateState
 from bot.users.registration.enums.age import AgeGroup
-from bot.users import crud as users_crud
-from bot.users.models import User
 
 DEFAULT_AGE_GUESS_SCORE = 0.0
 CLOSE_AGE_GUESS_SCORE = 2.5
@@ -26,11 +26,11 @@ def get_guess_points(user_age_guess: int, user_for_view: User) -> float | int:
 
 
 async def react_for_user_guess(
-    message: Message,
-    user: User,
-    session: AsyncSession,
-    user_for_view: User,
-    state: FSMContext,
+        message: Message,
+        user: User,
+        session: AsyncSession,
+        user_for_view: User,
+        state: FSMContext,
 ) -> None:
     """Добавление пользовательского угадывания в базу и нужная реакция на него"""
     points = get_guess_points(
@@ -57,9 +57,9 @@ async def get_guessed_users_ids(user_id: int, session: AsyncSession) -> Set[int]
 
 
 async def send_user_to_guess(
-    guesser: User,
-    guessed: User,
-    caption: str,
+        guesser: User,
+        guessed: User,
+        caption: str,
 ) -> None:
     """Отправляет пользователя для угадывания его возраста"""
     photo = await bot.send_photo(

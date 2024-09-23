@@ -2,7 +2,6 @@ from aiogram import Router, F
 from aiogram.enums import ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
-from httpx import delete
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -145,9 +144,9 @@ async def location_state_handler(message: Message, state: FSMContext):
 
 @router.message(RegistrationState.photo)
 async def photo_state_handler(
-    message: Message,
-    state: FSMContext,
-    session: AsyncSession,
+        message: Message,
+        state: FSMContext,
+        session: AsyncSession,
 ):
     """Получение фотографии пользователя и последующая загрузка в БД"""
     if message.text == "↩":
