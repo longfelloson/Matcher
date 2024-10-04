@@ -17,15 +17,14 @@ def get_age_range(user_age: int) -> Generator:
 
 
 def get_search_options(
-    rated_users_ids: Sequence[int],
-    guessed_users_ids: Sequence[int],
-    searcher: User,
+        rated_users_ids: Sequence[int],
+        guessed_users_ids: Sequence[int],
+        searcher: User,
 ) -> Tuple:
     """Получение условий поиска пользователей для просмотра"""
     minimal_options = [
         User.user_id != searcher.user_id,
         User.status == UserStatus.active,
-        User.gender == searcher.preferred_gender,
         or_(User.viewer_gender == searcher.gender, User.viewer_gender == PreferredGender.both)
     ]
 

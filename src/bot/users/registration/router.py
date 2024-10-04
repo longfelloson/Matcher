@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
 from bot.users.configs.schemas import UserConfig
-from bot.users.enums.answers import IncorrectInputAnswer
+from bot.users.enums.answers import IncorrectInputAnswer, WarningAnswer
 from bot.users.locations import reverse_geocode_user_location
 from bot.users.registration.constants import COMPLETED_REGISTRATION_ANSWER
 from bot.users.registration.enums.answers import SectionAnswer
@@ -157,9 +157,10 @@ async def photo_state_handler(
         return await message.answer(IncorrectInputAnswer.photo)
 
     data = await state.get_data()
-    photo_answer = await message.answer(text="Фото загружается...", reply_markup=ReplyKeyboardRemove())
 
     await state.clear()
+
+    answer_for_user_photo = await message.answer(WarningAnswer.photo_is_uploading, reply_markup=ReplyKeyboardRemove())
 
     profile_photo_telegram_file_id = message.photo[-1].file_id
     photo_url = s3_client.get_file_url(file_name=profile_photo_telegram_file_id)
@@ -168,5 +169,5 @@ async def photo_state_handler(
     user_registration_info = UserRegistrationInfo(**data, user_id=user_config.user_id, photo_url=photo_url)
 
     await complete_user_registration(user_config, profile_photo_telegram_file_id, user_registration_info, session)
-    await photo_answer.delete()
+    await answer_for_user_photo.delete()
     await message.answer(COMPLETED_REGISTRATION_ANSWER, reply_markup=main_keyboard())

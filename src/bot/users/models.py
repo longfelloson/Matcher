@@ -38,7 +38,7 @@ class User(Base):
     gender = Column(String, nullable=False)
     preferred_gender = Column(String, nullable=False)
     viewer_gender = Column(String, nullable=False)
-    location = Column(String, nullable=False)
+    location = Column(String, nullable=True)
     city = Column(String, nullable=False)
     photo_url = Column(String, nullable=False)
     points = Column(Float, default=0.0)

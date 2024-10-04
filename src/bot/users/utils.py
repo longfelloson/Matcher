@@ -13,7 +13,7 @@ from bot.loader import bot
 from bot.texts.users import get_user_profile_caption
 from bot.users import crud as users_crud
 from bot.users.guesses.enums import Answer
-from bot.users.guesses.states import GuessesStates
+from bot.users.guesses.states import GuessesState
 from bot.users.guesses.utils import (
     get_guessed_users_ids,
     was_user_guessed,
@@ -34,10 +34,10 @@ async def get_user_for_view(state: FSMContext, session: AsyncSession) -> User:
 
 
 async def get_users_for_view(
-    rated_users_id: Sequence[int],
-    guessed_users_ids: Sequence[int],
-    user: User,
-    session: AsyncSession,
+        rated_users_id: Sequence[int],
+        guessed_users_ids: Sequence[int],
+        user: User,
+        session: AsyncSession,
 ) -> List[User]:
     """Получение пользователей, из которых можно выбрать пользователя для просмотра"""
     specific_search_options, common_search_options, minimal_options = get_search_options(
@@ -55,10 +55,10 @@ async def get_users_for_view(
 
 
 async def send_user_to_react(
-    message: Message,
-    user: User,
-    session: AsyncSession,
-    state: FSMContext,
+        message: Message,
+        user: User,
+        session: AsyncSession,
+        state: FSMContext,
 ) -> None:
     """Отправка фотографии пользователя на оценку"""
     guessed_users_ids = await get_guessed_users_ids(user.user_id, session)
@@ -66,8 +66,7 @@ async def send_user_to_react(
 
     users_for_view = await get_users_for_view(rated_users_ids, guessed_users_ids, user, session)
     if not users_for_view:
-        await message.answer(Answer.not_user_for_guess, reply_markup=main_keyboard())
-        return
+        return await message.answer(Answer.not_user_for_guess, reply_markup=main_keyboard())
 
     user_for_view = users_for_view[0]
     caption = get_user_profile_caption(user, user_for_view)
@@ -76,7 +75,7 @@ async def send_user_to_react(
         user_for_view = get_nearest_user(user, users_for_view)
 
     if user.config.guess_age and not was_user_guessed(user_for_view, guessed_users_ids):
-        await state.set_state(GuessesStates.user_age)
+        await state.set_state(GuessesState.user_age)
         await send_user_to_guess(user, user_for_view, caption)
     else:
         await state.set_state(RateState.user)
@@ -86,11 +85,11 @@ async def send_user_to_react(
 
 
 async def send_user_to_view(
-    photo: str,
-    caption: str,
-    keyboard=None,
-    chat_id: Union[str, int] = None,
-    message: Message = None,
+        photo: str,
+        caption: str,
+        keyboard=None,
+        chat_id: Union[str, int] = None,
+        message: Message = None,
 ) -> Message:
     if not chat_id and not message:
         raise ValueError("Какой-то из аргументов должен быть заполнен для отправки пользователя!")

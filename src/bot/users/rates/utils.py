@@ -1,7 +1,7 @@
 from typing import Union, List
 
 from aiogram.enums import ParseMode, ContentType
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 from aiogram.types import Message, InlineKeyboardMarkup
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -65,7 +65,7 @@ async def send_rate_notification(
                 reply_markup=keyboard,
                 parse_mode=ParseMode.HTML,
             )
-    except TelegramForbiddenError:
+    except (TelegramForbiddenError, TelegramBadRequest):
         await users_crud.update_user(user_id, session, status=UserStatus.left)
 
 

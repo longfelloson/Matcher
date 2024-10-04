@@ -13,16 +13,9 @@ def user_profile_keyboard(guess_age: bool, user_status: UserStatus):
     builder = Builder().row(
         Button(text="Изменить анкету 📝")
     )
-
-    if user_status == UserStatus.active:
-        builder.row(
-            Button(text="Отключить анкету 😴")
-        )
-    else:
-        builder.row(
-            Button(text="Включить анкету 🚀")
-        )
-
+    builder.row(
+        Button(text="Отключить анкету 😴" if user_status == UserStatus.active else "Включить анкету 🚀")
+    )
     builder.row(
         Button(text="↩")
     )

@@ -1,31 +1,18 @@
-from aiogram.types import (
+from aiogram.utils.keyboard import (
     InlineKeyboardMarkup as InlineKeyboard,
     InlineKeyboardButton as InlineButton,
+    InlineKeyboardBuilder as InlineBuilder,
 )
-from aiogram.utils.keyboard import InlineKeyboardBuilder as InlineBuilder
 
-from bot.adminpanel.enums import AdminPanelSection, AdminAction
+from bot.adminpanel.enums import SectionName, Section
+from bot.adminpanel.schemas import SectionQueryData
 
 
-def admin_panel_keyboard() -> InlineKeyboard:
-    builder = InlineBuilder().row(
+def select_section_keyboard() -> InlineKeyboard:
+    buttons = [
         InlineButton(
-            text="Статистика",
-            callback_data=f"admin_panel_section*{AdminPanelSection.stats}"
-        ),
-        InlineButton(
-            text="Пользователи",
-            callback_data=f"admin_panel_section*{AdminPanelSection.stats}"
-        ),
-    )
-    return builder.as_markup()
-
-
-def stats_section_keyboard() -> InlineKeyboard:
-    builder = InlineBuilder().row(
-        InlineButton(
-            text="Все пользователи",
-            callback_data=f"admin_action*{AdminAction.view_users_amount}"
+            text=section_name, callback_data=SectionQueryData(section=section).pack()
         )
-    )
-    return builder.as_markup()
+        for section_name, section in zip(SectionName, Section)
+    ]
+    return InlineBuilder().add(*buttons).as_markup()

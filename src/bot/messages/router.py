@@ -1,6 +1,7 @@
 import asyncio
 
 from aiogram import Router, F
+from aiogram.filters import or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +10,7 @@ from bot.keyboards import market_link_keyboard
 from bot.messages.enums import ChangeProfileAnswer
 from bot.texts.users import get_profile_text
 from bot.users import crud as users_crud
+from bot.users.enums.answers import WarningAnswer
 from bot.users.enums.statuses import UserStatus
 from bot.users.guesses.router import router as guesses_router
 from bot.users.keyboards import (
@@ -22,24 +24,27 @@ from bot.users.states import UserChangeState
 from bot.users.utils import send_user_to_react
 from market.auth.token import get_auth_link
 
+NO_PHOTO_DELAY = 2
+
 router = Router(name="Messages")
 router.include_routers(registration_router, guesses_router, rates_router)
 
 
 @router.message(F.text == "Начать ▶️")
 async def view_user_button_handler(
-    message: Message,
-    session: AsyncSession,
-    state: FSMContext,
-    user: User,
+        message: Message,
+        session: AsyncSession,
+        state: FSMContext,
+        user: User,
 ):
-    """Обработка кнопки "Старт" и выдача фото для угадывания возраста или оценки"""
+    if user.status == UserStatus.inactive:
+        return await message.answer(WarningAnswer.turn_on_profile)
+
     await send_user_to_react(message, user, session, state)
 
 
 @router.message(F.text == "Магазин 🛍")
 async def market_button_handler(message: Message):
-    """Обработка кнопки "Магазин" в главном меню"""
     await message.answer(
         text="Перейди по ссылке ниже, чтобы обменять баллы ⤵️",
         reply_markup=market_link_keyboard(link=get_auth_link(user_id=message.chat.id)),
@@ -49,16 +54,15 @@ async def market_button_handler(message: Message):
 @router.message(F.text == "Профиль 📱")
 @router.message(UserChangeState.sections, F.text == "↩")
 async def profile_button_handler(
-    message: Message,
-    user: User,
-    state: FSMContext,
-) -> None:
-    """Обработка кнопки 'Профиль'"""
+        message: Message,
+        user: User,
+        state: FSMContext,
+):
     await state.set_state(UserChangeState.profile)
 
     # Задержка на случай, если фото не успелось загрузиться в S3
     if not user.photo_url:
-        await asyncio.sleep(2)
+        await asyncio.sleep(NO_PHOTO_DELAY)
 
     await message.answer_photo(
         photo=user.photo_url,
@@ -86,11 +90,7 @@ async def profile_button_handler(
 
 
 @router.message(UserChangeState.profile, F.text == "Изменить анкету 📝")
-@router.message(UserChangeState.name, F.text == "↩")
-@router.message(UserChangeState.age, F.text == "↩")
-@router.message(UserChangeState.location, F.text == "↩")
-@router.message(UserChangeState.photo, F.text == "↩")
-@router.message(UserChangeState.gender, F.text == "↩")
+@router.message(or_f(*UserChangeState.__all_states__[1:]), F.text == "↩")
 async def change_user_profile_button_handler(message: Message, state: FSMContext):
     """Обработка кнопки "Изменить профиль"""
     await state.set_state(UserChangeState.sections)
@@ -102,23 +102,23 @@ async def change_user_profile_button_handler(message: Message, state: FSMContext
 
 @router.message(UserChangeState.profile, F.text == "Отключить анкету 😴")
 async def turn_off_user(
-    message: Message,
-    user: User,
-    session: AsyncSession,
+        message: Message,
+        user: User,
+        session: AsyncSession,
 ):
     """Отключение анкеты из системы поиска"""
-    await users_crud.update_user(user.user_id, session, status=UserStatus.not_active)
+    await users_crud.update_user(user.user_id, session, status=UserStatus.inactive)
     await message.answer(
         text="Твоя анкета отключена, скорее возвращайся 😇",
-        reply_markup=user_profile_keyboard(user.config.guess_age, UserStatus.not_active)
+        reply_markup=user_profile_keyboard(user.config.guess_age, UserStatus.inactive)
     )
 
 
 @router.message(UserChangeState.profile, F.text == "Включить анкету 🚀")
 async def turn_on_user(
-    message: Message,
-    user: User,
-    session: AsyncSession,
+        message: Message,
+        user: User,
+        session: AsyncSession,
 ):
     """Отключение анкеты из системы поиска"""
     await users_crud.update_user(user.user_id, session, status=UserStatus.active)

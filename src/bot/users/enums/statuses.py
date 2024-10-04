@@ -5,5 +5,5 @@ class UserStatus(StrEnum):
     reported = "reported"
     blocked = "blocked"
     active = "active"
-    not_active = "not_active"
+    inactive = "inactive"
     left = "left"

@@ -9,7 +9,7 @@ from bot.files import upload_user_photo_to_s3
 from bot.keyboards import main_keyboard
 from bot.messages.enums import ChangeProfileAnswer, UpdatedProfileAnswer
 from bot.users import crud
-from bot.users.enums.answers import IncorrectInputAnswer
+from bot.users.enums.answers import IncorrectInputAnswer, WarningAnswer
 from bot.users.enums.sections import UserProfileSection
 from bot.users.locations import reverse_geocode_user_location
 from bot.users.models import User
@@ -64,18 +64,20 @@ async def change_profile_handler(message: Message, state: FSMContext):
     action = section_actions.get(message.text)
 
     if action:
-        await state.set_state(action[0])
-        await message.answer(action[1], reply_markup=action[2])
+        state_, answer, keyboard = action
+
+        await state.set_state(state_)
+        await message.answer(answer, reply_markup=keyboard)
     else:
         await message.answer("Используй кнопки 😘")
 
 
 @router.message(UserChangeState.name)
 async def change_name_state_handler(
-    message: Message,
-    user: User,
-    session: AsyncSession,
-    state: FSMContext,
+        message: Message,
+        user: User,
+        session: AsyncSession,
+        state: FSMContext,
 ):
     """Обновление пользовательского имени"""
     try:
@@ -90,10 +92,10 @@ async def change_name_state_handler(
 
 @router.message(UserChangeState.location)
 async def change_location_state_handler(
-    message: Message,
-    user: User,
-    session: AsyncSession,
-    state: FSMContext,
+        message: Message,
+        user: User,
+        session: AsyncSession,
+        state: FSMContext,
 ):
     """Обновление пользовательской локации"""
     try:
@@ -113,9 +115,9 @@ async def change_location_state_handler(
 
 @router.message(UserChangeState.photo)
 async def change_photo_state_handler(
-    message: Message,
-    session: AsyncSession,
-    state: FSMContext,
+        message: Message,
+        session: AsyncSession,
+        state: FSMContext,
 ):
     """Обновление пользовательской фотографии"""
     if message.content_type != ContentType.PHOTO:
@@ -123,23 +125,23 @@ async def change_photo_state_handler(
 
     await state.clear()
 
-    photo_answer = await message.answer(text="Фото загружается...", reply_markup=ReplyKeyboardRemove())
+    answer_for_user_photo = await message.answer(WarningAnswer.photo_is_uploading, reply_markup=ReplyKeyboardRemove())
 
     file_name = message.photo[-1].file_id
     photo_url = s3_client.get_file_url(file_name)
 
     await upload_user_photo_to_s3(file_name)
-    await photo_answer.delete()
-    await message.answer(UpdatedProfileAnswer.photo, reply_markup=main_keyboard())
+    await answer_for_user_photo.delete()
+    await message.reply(UpdatedProfileAnswer.photo, reply_markup=main_keyboard())
     await crud.update_user(message.chat.id, session, photo_url=photo_url)
 
 
 @router.message(UserChangeState.age)
 async def change_age_state_handler(
-    message: Message,
-    user: User,
-    session: AsyncSession,
-    state: FSMContext,
+        message: Message,
+        user: User,
+        session: AsyncSession,
+        state: FSMContext,
 ):
     """Смена возраста в профиле"""
     try:
@@ -155,10 +157,10 @@ async def change_age_state_handler(
 
 @router.message(UserChangeState.gender)
 async def change_gender_state_handler(
-    message: Message,
-    user: User,
-    state: FSMContext,
-    session: AsyncSession
+        message: Message,
+        user: User,
+        state: FSMContext,
+        session: AsyncSession,
 ):
     """Смена гендера в профиле"""
     try:
@@ -174,10 +176,10 @@ async def change_gender_state_handler(
 
 @router.message(UserChangeState.preferred_gender)
 async def change_preferred_gender_state_handler(
-    message: Message,
-    user: User,
-    state: FSMContext,
-    session: AsyncSession
+        message: Message,
+        user: User,
+        state: FSMContext,
+        session: AsyncSession,
 ):
     """Смена гендера анкет для просмотра"""
     try:
@@ -193,10 +195,10 @@ async def change_preferred_gender_state_handler(
 
 @router.message(UserChangeState.viewer_gender)
 async def change_viewer_gender(
-    message: Message,
-    user: User,
-    state: FSMContext,
-    session: AsyncSession
+        message: Message,
+        user: User,
+        state: FSMContext,
+        session: AsyncSession,
 ):
     """Смена гендера в профиле"""
     try:

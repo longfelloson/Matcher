@@ -4,10 +4,9 @@ from typing import Union
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.messages.commands.enums import CommandAnswer
+from bot.adminpanel.reports.keyboards import report_manage_keyboard
 from bot.reports import crud
-from bot.reports.enums import ReportStatus
-from bot.reports.keyboards import report_manage_keyboard
+from bot.reports.enums import Answer
 from bot.reports.models import Report
 from bot.reports.schemas import Report as ReportSchema
 from bot.texts.users import get_user_link
@@ -16,6 +15,8 @@ from bot.users.enums.statuses import UserStatus
 from bot.users.models import User
 from bot.users.utils import send_user_to_view
 from config import settings
+
+DEFAULT_DELAY = 0.75
 
 
 async def react_for_report(
@@ -30,24 +31,12 @@ async def react_for_report(
     await crud.add_report(report, session)
     await users_crud.update_user(reported_user_id, session, status=UserStatus.reported)
 
-    answer_to_report = await message.answer(CommandAnswer.report)
-    await asyncio.sleep(0.75)
+    answer_to_report = await message.answer(Answer.sent_report)
+
+    await asyncio.sleep(DEFAULT_DELAY)
     await answer_to_report.delete()
 
     await send_reported_user_to_moderators(report, reported_user)
-
-
-async def approve_report(report: Report, session: AsyncSession) -> None:
-    """Блокировка пользователя и начисление баллов за корректную жалобу"""
-    await users_crud.update_user(report.reported, session, status=UserStatus.blocked)
-    await users_crud.increase_user_points(report.reporter, settings.POINTS_FOR_BLOCKED_USER, session)
-    await crud.update_report(report.report_id, session, status=ReportStatus.viewed)
-
-
-async def decline_report(report: Report, session: AsyncSession) -> None:
-    """Отклонение пользовательской жалобы"""
-    await users_crud.update_user(report.reported, session, status=UserStatus.active)
-    await crud.update_report(report.report_id, session, status=ReportStatus.viewed)
 
 
 async def send_reported_user_to_moderators(report: ReportSchema, reported: User):

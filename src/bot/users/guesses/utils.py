@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List, Set, Union
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -12,7 +12,7 @@ from bot.users.guesses.keyboards import rate_user_keyboard, guess_user_age_keybo
 from bot.users.guesses.schemas import Guess
 from bot.users.models import User
 from bot.users.rates.states import RateState
-from bot.users.registration.enums.age import AgeGroup
+from bot.users.search import get_age_range
 
 DEFAULT_AGE_GUESS_SCORE = 0.0
 CLOSE_AGE_GUESS_SCORE = 2.5
@@ -20,7 +20,7 @@ SAME_AGE_GUESS_SCORE = 5
 DEFAULT_DELAY = 0.3
 
 
-def get_guess_points(user_age_guess: int, user_for_view: User) -> float | int:
+def get_guess_points(user_age_guess: int, user_for_view: User) -> Union[int, float]:
     """Возвращает баллы, которые получит человек за его попытку угадать возраст"""
     return SAME_AGE_GUESS_SCORE if user_age_guess == user_for_view.age else DEFAULT_AGE_GUESS_SCORE
 
@@ -67,10 +67,10 @@ async def send_user_to_guess(
         caption=caption,
         photo=guessed.photo_url
     )
-    guessed_age_group_name = AgeGroup.get_group_by_age(guessed.age).name
+    age_range = get_age_range(guesser.age)
     await photo.answer(
         text=Answer.guess_age,
-        reply_markup=guess_user_age_keyboard(guessed_age_group_name)
+        reply_markup=guess_user_age_keyboard(age_range)
     )
 
 

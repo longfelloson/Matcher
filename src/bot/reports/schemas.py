@@ -1,6 +1,6 @@
 import uuid
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, Field, BaseModel
 
 
 class Report(BaseModel):

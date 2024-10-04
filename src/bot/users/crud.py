@@ -4,6 +4,7 @@ from sqlalchemy import insert, update, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.functions import count
 
+from bot.users.enums.statuses import UserStatus
 from bot.users.models import User
 from bot.users.registration.schemas import UserRegistrationInfo
 
@@ -16,9 +17,9 @@ async def create_user(user: UserRegistrationInfo, session: AsyncSession) -> None
 
 
 async def update_user(
-    user_id: int,
-    session: AsyncSession,
-    **user_info
+        user_id: int,
+        session: AsyncSession,
+        **user_info
 ) -> None:
     await session.execute(
         update(User).where(User.user_id == user_id).values(**user_info)
@@ -33,9 +34,9 @@ async def get_user(user_id: int, session: AsyncSession) -> Optional[User]:
 
 
 async def increase_user_points(
-    user_id: int,
-    points: Union[int, float],
-    session: AsyncSession,
+        user_id: int,
+        points: Union[int, float],
+        session: AsyncSession,
 ) -> None:
     """Увеличение очков пользователя"""
     await session.execute(
@@ -45,9 +46,9 @@ async def increase_user_points(
 
 
 async def decrease_user_points(
-    user_id: int,
-    points: Union[int, float],
-    session: AsyncSession
+        user_id: int,
+        points: Union[int, float],
+        session: AsyncSession
 ) -> None:
     """Уменьшение очков пользователя"""
     await session.execute(update(User).where(User.user_id == user_id).values(points=User.points - points))
@@ -55,9 +56,9 @@ async def decrease_user_points(
 
 
 async def get_users(
-    session: AsyncSession,
-    limit: int = DEFAULT_USERS_LIMIT,
-    options: List = None,
+        session: AsyncSession,
+        limit: int = DEFAULT_USERS_LIMIT,
+        options: List = None,
 ) -> List[User]:
     """Получение пользователей по заданным условиям"""
     stmt = select(User).limit(limit)
@@ -74,7 +75,11 @@ async def get_user_points(user_id: int, session: AsyncSession) -> Union[int, flo
     return points.scalar_one()
 
 
-async def get_users_amount(session: AsyncSession) -> int:
+async def get_users_amount(session: AsyncSession, users_status: UserStatus = None) -> int:
     """Получение количества всех пользователей в базе"""
-    users_amount = await session.execute(count(User.user_id))
+    stmt = select(count(User.user_id))
+    if users_status:
+        stmt = stmt.where(User.status == users_status)
+
+    users_amount = await session.execute(stmt)
     return users_amount.scalar_one()

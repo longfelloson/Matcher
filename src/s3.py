@@ -37,7 +37,7 @@ class S3Client:
         except ClientError as e:
             await logger.error(f"Error uploading file via S3: {e}")
 
-    async def delete_file(self, object_name: str):
+    async def delete_file(self, object_name: str) -> None:
         try:
             async with self.get_client() as client:
                 await client.delete_object(Bucket=self.bucket_name, Key=object_name)
@@ -45,16 +45,11 @@ class S3Client:
             await logger.error(f"Error deleting file via S3: {e}")
 
     async def update_file(self, file: bytes, file_name: str) -> None:
-        """
-        Перезапись файла
-        """
         await self.delete_file(file_name)
         await self.upload_file(file_name, file)
 
     def get_file_url(self, file_name: str, extension: str = "jpg") -> str:
-        return (
-            f"{self.config['endpoint_url']}/{self.bucket_name}/{file_name}.{extension}"
-        )
+        return f"{self.config['endpoint_url']}/{self.bucket_name}/{file_name}.{extension}"
 
 
 s3_client = S3Client(

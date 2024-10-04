@@ -19,4 +19,4 @@ class Report(Base):
     reporter = Column(BigInteger, nullable=False)
     reported = Column(BigInteger, nullable=False)
     reported_at = Column(DateTime, nullable=False, default=datetime.now())
-    status = Column(String, nullable=False, default=ReportStatus.not_viewed)
+    status = Column(String, nullable=False, default=ReportStatus.PENDING)

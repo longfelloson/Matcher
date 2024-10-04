@@ -1,3 +1,4 @@
+from aiogram import BaseMiddleware
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 from bot.adminpanel.router import router as admin_panel_router
@@ -7,10 +8,8 @@ from bot.messages.commands.router import router as commands_router
 from bot.messages.router import router as messages_router
 from bot.middlewares.payload import PayloadMiddleware
 from bot.middlewares.throttling import ThrottlingMiddleware
-from bot.middlewares.user import BlockedUserMiddleware
-from bot.reports.router import router as reports_router
+from bot.middlewares.user import UserStatusMiddleware
 from bot.users.router import router as users_router
-from bot.errors.router import router as errors_router
 from config import settings
 from database import create_tables
 
@@ -20,17 +19,16 @@ DEFAULT_RATE_LIMIT = 0.5
 async def start() -> None:
     """Устанавливает настройки для бота и запускает его"""
     dp.include_routers(
-        errors_router,
+        # errors_router,
         captcha_router,
         messages_router,
         commands_router,
-        reports_router,
         users_router,
         admin_panel_router,
     )
     set_middleware(ThrottlingMiddleware(rate_limit=DEFAULT_RATE_LIMIT), for_updates=True)
     set_middleware(PayloadMiddleware(), for_updates=True)
-    set_middleware(BlockedUserMiddleware(), for_messages=True)
+    set_middleware(UserStatusMiddleware(), for_messages=True, for_calldata=True)
 
     await create_tables()
     await set_commands()
@@ -38,7 +36,6 @@ async def start() -> None:
 
 
 async def set_commands() -> None:
-    """Устанавливает команды в боте"""
     default_commands = [
         BotCommand(command="start", description="Запуск бота"),
         BotCommand(command="help", description="Поддержка"),
@@ -55,10 +52,12 @@ async def set_commands() -> None:
         ])
 
 
-def set_middleware(middleware, for_updates=False, for_messages=False):
-    """Устанавливает 'прослойки'"""
+def set_middleware(middleware: BaseMiddleware, for_updates=False, for_messages=False, for_calldata=False):
     if for_updates:
         dp.update.outer_middleware(middleware)
 
     if for_messages:
         dp.message.middleware(middleware)
+
+    if for_calldata:
+        dp.callback_query.middleware(middleware)

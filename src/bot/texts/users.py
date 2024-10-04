@@ -32,16 +32,16 @@ def get_profile_text(user: User) -> str:
     )
 
 
-def get_user_profile_caption(rater: User, rated: User) -> str:
+def get_user_profile_caption(viewer: User, viewed: User) -> str:
     """Возвращает описание профиля пользовательской анкеты при просмотре другим пользователем"""
-    base_caption = f"{rated.name}, {rated.city}"
+    base_caption = f"{viewed.name}, {viewed.city}, {viewed.gender}, {viewed.viewer_gender}"
 
-    if rater.instagram:
-        base_caption += f", Instagram: <code>{rated.instagram}</code>"
+    if viewed.instagram:
+        base_caption += f", Instagram: <code>{viewed.instagram}</code>"
 
-    if not rater.config.guess_age:
-        age_suffix = get_age_suffix(rated.age)
-        base_caption += f", {rated.age} {age_suffix}"
+    if not viewer.config.guess_age:
+        age_suffix = get_age_suffix(viewed.age)
+        base_caption += f", {viewed.age} {age_suffix}"
 
     return base_caption
 
