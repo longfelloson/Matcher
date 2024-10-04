@@ -6,6 +6,7 @@ from bot.captcha.router import router as captcha_router
 from bot.loader import bot, dp
 from bot.messages.commands.router import router as commands_router
 from bot.messages.router import router as messages_router
+from bot.errors.router import router as errors_router
 from bot.middlewares.payload import PayloadMiddleware
 from bot.middlewares.throttling import ThrottlingMiddleware
 from bot.middlewares.user import UserStatusMiddleware
@@ -19,7 +20,7 @@ DEFAULT_RATE_LIMIT = 0.5
 async def start() -> None:
     """Устанавливает настройки для бота и запускает его"""
     dp.include_routers(
-        # errors_router,
+        errors_router,
         captcha_router,
         messages_router,
         commands_router,
