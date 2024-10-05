@@ -34,7 +34,7 @@ def get_profile_text(user: User) -> str:
 
 def get_user_profile_caption(viewer: User, viewed: User) -> str:
     """Возвращает описание профиля пользовательской анкеты при просмотре другим пользователем"""
-    base_caption = f"{viewed.name}, {viewed.city}, {viewed.gender}, {viewed.viewer_gender}"
+    base_caption = f"{viewed.name}, {viewed.city}"
 
     if viewed.instagram:
         base_caption += f", Instagram: <code>{viewed.instagram}</code>"
