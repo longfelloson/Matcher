@@ -6,6 +6,7 @@ from config import settings
 from s3 import s3_client
 
 BASE_TELEGRAM_FILE_URL = "https://api.telegram.org/file/bot"
+DEFAULT_FILE_EXTENSION = "jpg"
 
 
 async def get_file_from_telegram(file_id: str) -> bytes:
@@ -19,9 +20,9 @@ async def get_file_from_telegram(file_id: str) -> bytes:
         return await response.read()
 
 
-async def upload_user_photo_to_s3(telegram_file_id: str) -> None:
+async def upload_user_photo_to_s3(telegram_file_id: str, extension: str = DEFAULT_FILE_EXTENSION) -> None:
     """Загружает фото полученное от пользователя в хранилище S3"""
     file = await get_file_from_telegram(telegram_file_id)
-    filename = telegram_file_id + ".jpg"
+    filename = f"{telegram_file_id}.{extension}"
 
     await s3_client.upload_file(filename, file)

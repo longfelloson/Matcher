@@ -5,7 +5,7 @@ from config import settings
 
 
 class Answer(StrEnum):
-    not_user_for_guess = "Нет пользователей для просмотра 🤷‍♂️"
+    no_user_for_guess = "Нет пользователей для просмотра 🤷‍♂️"
     guess_age = "Угадай возраст ⤴️"
     rate_user = "Оцени пользователя ⤴️"
 

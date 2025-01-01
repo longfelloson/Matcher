@@ -1,6 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
+from bot.keyboards import back_button
 from bot.users.registration.enums.age import PreferredAgeGroupOption
 from bot.users.registration.enums.gender import GenderOption, PreferredGenderOption, ViewerGenderOption
 
@@ -59,6 +60,16 @@ def select_location_keyboard() -> Keyboard:
     return builder.as_markup(resize_keyboard=True, input_field_placeholder="Введи название места, где ты живешь")
 
 
+def select_name_keyboard(user_name: str) -> Keyboard:
+    builder = Builder().row(
+        Button(text=user_name)
+    )
+    builder.row(
+        back_button()
+    )
+    return builder.as_markup(resize_keyboard=True)
+
+
 def back_button_keyboard() -> Keyboard:
     builder = Builder().row(
         Button(text="↩")
@@ -74,6 +85,6 @@ def select_viewer_gender_keyboard() -> Keyboard:
         *buttons
     )
     builder.row(
-        Button(text="↩")
+        back_button()
     )
     return builder.as_markup(resize_keyboard=True)

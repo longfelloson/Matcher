@@ -1,3 +1,4 @@
+from typing import Union
 from aiogram.types import (
     InlineKeyboardMarkup as InlineKeyboard,
     InlineKeyboardButton as InlineButton,
@@ -13,6 +14,8 @@ from aiogram.utils.keyboard import (
 )
 
 from config import settings
+
+BACK_BUTTON_EMOJI = "↩"
 
 
 def main_keyboard() -> Keyboard:
@@ -50,3 +53,12 @@ def market_link_keyboard(link: str) -> InlineKeyboard:
         )
     )
     return builder.as_markup()
+
+
+def back_button(as_builder: bool = False) -> Union[Builder, Keyboard]:
+    """Keyboard or builder with back button"""
+    button = Button(text=BACK_BUTTON_EMOJI)
+    if as_builder:
+        return Builder().add(button)
+    return button
+    

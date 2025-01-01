@@ -5,6 +5,10 @@ from pydantic_settings import BaseSettings
 
 load_dotenv()
 
+DEFAULT_REDIS_PORT = 6379
+DEFAULT_REDIS_HOST = "redis"
+DEFAULT_REDIS_DB = 0
+
 
 class S3Config(BaseSettings):
     S3_ACCESS_KEY: str
@@ -14,10 +18,10 @@ class S3Config(BaseSettings):
 
 
 class RedisConfig(BaseSettings):
-    REDIS_PORT: int = 6379
-    REDIS_HOST: str = "redis"
-    REDIS_DB: int = 0
-
+    REDIS_PORT: int = DEFAULT_REDIS_PORT
+    REDIS_HOST: str = DEFAULT_REDIS_HOST
+    REDIS_DB: int = DEFAULT_REDIS_DB
+    
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"

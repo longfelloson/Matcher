@@ -29,11 +29,11 @@ templates = Jinja2Templates(directory=settings.TEMPLATES_PATH)
 
 @app.on_event("startup")
 async def startup():
-    """Создание таблиц перед запуском"""
+    """Creating database tables"""
     await database.create_tables()
 
 
 @app.get("/", dependencies=[Depends(auth_guard)])
 async def root_page(request: Request):
-    """Ручка для получения главной страницы"""
+    """Main page"""
     return templates.TemplateResponse("index.html", {"request": request})

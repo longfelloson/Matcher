@@ -17,6 +17,7 @@ from bot.users.registration.keyboards import (
     select_location_keyboard,
     back_button_keyboard,
     select_gender_keyboard,
+    select_name_keyboard,
     select_preferred_gender_keyboard,
     select_viewer_gender_keyboard,
 )
@@ -39,7 +40,7 @@ async def change_profile_handler(message: Message, state: FSMContext):
     """Обработка кнопок выбора секции"""
     section_actions = {
         UserProfileSection.name: (
-            UserChangeState.name, ChangeProfileAnswer.name, back_button_keyboard()
+            UserChangeState.name, ChangeProfileAnswer.name, select_name_keyboard(message.from_user.first_name)
         ),
         UserProfileSection.age: (
             UserChangeState.age, ChangeProfileAnswer.age, back_button_keyboard()

@@ -12,7 +12,7 @@ from bot.keyboards import main_keyboard
 from bot.loader import bot
 from bot.texts.users import get_user_profile_caption
 from bot.users import crud as users_crud
-from bot.users.guesses.enums import Answer
+from bot.users.guesses.answers import Answer
 from bot.users.guesses.states import GuessesState
 from bot.users.guesses.utils import (
     get_guessed_users_ids,
@@ -66,7 +66,7 @@ async def send_user_to_react(
 
     users_for_view = await get_users_for_view(rated_users_ids, guessed_users_ids, user, session)
     if not users_for_view:
-        return await message.answer(Answer.not_user_for_guess, reply_markup=main_keyboard())
+        return await message.answer(Answer.no_user_for_guess, reply_markup=main_keyboard())
 
     user_for_view = users_for_view[0]
     caption = get_user_profile_caption(user, user_for_view)
@@ -97,3 +97,7 @@ async def send_user_to_view(
     if chat_id:
         return await bot.send_photo(chat_id, photo, caption=caption, reply_markup=keyboard)
     return await message.answer_photo(photo, caption, reply_markup=keyboard)
+
+
+async def recognize_nude():
+    ...

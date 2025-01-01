@@ -13,6 +13,7 @@ from bot.users.registration.constants import COMPLETED_REGISTRATION_ANSWER
 from bot.users.registration.enums.answers import SectionAnswer
 from bot.users.registration.keyboards import (
     select_gender_keyboard,
+    select_name_keyboard,
     select_preferred_gender_keyboard,
     select_location_keyboard,
     back_button_keyboard,
@@ -41,7 +42,7 @@ async def user_age_state_handler(message: Message, state: FSMContext):
         await state.update_data(age=age.age)
         await state.set_state(RegistrationState.name)
         await message.answer(
-            SectionAnswer.name, reply_markup=back_button_keyboard()
+            SectionAnswer.name, reply_markup=select_name_keyboard(message.from_user.first_name)
         )
 
     except ValidationError:

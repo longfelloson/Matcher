@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.loader import bot
 from bot.users import crud as users_crud
 from bot.users.guesses import crud
-from bot.users.guesses.enums import Answer
+from bot.users.guesses.answers import Answer
 from bot.users.guesses.keyboards import rate_user_keyboard, guess_user_age_keyboard
 from bot.users.guesses.schemas import Guess
 from bot.users.models import User

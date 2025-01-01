@@ -17,8 +17,8 @@ from database import create_tables
 DEFAULT_RATE_LIMIT = 0.5
 
 
-async def start() -> None:
-    """Устанавливает настройки для бота и запускает его"""
+async def start_bot() -> None:
+    """Sets bot settings and start it"""
     dp.include_routers(
         errors_router,
         captcha_router,
