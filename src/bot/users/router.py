@@ -75,10 +75,10 @@ async def change_profile_handler(message: Message, state: FSMContext):
 
 @router.message(UserChangeState.name)
 async def change_name_state_handler(
-        message: Message,
-        user: User,
-        session: AsyncSession,
-        state: FSMContext,
+    message: Message,
+    user: User,
+    session: AsyncSession,
+    state: FSMContext,
 ):
     """Обновление пользовательского имени"""
     try:
@@ -93,10 +93,10 @@ async def change_name_state_handler(
 
 @router.message(UserChangeState.location)
 async def change_location_state_handler(
-        message: Message,
-        user: User,
-        session: AsyncSession,
-        state: FSMContext,
+    message: Message,
+    user: User,
+    session: AsyncSession,
+    state: FSMContext,
 ):
     """Обновление пользовательской локации"""
     try:
@@ -133,16 +133,16 @@ async def change_photo_state_handler(
 
     await upload_user_photo_to_s3(file_name)
     await answer_for_user_photo.delete()
-    await message.reply(UpdatedProfileAnswer.photo, reply_markup=main_keyboard())
+    await message.answer(UpdatedProfileAnswer.photo, reply_markup=main_keyboard())
     await crud.update_user(message.chat.id, session, photo_url=photo_url)
 
 
 @router.message(UserChangeState.age)
 async def change_age_state_handler(
-        message: Message,
-        user: User,
-        session: AsyncSession,
-        state: FSMContext,
+    message: Message,
+    user: User,
+    session: AsyncSession,
+    state: FSMContext,
 ):
     """Смена возраста в профиле"""
     try:
@@ -151,7 +151,6 @@ async def change_age_state_handler(
         await state.clear()
         await message.answer(UpdatedProfileAnswer.age, reply_markup=main_keyboard())
         await crud.update_user(user.user_id, session, age=age.age)
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.age)
 
@@ -170,44 +169,43 @@ async def change_gender_state_handler(
         await state.clear()
         await message.answer(UpdatedProfileAnswer.gender, reply_markup=main_keyboard())
         await crud.update_user(user.user_id, session, gender=gender)
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
 
 @router.message(UserChangeState.preferred_gender)
 async def change_preferred_gender_state_handler(
-        message: Message,
-        user: User,
-        state: FSMContext,
-        session: AsyncSession,
+    message: Message,
+    user: User,
+    state: FSMContext,
+    session: AsyncSession,
 ):
     """Смена гендера анкет для просмотра"""
     try:
         preferred_gender = UserPreferredGender(input=message.text).convert_input_to_enum()
+        answer = UpdatedProfileAnswer.get_preffered_gender_answer(preferred_gender)
 
         await state.clear()
-        await message.answer(UpdatedProfileAnswer.preferred_gender, reply_markup=main_keyboard())
+        await message.answer(answer, reply_markup=main_keyboard())
         await crud.update_user(user.user_id, session, preferred_gender=preferred_gender)
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
 
 @router.message(UserChangeState.viewer_gender)
 async def change_viewer_gender(
-        message: Message,
-        user: User,
-        state: FSMContext,
-        session: AsyncSession,
+    message: Message,
+    user: User,
+    state: FSMContext,
+    session: AsyncSession,
 ):
     """Смена гендера в профиле"""
     try:
         viewer_gender = UserViewerGender(input=message.text).convert_input_to_enum()
+        answer = UpdatedProfileAnswer.get_viewer_gender_answer(viewer_gender)
 
         await state.clear()
-        await message.answer(UpdatedProfileAnswer.viewer_gender, reply_markup=main_keyboard())
+        await message.answer(answer, reply_markup=main_keyboard())
         await crud.update_user(user.user_id, session, viewer_gender=viewer_gender)
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)

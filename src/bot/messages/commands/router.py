@@ -7,6 +7,7 @@ from aiogram.types import Message
 
 from bot.adminpanel.keyboards import select_section_keyboard
 from bot.captcha.utils import send_captcha, generate_captcha
+from bot.constants import BACK_BUTTON_EMOJI
 from bot.keyboards import main_keyboard, help_command_keyboard
 from bot.messages.commands.enums import CommandAnswer
 from bot.texts.utils import spoiler
@@ -16,7 +17,7 @@ from config import settings
 router = Router(name="Commands")
 
 
-@router.message(or_f(CommandStart(), F.text == "↩"))
+@router.message(or_f(CommandStart(), F.text == BACK_BUTTON_EMOJI))
 async def start_command_handler(
         message: Message,
         state: FSMContext,

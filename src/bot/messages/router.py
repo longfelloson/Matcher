@@ -7,6 +7,7 @@ from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import market_link_keyboard
+from bot.constants import BACK_BUTTON_EMOJI
 from bot.messages.enums import ChangeProfileAnswer
 from bot.texts.users import get_profile_text
 from bot.users import crud as users_crud
@@ -52,7 +53,7 @@ async def market_button_handler(message: Message):
 
 
 @router.message(F.text == "Профиль 📱")
-@router.message(UserChangeState.sections, F.text == "↩")
+@router.message(UserChangeState.sections, F.text == BACK_BUTTON_EMOJI)
 async def profile_button_handler(
         message: Message,
         user: User,
@@ -90,7 +91,7 @@ async def profile_button_handler(
 
 
 @router.message(UserChangeState.profile, F.text == "Изменить анкету 📝")
-@router.message(or_f(*UserChangeState.__all_states__[1:]), F.text == "↩")
+@router.message(or_f(*UserChangeState.__all_states__[1:]), F.text == BACK_BUTTON_EMOJI)
 async def change_user_profile_button_handler(message: Message, state: FSMContext):
     """Обработка кнопки "Изменить профиль"""
     await state.set_state(UserChangeState.sections)

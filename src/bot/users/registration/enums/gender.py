@@ -2,8 +2,8 @@ from enum import StrEnum
 
 
 class GenderOption(StrEnum):
-    male = "Парень"
-    female = "Девушка"
+    male = "Мужской"
+    female = "Женский"
 
 
 class PreferredGenderOption(StrEnum):

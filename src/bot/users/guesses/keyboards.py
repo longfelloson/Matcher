@@ -3,6 +3,8 @@ from typing import List
 from aiogram.types import ReplyKeyboardMarkup as Keyboard, KeyboardButton as Button
 from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
+from bot.keyboards import back_button
+
 USER_RATE_BUTTONS = ["❤", "👎"]
 
 
@@ -11,7 +13,7 @@ def guess_user_age_keyboard(age_range: List[int]) -> Keyboard:
     buttons = [
         Button(text=str(age)) for age in age_range
     ]
-    return Builder().add(*buttons).row(Button(text="↩")).as_markup(resize_keyboard=True)
+    return Builder().add(*buttons).row(back_button()).as_markup(resize_keyboard=True)
 
 
 def rate_user_keyboard() -> Keyboard:
@@ -22,4 +24,4 @@ def rate_user_keyboard() -> Keyboard:
     builder = Builder().row(
         *rate_user_buttons
     )
-    return builder.row(Button(text="↩")).as_markup(resize_keyboard=True)
+    return builder.row(back_button()).as_markup(resize_keyboard=True)

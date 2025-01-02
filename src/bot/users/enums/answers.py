@@ -1,10 +1,10 @@
 from enum import StrEnum
 
-from bot.users.registration.constants import MIN_AGE
+from bot.users.registration.constants import MAX_AGE, MIN_AGE
 
 
 class IncorrectInputAnswer(StrEnum):
-    age = f"Твой возраст должен быть не меньше {MIN_AGE} лет 😘"
+    age = f"Введи возраст от {MIN_AGE} до {MAX_AGE} 😘"
     name = f"Это не похоже на имя 🤔"
     city = f"Используй только буквы 😘"
     buttons = "Используй кнопки 😘"

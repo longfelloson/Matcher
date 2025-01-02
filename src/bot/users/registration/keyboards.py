@@ -3,10 +3,15 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder as Builder
 
 from bot.keyboards import back_button
 from bot.users.registration.enums.age import PreferredAgeGroupOption
-from bot.users.registration.enums.gender import GenderOption, PreferredGenderOption, ViewerGenderOption
+from bot.users.registration.enums.gender import (
+    GenderOption, 
+    PreferredGenderOption, 
+    ViewerGenderOption,
+)
 
 
 def select_gender_keyboard() -> Keyboard:
+    """Choice of gender keyboard during registration"""
     buttons = [
         Button(text=gender) for gender in GenderOption
     ]
@@ -14,7 +19,7 @@ def select_gender_keyboard() -> Keyboard:
         *buttons
     )
     builder.row(
-        Button(text="↩")
+       back_button()
     )
     return builder.as_markup(resize_keyboard=True)
 
@@ -23,13 +28,12 @@ def select_preferred_gender_keyboard() -> Keyboard:
     buttons = [
         Button(text=preferred_gender) for preferred_gender in PreferredGenderOption
     ]
-    builder = Builder().row(
-        *buttons
+    builder = Builder().row(*buttons)
+    builder.row(back_button())
+    return builder.as_markup(
+        resize_keyboard=True, 
+        placeholder="Выбери пол, который хочешь оценивать"
     )
-    builder.row(
-        Button(text="↩")
-    )
-    return builder.as_markup(resize_keyboard=True, placeholder="Выбери пол, который хочешь оценивать")
 
 
 def select_age_group_keyboard() -> Keyboard:
@@ -41,7 +45,7 @@ def select_age_group_keyboard() -> Keyboard:
         *buttons
     )
     builder.row(
-        Button(text="↩")
+        back_button()
     )
     return builder.as_markup(resize_keyboard=True)
 
@@ -55,9 +59,12 @@ def select_location_keyboard() -> Keyboard:
         Button(text="🗺 Отправить свое место", request_location=True)
     )
     builder.row(
-        Button(text="↩")
+        back_button()
     )
-    return builder.as_markup(resize_keyboard=True, input_field_placeholder="Введи название места, где ты живешь")
+    return builder.as_markup(
+        resize_keyboard=True, 
+        input_field_placeholder="Введи название места, где ты живешь"
+    )
 
 
 def select_name_keyboard(user_name: str) -> Keyboard:
@@ -71,10 +78,7 @@ def select_name_keyboard(user_name: str) -> Keyboard:
 
 
 def back_button_keyboard() -> Keyboard:
-    builder = Builder().row(
-        Button(text="↩")
-    )
-    return builder.as_markup(resize_keyboard=True)
+    return Builder().row(back_button()).as_markup(resize_keyboard=True)
 
 
 def select_viewer_gender_keyboard() -> Keyboard:

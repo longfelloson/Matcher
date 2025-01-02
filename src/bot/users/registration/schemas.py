@@ -3,7 +3,14 @@ from typing import Dict, Optional
 from pydantic import Field, BaseModel
 
 from bot.users.enums.genders import UserGender as UserGenderEnum, UserViewerGender as UserViewerGenderEnum
-from bot.users.registration.constants import MIN_AGE
+from bot.users.registration.constants import (
+    MIN_CITY_LENGTH,
+    MAX_CITY_LENGTH,
+    MAX_NAME_LENGTH, 
+    MIN_NAME_LENGTH,
+    MIN_AGE,
+    MAX_AGE,
+)
 from bot.users.registration.enums.age import PreferredAgeGroupOption, AgeGroup
 from bot.users.registration.enums.gender import (
     GenderOption,
@@ -14,11 +21,11 @@ from bot.users.registration.enums.gender import (
 
 
 class UserAge(BaseModel):
-    age: int = Field(..., ge=MIN_AGE)
+    age: int = Field(..., ge=MIN_AGE, lt=MAX_AGE)
 
 
 class UserName(BaseModel):
-    name: str = Field(..., min_length=2, max_length=15)
+    name: str = Field(..., min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH)
 
 
 class UserGender(BaseModel):
@@ -65,7 +72,7 @@ class UserPreferredAgeGroup(BaseModel):
 
 
 class UserCity(BaseModel):
-    city: str = Field(min_length=2, max_length=23)
+    city: str = Field(min_length=MIN_CITY_LENGTH, max_length=MAX_CITY_LENGTH)
 
 
 class UserRegistrationInfo(BaseModel):

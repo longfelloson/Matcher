@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.keyboards import main_keyboard
+from bot.constants import BACK_BUTTON_EMOJI
 from bot.users.configs.schemas import UserConfig
 from bot.users.enums.answers import IncorrectInputAnswer, WarningAnswer
 from bot.users.locations import reverse_geocode_user_location
@@ -35,7 +36,7 @@ router = Router(name="Registration")
 
 @router.message(RegistrationState.age)
 async def user_age_state_handler(message: Message, state: FSMContext):
-    """Обработка пользовательского возраста"""
+    """Handler of user's age"""
     try:
         age = UserAge(age=message.text)
 
@@ -44,15 +45,14 @@ async def user_age_state_handler(message: Message, state: FSMContext):
         await message.answer(
             SectionAnswer.name, reply_markup=select_name_keyboard(message.from_user.first_name)
         )
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.age)
 
 
 @router.message(RegistrationState.name, F.content_type == ContentType.TEXT)
 async def user_name_state_handler(message: Message, state: FSMContext):
-    """Обработка пользовательского имени"""
-    if message.text == "↩":
+    """Handler for user's name"""
+    if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.age)
         return await message.answer(SectionAnswer.age, reply_markup=ReplyKeyboardRemove())
 
@@ -62,15 +62,14 @@ async def user_name_state_handler(message: Message, state: FSMContext):
         await state.update_data(name=name.name)
         await state.set_state(RegistrationState.gender)
         await message.answer(SectionAnswer.gender, reply_markup=select_gender_keyboard())
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.name)
 
 
 @router.message(RegistrationState.gender)
 async def user_gender_state_handler(message: Message, state: FSMContext):
-    """Обработка пользовательского гендера"""
-    if message.text == "↩":
+    """Handler of user's gender"""
+    if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.name)
         return await message.answer(SectionAnswer.name, reply_markup=ReplyKeyboardRemove())
 
@@ -79,16 +78,17 @@ async def user_gender_state_handler(message: Message, state: FSMContext):
 
         await state.update_data(gender=gender)
         await state.set_state(RegistrationState.preferred_gender)
-        await message.answer(SectionAnswer.preferred_gender, reply_markup=select_preferred_gender_keyboard())
-
+        await message.answer(
+            SectionAnswer.preferred_gender, reply_markup=select_preferred_gender_keyboard()
+        )
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
 
 @router.message(RegistrationState.preferred_gender)
 async def user_preferred_gender_state_handler(message: Message, state: FSMContext):
-    """Обработка предпочитаемого к просмотру гендера анкет"""
-    if message.text == "↩":
+    """Handler of user's preferred gender"""
+    if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.gender)
         return await message.answer(SectionAnswer.gender, reply_markup=select_gender_keyboard())
 
@@ -98,16 +98,18 @@ async def user_preferred_gender_state_handler(message: Message, state: FSMContex
         await state.update_data(preferred_gender=preferred_gender)
         await state.set_state(RegistrationState.viewer_gender)
         await message.answer(SectionAnswer.viewer_gender, reply_markup=select_viewer_gender_keyboard())
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
 
 @router.message(RegistrationState.viewer_gender)
 async def viewer_gender_state_handler(message: Message, state: FSMContext):
-    if message.text == "↩":
+    """Handler of user's viewer gender"""
+    if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.preferred_gender)
-        return await message.answer(SectionAnswer.preferred_gender, reply_markup=select_preferred_gender_keyboard())
+        return await message.answer(
+            SectionAnswer.preferred_gender, reply_markup=select_preferred_gender_keyboard()
+        )
 
     try:
         viewer_gender = UserViewerGender(input=message.text).convert_input_to_enum()
@@ -115,7 +117,6 @@ async def viewer_gender_state_handler(message: Message, state: FSMContext):
         await state.update_data(viewer_gender=viewer_gender)
         await state.set_state(RegistrationState.location)
         await message.answer(SectionAnswer.location, reply_markup=select_location_keyboard())
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
@@ -123,9 +124,11 @@ async def viewer_gender_state_handler(message: Message, state: FSMContext):
 @router.message(RegistrationState.location)
 async def location_state_handler(message: Message, state: FSMContext):
     """Получение локации или города пользователя"""
-    if message.text == "↩":
+    if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.viewer_gender)
-        return await message.answer(SectionAnswer.viewer_gender, reply_markup=select_viewer_gender_keyboard())
+        return await message.answer(
+            SectionAnswer.viewer_gender, reply_markup=select_viewer_gender_keyboard()
+        )
 
     try:
         if location := message.location:
@@ -138,19 +141,18 @@ async def location_state_handler(message: Message, state: FSMContext):
 
         await state.set_state(RegistrationState.photo)
         await message.answer(SectionAnswer.photo, reply_markup=back_button_keyboard())
-
     except ValidationError:
         await message.answer(IncorrectInputAnswer.city)
 
 
 @router.message(RegistrationState.photo)
 async def photo_state_handler(
-        message: Message,
-        state: FSMContext,
-        session: AsyncSession,
+    message: Message,
+    state: FSMContext,
+    session: AsyncSession,
 ):
     """Получение фотографии пользователя и последующая загрузка в БД"""
-    if message.text == "↩":
+    if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.location)
         return await message.answer(SectionAnswer.location, reply_markup=select_location_keyboard())
 
@@ -161,14 +163,20 @@ async def photo_state_handler(
 
     await state.clear()
 
-    answer_for_user_photo = await message.answer(WarningAnswer.photo_is_uploading, reply_markup=ReplyKeyboardRemove())
+    answer_for_user_photo = await message.answer(
+        WarningAnswer.photo_is_uploading, reply_markup=ReplyKeyboardRemove()
+    )
 
     profile_photo_telegram_file_id = message.photo[-1].file_id
     photo_url = s3_client.get_file_url(file_name=profile_photo_telegram_file_id)
 
     user_config = UserConfig(user_id=message.chat.id, guess_age=True)
-    user_registration_info = UserRegistrationInfo(**data, user_id=user_config.user_id, photo_url=photo_url)
+    user_registration_info = UserRegistrationInfo(
+        **data, user_id=user_config.user_id, photo_url=photo_url
+    )
 
-    await complete_user_registration(user_config, profile_photo_telegram_file_id, user_registration_info, session)
+    await complete_user_registration(
+        user_config, profile_photo_telegram_file_id, user_registration_info, session
+    )
     await answer_for_user_photo.delete()
     await message.answer(COMPLETED_REGISTRATION_ANSWER, reply_markup=main_keyboard())

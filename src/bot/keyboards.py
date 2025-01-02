@@ -13,9 +13,8 @@ from aiogram.utils.keyboard import (
     ReplyKeyboardBuilder as Builder,
 )
 
+from bot.constants import BACK_BUTTON_EMOJI
 from config import settings
-
-BACK_BUTTON_EMOJI = "↩"
 
 
 def main_keyboard() -> Keyboard:

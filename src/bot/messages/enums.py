@@ -1,5 +1,8 @@
 from enum import StrEnum
 
+from bot.users.enums.genders import UserViewerGender
+from bot.users.registration.enums.gender import PreferredGender, ViewerGenderOption
+
 
 class Answer(StrEnum):
     unknown_message = "Я не знаю эту команду 🤷‍♂️"
@@ -26,5 +29,23 @@ class UpdatedProfileAnswer(StrEnum):
     age = "Возраст обновлен ✅"
     location = "Город обновлен ✅"
     gender = "Пол обновлен ✅"
-    preferred_gender = "Теперь ты ищешь другой пол ✅"
-    viewer_gender = "Теперь тебя просматривает другой пол ✅"
+
+    @staticmethod
+    def get_preffered_gender_answer(gender: PreferredGender):
+        match gender:
+            case PreferredGender.male:
+                return "Теперь ты просматриваешь парней ✅"
+            case PreferredGender.female:
+                return "Теперь ты просматриваешь девушек ✅"
+            case PreferredGender.both:
+                return "Теперь ты просматриваешь любой пол ✅"
+    
+    @staticmethod
+    def get_viewer_gender_answer(gender: UserViewerGender):
+        match gender:
+            case UserViewerGender.male:
+                return "Теперь тебя просматривают парни ✅"
+            case UserViewerGender.female:
+                return "Теперь тебя просматривают девушки ✅"
+            case UserViewerGender.both:
+                return "Теперь тебя просматривают и девушки, и парни ✅"
