@@ -1,20 +1,18 @@
-from datetime import timedelta, timezone, datetime
+from datetime import (
+    datetime,
+    timedelta,
+    timezone,
+)
 from typing import Optional
-
+from fastapi import HTTPException, status
 import jwt
 
 from config import settings
 
 
-def get_auth_link(user_id: int) -> str:
-    """
-    Получает ссылку для авторизации по JWT-токену в параметре
-    """
-    token = create_access_token({"sub": user_id})
-    return f"/auth?token={token}"
-
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(
+    data: dict, expires_delta: Optional[timedelta] = None
+) -> str:
     to_encode = data.copy()
 
     if expires_delta:
@@ -29,7 +27,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def decode_token(token: str) -> dict:
-    return jwt.decode(
-        token, settings.JWT_SECRET_KEY, algorithms=settings.JWT_ALGORITHM
-    )
+def decode_token(token: str):
+    try:
+        payload = jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            detail={"Token expried"}, status_code=status.HTTP_401_UNAUTHORIZED
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            detail={"Invalid token"}, status_code=status.HTTP_401_UNAUTHORIZED
+        )

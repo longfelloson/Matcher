@@ -8,8 +8,11 @@ router = Router()
 
 @router.error()
 async def error_handler(error: ErrorEvent):
-    """Обработка ошибок"""
-    message = error.update.message if getattr(error.update, "message") else error.update.callback_query
+    message = (
+        error.update.message
+        if getattr(error.update, "message")
+        else error.update.callback_query
+    )
 
     await logger.error(f"Возникла ошибка: {error.exception}", exc_info=True)
     await message.answer("Возникла ошибка, попробуйте позже 🫨")

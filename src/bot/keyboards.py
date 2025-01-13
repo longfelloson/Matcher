@@ -1,4 +1,3 @@
-from typing import Union
 from aiogram.types import (
     InlineKeyboardMarkup as InlineKeyboard,
     InlineKeyboardButton as InlineButton,
@@ -13,51 +12,44 @@ from aiogram.utils.keyboard import (
     ReplyKeyboardBuilder as Builder,
 )
 
-from bot.constants import BACK_BUTTON_EMOJI
+from bot.constants import BACK_BUTTON_EMOJI, ONE_BUTTON_IN_ROW
 from config import settings
 
 
 def main_keyboard() -> Keyboard:
-    """Клавиатура для главного меню"""
-    builder = Builder().row(
-        Button(text="Начать ▶️")
+    buttons_texts = ["Начать ▶️", "Профиль 📱", "Магазин 🛍"]
+    buttons = [Button(text=button_text) for button_text in buttons_texts]
+    return (
+        Builder()
+        .add(*buttons)
+        .adjust(ONE_BUTTON_IN_ROW)
+        .as_markup(resize_keyboard=True)
     )
-    builder.row(
-        Button(text="Профиль 📱")
-    )
-    builder.row(
-        Button(text="Магазин 🛍")
-    )
-    return builder.as_markup(resize_keyboard=True)
 
 
 def help_command_keyboard() -> InlineKeyboard:
-    """Клавиатура ответа на команду вызова поддержки"""
-    keyboard = [
-        [
-            InlineButton(
-                text="Поддержка ⚙", url=f"t.me/{settings.SUPPORT_ACCOUNT_USERNAME}"
-            )
-        ]
+    buttons = [
+        InlineButton(
+            text="Поддержка ⚙", url=f"t.me/{settings.SUPPORT_ACCOUNT_USERNAME}"
+        )
     ]
-    return InlineKeyboard(inline_keyboard=keyboard)
+    return InlineBuilder().add(*buttons).as_markup()
 
 
 def market_link_keyboard(link: str) -> InlineKeyboard:
-    """Клавиатура из одной кнопки, содержащую ссылку на маркет"""
-    builder = InlineBuilder().row(
+    buttons = [
         InlineButton(
             text="🔗",
             web_app=WebAppInfo(url=settings.MARKET_LINK + link),
-        )
-    )
-    return builder.as_markup()
+        ),
+    ]
+    return InlineBuilder().add(*buttons).as_markup()
 
 
-def back_button(as_builder: bool = False) -> Union[Builder, Keyboard]:
-    """Keyboard or builder with back button"""
+def back_button(as_builder: bool = False) -> Builder | Keyboard:
+    """Returns Keyboard or Builder with back button"""
     button = Button(text=BACK_BUTTON_EMOJI)
     if as_builder:
         return Builder().add(button)
+
     return button
-    

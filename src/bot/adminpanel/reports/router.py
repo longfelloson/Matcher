@@ -13,9 +13,9 @@ router = Router()
 
 @router.callback_query(ReportsSectionAction.filter(F.action == ReportAction.APPROVE))
 async def approve_report(
-        query: CallbackQuery,
-        query_data: ReportsSectionAction,
-        session: AsyncSession,
+    query: CallbackQuery,
+    query_data: ReportsSectionAction,
+    session: AsyncSession,
 ):
     report = await crud.get_report(query_data.report_id, session)
 
@@ -25,9 +25,9 @@ async def approve_report(
 
 @router.callback_query(ReportsSectionAction.filter(F.action == ReportAction.DECLINE))
 async def decline_report(
-        query: CallbackQuery,
-        query_data: ReportsSectionAction,
-        session: AsyncSession,
+    query: CallbackQuery,
+    query_data: ReportsSectionAction,
+    session: AsyncSession,
 ):
     report = await crud.get_report(query_data.report_id, session)
 

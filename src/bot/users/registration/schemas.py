@@ -2,11 +2,14 @@ from typing import Dict, Optional
 
 from pydantic import Field, BaseModel
 
-from bot.users.enums.genders import UserGender as UserGenderEnum, UserViewerGender as UserViewerGenderEnum
+from bot.users.enums.genders import (
+    UserGender as UserGenderEnum,
+    UserViewerGender as UserViewerGenderEnum,
+)
 from bot.users.registration.constants import (
     MIN_CITY_LENGTH,
     MAX_CITY_LENGTH,
-    MAX_NAME_LENGTH, 
+    MAX_NAME_LENGTH,
     MIN_NAME_LENGTH,
     MIN_AGE,
     MAX_AGE,
@@ -32,7 +35,11 @@ class UserGender(BaseModel):
     input: GenderOption
 
     def convert_input_to_enum(self) -> UserGenderEnum:
-        return UserGenderEnum.male if self.input == GenderOption.male else UserGenderEnum.female
+        return (
+            UserGenderEnum.male
+            if self.input == GenderOption.male
+            else UserGenderEnum.female
+        )
 
 
 class UserViewerGender(BaseModel):
@@ -42,7 +49,7 @@ class UserViewerGender(BaseModel):
         mapping: Dict[ViewerGenderOption, UserViewerGenderEnum] = {
             ViewerGenderOption.female: UserViewerGenderEnum.female,
             ViewerGenderOption.male: UserViewerGenderEnum.male,
-            ViewerGenderOption.both: UserViewerGenderEnum.both
+            ViewerGenderOption.both: UserViewerGenderEnum.both,
         }
         return mapping.get(self.input)
 
@@ -72,11 +79,11 @@ class UserPreferredAgeGroup(BaseModel):
 
 
 class UserCity(BaseModel):
-    city: str = Field(min_length=MIN_CITY_LENGTH, max_length=MAX_CITY_LENGTH)
+    city: str = Field(..., min_length=MIN_CITY_LENGTH, max_length=MAX_CITY_LENGTH)
 
 
 class UserRegistrationInfo(BaseModel):
-    user_id: int
+    id: int
     age: int
     name: str
     gender: UserGenderEnum

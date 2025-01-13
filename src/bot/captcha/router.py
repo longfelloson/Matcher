@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from bot.captcha.enum import CaptchaCorrectness
 from bot.captcha.utils import decrypt_correctness
 from bot.loader import bot
 from bot.users.enums.actions import UserAction
@@ -12,12 +13,11 @@ router = Router()
 
 
 @router.callback_query(F.data.startswith(UserAction.select_captcha_emoji))
-async def captcha_button_handler(call: CallbackQuery, state: FSMContext):
-    """Обработка решения капчи"""
+async def captcha_click_handler(call: CallbackQuery, state: FSMContext):
     encrypted_captcha_correctness = call.data.split("*")[1]
     decrypted_captcha_correctness = decrypt_correctness(encrypted_captcha_correctness)
 
-    if decrypted_captcha_correctness == "CORRECT":
+    if decrypted_captcha_correctness == CaptchaCorrectness.CORRECT:
         await bot.answer_callback_query(call.id)
         await call.message.delete()
         await state.set_state(RegistrationState.age)

@@ -19,9 +19,9 @@ router = Router(name="Commands")
 
 @router.message(or_f(CommandStart(), F.text == BACK_BUTTON_EMOJI))
 async def start_command_handler(
-        message: Message,
-        state: FSMContext,
-        user: Optional[User]
+    message: Message,
+    state: FSMContext,
+    user: Optional[User],
 ):
     if not user:
         user_id = message.chat.id

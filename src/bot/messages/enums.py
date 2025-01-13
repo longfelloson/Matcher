@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 from bot.users.enums.genders import UserViewerGender
-from bot.users.registration.enums.gender import PreferredGender, ViewerGenderOption
+from bot.users.registration.enums.gender import PreferredGender
 
 
 class Answer(StrEnum):
@@ -39,7 +39,7 @@ class UpdatedProfileAnswer(StrEnum):
                 return "Теперь ты просматриваешь девушек ✅"
             case PreferredGender.both:
                 return "Теперь ты просматриваешь любой пол ✅"
-    
+
     @staticmethod
     def get_viewer_gender_answer(gender: UserViewerGender):
         match gender:

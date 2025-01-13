@@ -9,13 +9,13 @@ from config import settings
 
 
 async def approve_report(report: ReportSchema, session: AsyncSession) -> None:
-    """Блокировка пользователя и начисление баллов за корректную жалобу"""
     await users_crud.update_user(report.reported, session, status=UserStatus.blocked)
-    await users_crud.increase_user_points(report.reporter, settings.POINTS_FOR_BLOCKED_USER, session)
-    await crud.update_report(report.report_id, session, status=ReportStatus.APPROVED)
+    await users_crud.increase_user_points(
+        report.reporter, settings.POINTS_FOR_BLOCKED_USER, session
+    )
+    await crud.update_report(report.id, session, status=ReportStatus.APPROVED)
 
 
 async def decline_report(report: ReportSchema, session: AsyncSession) -> None:
-    """Отклонение пользовательской жалобы"""
     await users_crud.update_user(report.reported, session, status=UserStatus.active)
-    await crud.update_report(report.report_id, session, status=ReportStatus.DECLINED)
+    await crud.update_report(report.id, session, status=ReportStatus.DECLINED)

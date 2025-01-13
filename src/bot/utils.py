@@ -27,7 +27,9 @@ async def start_bot() -> None:
         users_router,
         admin_panel_router,
     )
-    set_middleware(ThrottlingMiddleware(rate_limit=DEFAULT_RATE_LIMIT), for_updates=True)
+    set_middleware(
+        ThrottlingMiddleware(rate_limit=DEFAULT_RATE_LIMIT), for_updates=True
+    )
     set_middleware(PayloadMiddleware(), for_updates=True)
     set_middleware(UserStatusMiddleware(), for_messages=True, for_calldata=True)
 
@@ -44,16 +46,24 @@ async def set_commands() -> None:
     await bot.set_my_commands(default_commands)
 
     for ADMIN_ID in settings.admins_ids:
-        await bot.set_my_commands(default_commands + [
-            BotCommand(
-                command="admin",
-                description="Панель администратора",
-                scope=BotCommandScopeChat(chat_id=ADMIN_ID)
-            )
-        ])
+        await bot.set_my_commands(
+            default_commands
+            + [
+                BotCommand(
+                    command="admin",
+                    description="Панель администратора",
+                    scope=BotCommandScopeChat(chat_id=ADMIN_ID),
+                )
+            ]
+        )
 
 
-def set_middleware(middleware: BaseMiddleware, for_updates=False, for_messages=False, for_calldata=False):
+def set_middleware(
+    middleware: BaseMiddleware,
+    for_updates=False,
+    for_messages=False,
+    for_calldata=False,
+):
     if for_updates:
         dp.update.outer_middleware(middleware)
 

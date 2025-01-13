@@ -1,56 +1,45 @@
-from fastapi import APIRouter, Depends, status, Request
-from fastapi.responses import JSONResponse, HTMLResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.templating import Jinja2Templates
+import base64
+import uuid
+from fastapi import APIRouter, Depends
+from pydantic import UUID4
 
-from config import settings
-from database import get_async_session
-from market.auth.utils import auth_guard
+from database import DatabaseSession
+from market.products.schemas import CreateProduct, Product
+from market.responses import (
+    RESOURCE_CREATED_RESPONSE, 
+    RESOURCE_DELETED_RESPONSE,
+)
 from market.products import crud
-from market.products.schemas import CreateUserProduct
+from market.schemas import OffsetLimit
+from s3 import s3_client
 
-router = APIRouter(tags=["Products"], dependencies=[Depends(auth_guard)])
-templates = Jinja2Templates(directory=settings.TEMPLATES_PATH + "/products")
+router = APIRouter(tags=["Products"])
 
 
-@router.get("/products", status_code=status.HTTP_200_OK)
-async def get_products(
-        offset: int = 0,
-        limit: int = 100,
-        user_id: int = None,
-        session: AsyncSession = Depends(get_async_session),
+@router.post("/products")
+async def create_product_endpoint(
+    data: CreateProduct, session: DatabaseSession
 ):
-    """Ручка для получения товаров"""
-    return await crud.get_products(offset, limit, user_id, session)
+    img_name = str(uuid.uuid4())
+    img = base64.b64decode(data.img_base64)
+    img_url = s3_client.get_file_url(img_name)
+
+    await s3_client.upload_file(img_name, img)
+    await crud.create_product(data, img_url, session)
+
+    return RESOURCE_CREATED_RESPONSE
 
 
-@router.get("/products/{product_id}")
-async def get_product_endpoint(
-        product_id: int,
-        session: AsyncSession = Depends(get_async_session),
-        user_id: int = None,
+@router.get("/products", response_model=list[Product])
+async def get_products_endpoint(
+    session: DatabaseSession, params: OffsetLimit = Depends()
 ):
-    """Ручка для получения товара по его ID"""
-    return await crud.get_product(product_id, session, user_id)
+    products = await crud.get_products(params.offset, params.limit, session)
+    return products
 
 
-@router.get("/product", response_class=HTMLResponse)
-async def get_product_page(request: Request):
-    """Ручка для получения страницы товара"""
-    return templates.TemplateResponse("product.html", {"request": request})
+@router.delete("/products/{product_id}")
+async def delete_product_endpoint(product_id: UUID4, session: DatabaseSession):
+    await crud.delete_product(product_id, session)
 
-
-@router.get("/products/buy", response_class=HTMLResponse)
-async def buy_product_page(request: Request):
-    """
-    Ручка для получения страницы покупки товара за баллы
-    """
-    return templates.TemplateResponse("buy-product.html", {"request": request})
-
-
-@router.post("/products/user", response_class=JSONResponse, status_code=status.HTTP_201_CREATED)
-async def buy_product_endpoint(data: CreateUserProduct, session: AsyncSession = Depends(get_async_session)):
-    """Ручка для добавления пользовательского товара полученного за баллы"""
-    await crud.create_user_product(data.user_id, data.product_id, session)
-
-    return JSONResponse({"message": "User product successfully created"}, status.HTTP_201_CREATED)
+    return RESOURCE_DELETED_RESPONSE

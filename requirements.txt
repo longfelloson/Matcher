@@ -17,5 +17,7 @@ pydantic-extra-types==2.9.0
 aiologger==0.7.0
 aiopytesseract==0.14.0
 phonenumbers==8.13.45
-asyncpg
-redis
+asyncpg==0.30.0
+redis==5.2.1
+fastapi-cache2==0.2.2
+python-jose==3.3.0

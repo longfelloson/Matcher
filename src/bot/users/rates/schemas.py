@@ -1,7 +1,9 @@
 from pydantic import BaseModel
 
+from bot.users.rates.enums import RateType
+
 
 class Rate(BaseModel):
-    rater: int
-    rated: int
-    rate_type: str
+    rater_user_id: int
+    rated_user_id: int
+    type: RateType

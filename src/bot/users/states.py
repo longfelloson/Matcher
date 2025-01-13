@@ -1,7 +1,7 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class UserChangeState(StatesGroup):
+class UpdateUserState(StatesGroup):
     profile = State()
     sections = State()
     name = State()

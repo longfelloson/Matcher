@@ -1,10 +1,17 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class PaymentStatus(Enum):
+class PaymentStatus(StrEnum):
     pending = "PENDING"
     completed = "COMPLETED"
 
 
-class PaymentDestination(Enum):
+class PaymentDestination(StrEnum):
     tbank = "tbank"
+    sberbank = "sberbank"
+
+
+class PaymentCurrency(StrEnum):
+    EUR = "EUR"
+    USD = "USD"
+    

@@ -9,9 +9,9 @@ import aiohttp
 from config import settings
 from logger import logger
 
-SBERBANK_ID_FOR_SPB = "1enc00000111"
-YOOMONEY_ID_FOR_SPB = "1enc00000022"
-TINKOFF_ID_FOR_SPB = "1enc00000004"
+SBERBANK_idFOR_SPB = "1enc00000111"
+YOOMONEY_idFOR_SPB = "1enc00000022"
+TINKOFF_idFOR_SPB = "1enc00000004"
 
 RUB_CURRENCY_ID = 1
 
@@ -54,7 +54,6 @@ class Wallet(PaymentSystem):
 
     @staticmethod
     def __idempotence_key() -> str:
-        """ """
         return str(uuid.uuid4())
 
     def __create_sign(self, data: Optional[dict]) -> str:
@@ -69,12 +68,7 @@ class Wallet(PaymentSystem):
 
         return sigh
 
-    async def _request(
-            self,
-            url: str,
-            method: str = "POST",
-            data: dict = None
-    ) -> dict:
+    async def _request(self, url: str, method: str = "POST", data: dict = None) -> dict:
         """
         Отправляет запрос с нужными данными
         """
@@ -86,19 +80,19 @@ class Wallet(PaymentSystem):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(
-                        method, url, data=data, headers=headers
+                    method, url, data=data, headers=headers
                 ) as response:
                     return await response.json()
         except Exception as e:
             await logger.error(f"Ошибка при отправке запроса для создания платежа: {e}")
 
     async def withdraw(
-            self,
-            sbp_bank_id: int,
-            amount: float,
-            payment_system_id: int,
-            fee_from_balance: int = FEE_FROM_PAYMENT,
-            currency_id: int = RUB_CURRENCY_ID,
+        self,
+        sbp_bank_id: int,
+        amount: float,
+        payment_system_id: int,
+        fee_from_balance: int = FEE_FROM_PAYMENT,
+        currency_id: int = RUB_CURRENCY_ID,
     ) -> dict:
         """
         Выводит средства с кошелька на указанные реквизиты
@@ -109,6 +103,7 @@ class Wallet(PaymentSystem):
             "payment_system_id": payment_system_id,
             "fee_from_balance": fee_from_balance,
             "account": self.account,
+            "amount": amount,
         }
         return await self._request(self.withdraw_endpoint_url, data=data)
 

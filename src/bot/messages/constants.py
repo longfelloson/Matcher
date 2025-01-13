@@ -1,0 +1,1 @@
+NO_PHOTO_DELAY = 2

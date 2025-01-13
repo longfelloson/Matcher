@@ -1,5 +1,3 @@
-from typing import Union
-
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
@@ -8,6 +6,8 @@ load_dotenv()
 DEFAULT_REDIS_PORT = 6379
 DEFAULT_REDIS_HOST = "redis"
 DEFAULT_REDIS_DB = 0
+
+DEFAULT_LOGS_PATH = "../errors.log"
 
 
 class S3Config(BaseSettings):
@@ -21,7 +21,7 @@ class RedisConfig(BaseSettings):
     REDIS_PORT: int = DEFAULT_REDIS_PORT
     REDIS_HOST: str = DEFAULT_REDIS_HOST
     REDIS_DB: int = DEFAULT_REDIS_DB
-    
+
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
@@ -34,7 +34,7 @@ class BotConfig(BaseSettings):
     MODERATOR_IDS: str
 
     SUPPORT_ACCOUNT_USERNAME: str
-    POINTS_FOR_BLOCKED_USER: Union[int, float]
+    POINTS_FOR_BLOCKED_USER: int | float
     GEOCODER_API_KEY: str
 
     @property
@@ -61,7 +61,7 @@ class DatabaseConfig(BaseSettings):
 class MarketConfig(BaseSettings):
     TEMPLATES_PATH: str = "../templates"
     MARKET_LINK: str
-    MARKET_EXCHANGE_RATE: Union[int, float]
+    MARKET_EXCHANGE_RATE: int | float
 
 
 class AuthConfig(BaseSettings):
@@ -85,7 +85,7 @@ class Settings(
     PaymentsConfig,
     RedisConfig,
 ):
-    LOGS_FILE_PATH: str = "../errors.log"
+    LOGS_FILE_PATH: str = DEFAULT_LOGS_PATH
 
 
 settings = Settings()

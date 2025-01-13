@@ -16,6 +16,6 @@ router.include_routers(reports_router, users_router)
 async def view_users_section(query: CallbackQuery):
     await bot.answer_callback_query(query.id)
     await query.message.edit_text(
-        text="Выберите действие или раздел ⤵️", 
-        reply_markup=users_section_actions_keyboard()
+        text="Выберите действие или раздел ⤵️",
+        reply_markup=users_section_actions_keyboard(),
     )

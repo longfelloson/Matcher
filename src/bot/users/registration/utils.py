@@ -8,10 +8,10 @@ from bot.users.registration.schemas import UserRegistrationInfo
 
 
 async def complete_user_registration(
-        user_config_schema: UserConfig,
-        photo_telegram_file_id: str,
-        user_registration_info: UserRegistrationInfo,
-        session: AsyncSession,
+    user_config_schema: UserConfig,
+    photo_telegram_file_id: str,
+    user_registration_info: UserRegistrationInfo,
+    session: AsyncSession,
 ) -> None:
     await upload_user_photo_to_s3(telegram_file_id=photo_telegram_file_id)
     await users_crud.create_user(user_registration_info, session)

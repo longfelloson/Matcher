@@ -6,6 +6,7 @@ from aiogram.utils.keyboard import (
 
 from bot.adminpanel.users.enums import Action, ActionName
 from bot.adminpanel.users.schemas import UsersSectionAction
+from bot.constants import ONE_BUTTON_IN_ROW
 
 
 def users_section_actions_keyboard() -> InlineKeyboard:
@@ -15,4 +16,4 @@ def users_section_actions_keyboard() -> InlineKeyboard:
         )
         for action_name, action in zip(ActionName, Action)
     ]
-    return InlineBuilder().add(*buttons).adjust(1).as_markup()
+    return InlineBuilder().add(*buttons).adjust(ONE_BUTTON_IN_ROW).as_markup()

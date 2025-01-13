@@ -1,30 +1,52 @@
-import jwt
-from fastapi import Request, HTTPException, status, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Annotated
+
+from fastapi import (
+    Depends,
+    HTTPException,
+    Request,
+    status,
+)
 
 from bot.users import crud as users_crud
 from bot.users.models import User
-from database import get_async_session
-from market.auth.token import decode_token
+from database import DatabaseSession
+from market.auth.schemas import User as UserSchema
+from market.auth.token import decode_token, create_access_token
 
 
-class AuthGuard:
-    async def __call__(self, request: Request):
-        """Миддлварь авторизации пользователя"""
-        if not (token := request.cookies.get("token")):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-        try:
-            if decode_token(token):
-                return True
-        except jwt.exceptions.ExpiredSignatureError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+def get_auth_link(user_id: int) -> str:
+    token = create_access_token({"sub": user_id})
+    return f"/auth?token={token}"
 
 
-async def get_current_user(request: Request, session: AsyncSession = Depends(get_async_session)) -> User:
-    """Получает текущего пользователя по JWT-токену из cookies"""
-    payload = decode_token(request.cookies.get("token"))
-    return await users_crud.get_user(payload["sub"], session)
+async def get_current_user(request: Request, session: DatabaseSession) -> User:
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    payload = decode_token(token)
+    user_id = payload.get("sub")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token: Missing user ID",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user = await users_crud.get_user_by_id(user_id, session)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return user
 
 
-auth_guard = AuthGuard()
+CurrentUser = Annotated[UserSchema, Depends(get_current_user)]

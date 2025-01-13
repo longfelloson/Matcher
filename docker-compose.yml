@@ -1,16 +1,21 @@
 services:
   redis:
     image: redis:latest
-    container_name: guesser_redis
+    container_name: matcher_redis
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    command: ["redis-server", "--maxmemory", "200mb", "--maxmemory-policy", "allkeys-lru"]
     env_file:
       - .env
     ports:
       - "${REDIS_PORT}:6379"
     networks:
-      - guesser-network
+      - matcher-network
 
   app:
-    container_name: guesser_site
+    container_name: matcher_site
     build: .
     depends_on:
       - db
@@ -22,11 +27,11 @@ services:
       - DB_HOST=db
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn market_main:app --host 0.0.0.0 --port 8000'
     networks:
-      - guesser-network
+      - matcher-network
 
   db:
     image: postgres:latest
-    container_name: guesser_db
+    container_name: matcher_db
     ports:
       - "5432:5432"
     env_file:
@@ -37,11 +42,11 @@ services:
       - postgres-data:/var/lib/postgresql/data
     restart: always
     networks:
-      - guesser-network
+      - matcher-network
 
   nginx:
     image: nginx:latest
-    container_name: guesser_nginx
+    container_name: matcher_nginx
     ports:
       - "80:80"
       - "443:443"
@@ -53,21 +58,21 @@ services:
       - /etc/letsencrypt/live/matcher-market.shop/fullchain.pem:/etc/letsencrypt/live/matcher-market.shop/fullchain.pem
       - /etc/letsencrypt/live/matcher-market.shop/privkey.pem:/etc/letsencrypt/live/matcher-market.shop/privkey.pem
     networks:
-      - guesser-network
+      - matcher-network
 
   bot:
-    container_name: guesser_bot
+    container_name: matcher_bot
     build: .
     depends_on:
       - db
     environment:
       - DB_HOST=db
     networks:
-      - guesser-network
+      - matcher-network
 
 volumes:
   postgres-data:
 
 networks:
-  guesser-network:
+  matcher-network:
     driver: bridge

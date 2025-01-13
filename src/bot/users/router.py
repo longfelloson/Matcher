@@ -11,7 +11,7 @@ from bot.messages.enums import ChangeProfileAnswer, UpdatedProfileAnswer
 from bot.users import crud
 from bot.users.enums.answers import IncorrectInputAnswer, WarningAnswer
 from bot.users.enums.sections import UserProfileSection
-from bot.users.locations import reverse_geocode_user_location
+from bot.users.locations import get_city_by_location
 from bot.users.models import User
 from bot.users.registration.keyboards import (
     select_location_keyboard,
@@ -29,37 +29,51 @@ from bot.users.registration.schemas import (
     UserPreferredGender,
     UserViewerGender,
 )
-from bot.users.states import UserChangeState
+from bot.users.states import UpdateUserState
 from s3 import s3_client
 
 router = Router(name="Users")
 
 
-@router.message(UserChangeState.sections)
+@router.message(UpdateUserState.sections)
 async def change_profile_handler(message: Message, state: FSMContext):
     """Обработка кнопок выбора секции"""
     section_actions = {
         UserProfileSection.name: (
-            UserChangeState.name, ChangeProfileAnswer.name, select_name_keyboard(message.from_user.first_name)
+            UpdateUserState.name,
+            ChangeProfileAnswer.name,
+            select_name_keyboard(message.from_user.first_name),
         ),
         UserProfileSection.age: (
-            UserChangeState.age, ChangeProfileAnswer.age, back_button_keyboard()
+            UpdateUserState.age,
+            ChangeProfileAnswer.age,
+            back_button_keyboard(),
         ),
         UserProfileSection.city: (
-            UserChangeState.location, ChangeProfileAnswer.location, select_location_keyboard()
+            UpdateUserState.location,
+            ChangeProfileAnswer.location,
+            select_location_keyboard(),
         ),
         UserProfileSection.gender: (
-            UserChangeState.gender, ChangeProfileAnswer.gender, select_gender_keyboard()
+            UpdateUserState.gender,
+            ChangeProfileAnswer.gender,
+            select_gender_keyboard(),
         ),
         UserProfileSection.preferred_gender: (
-            UserChangeState.preferred_gender, ChangeProfileAnswer.preferred_gender, select_preferred_gender_keyboard()
+            UpdateUserState.preferred_gender,
+            ChangeProfileAnswer.preferred_gender,
+            select_preferred_gender_keyboard(),
         ),
         UserProfileSection.photo: (
-            UserChangeState.photo, ChangeProfileAnswer.photo, back_button_keyboard()
+            UpdateUserState.photo,
+            ChangeProfileAnswer.photo,
+            back_button_keyboard(),
         ),
         UserProfileSection.viewer_gender: (
-            UserChangeState.viewer_gender, ChangeProfileAnswer.viewer_gender, select_viewer_gender_keyboard()
-        )
+            UpdateUserState.viewer_gender,
+            ChangeProfileAnswer.viewer_gender,
+            select_viewer_gender_keyboard(),
+        ),
     }
 
     action = section_actions.get(message.text)
@@ -70,63 +84,64 @@ async def change_profile_handler(message: Message, state: FSMContext):
         await state.set_state(state_)
         await message.answer(answer, reply_markup=keyboard)
     else:
-        await message.answer("Используй кнопки 😘")
+        await message.answer(IncorrectInputAnswer.buttons)
 
 
-@router.message(UserChangeState.name)
-async def change_name_state_handler(
+@router.message(UpdateUserState.name)
+async def update_user_name(
     message: Message,
     user: User,
     session: AsyncSession,
     state: FSMContext,
 ):
-    """Обновление пользовательского имени"""
     try:
         name = UserName(name=message.text)
 
         await state.clear()
         await message.answer(UpdatedProfileAnswer.name, reply_markup=main_keyboard())
-        await crud.update_user(user.user_id, session, name=name.name)
+        await crud.update_user(user.id, session, name=name.name)
     except ValidationError:
-        await message.answer("Это не похоже на имя 🤔")
+        await message.answer(IncorrectInputAnswer.name)
 
 
-@router.message(UserChangeState.location)
-async def change_location_state_handler(
+@router.message(UpdateUserState.location)
+async def update_user_location(
     message: Message,
     user: User,
     session: AsyncSession,
     state: FSMContext,
 ):
-    """Обновление пользовательской локации"""
     try:
         city = UserCity(city=message.text).city
         location = message.location
 
         if location:
-            city = await reverse_geocode_user_location(location.latitude, location.longitude)
+            city = await get_city_by_location(location.latitude, location.longitude)
             location = f"{location.longitude}*{location.latitude}"
 
         await state.clear()
-        await message.answer(UpdatedProfileAnswer.location, reply_markup=main_keyboard())
-        await crud.update_user(user.user_id, session, city=city, location=location)
+        await message.answer(
+            UpdatedProfileAnswer.location, reply_markup=main_keyboard()
+        )
+        await crud.update_user(user.id, session, city=city, location=location)
     except ValidationError:
-        await message.answer("Отправь город или локацию с помощью кнопки 😘")
+        await message.answer(IncorrectInputAnswer.city)
 
 
-@router.message(UserChangeState.photo)
-async def change_photo_state_handler(
-        message: Message,
-        session: AsyncSession,
-        state: FSMContext,
+@router.message(UpdateUserState.photo)
+async def update_user_photo(
+    message: Message,
+    session: AsyncSession,
+    state: FSMContext,
 ):
-    """Обновление пользовательской фотографии"""
     if message.content_type != ContentType.PHOTO:
         return await message.answer(IncorrectInputAnswer.photo)
 
     await state.clear()
 
-    answer_for_user_photo = await message.answer(WarningAnswer.photo_is_uploading, reply_markup=ReplyKeyboardRemove())
+    answer_for_user_photo = await message.answer(
+        WarningAnswer.photo_is_uploading, reply_markup=ReplyKeyboardRemove()
+    )
 
     file_name = message.photo[-1].file_id
     photo_url = s3_client.get_file_url(file_name)
@@ -137,75 +152,73 @@ async def change_photo_state_handler(
     await crud.update_user(message.chat.id, session, photo_url=photo_url)
 
 
-@router.message(UserChangeState.age)
-async def change_age_state_handler(
+@router.message(UpdateUserState.age)
+async def update_user_age(
     message: Message,
     user: User,
     session: AsyncSession,
     state: FSMContext,
 ):
-    """Смена возраста в профиле"""
     try:
         age = UserAge(age=message.text)
 
         await state.clear()
         await message.answer(UpdatedProfileAnswer.age, reply_markup=main_keyboard())
-        await crud.update_user(user.user_id, session, age=age.age)
+        await crud.update_user(user.id, session, age=age.age)
     except ValidationError:
         await message.answer(IncorrectInputAnswer.age)
 
 
-@router.message(UserChangeState.gender)
-async def change_gender_state_handler(
-        message: Message,
-        user: User,
-        state: FSMContext,
-        session: AsyncSession,
+@router.message(UpdateUserState.gender)
+async def update_user_gender(
+    message: Message,
+    user: User,
+    state: FSMContext,
+    session: AsyncSession,
 ):
-    """Смена гендера в профиле"""
     try:
         gender = UserGender(input=message.text).convert_input_to_enum()
 
         await state.clear()
         await message.answer(UpdatedProfileAnswer.gender, reply_markup=main_keyboard())
-        await crud.update_user(user.user_id, session, gender=gender)
+        await crud.update_user(user.id, session, gender=gender)
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
 
-@router.message(UserChangeState.preferred_gender)
-async def change_preferred_gender_state_handler(
+@router.message(UpdateUserState.preferred_gender)
+async def update_user_preferred_gender(
     message: Message,
     user: User,
     state: FSMContext,
     session: AsyncSession,
 ):
-    """Смена гендера анкет для просмотра"""
     try:
-        preferred_gender = UserPreferredGender(input=message.text).convert_input_to_enum()
+        preferred_gender = UserPreferredGender(
+            input=message.text
+        ).convert_input_to_enum()
         answer = UpdatedProfileAnswer.get_preffered_gender_answer(preferred_gender)
 
         await state.clear()
         await message.answer(answer, reply_markup=main_keyboard())
-        await crud.update_user(user.user_id, session, preferred_gender=preferred_gender)
+        await crud.update_user(user.id, session, preferred_gender=preferred_gender)
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
 
 
-@router.message(UserChangeState.viewer_gender)
-async def change_viewer_gender(
+@router.message(UpdateUserState.viewer_gender)
+async def update_user_viewer_gender(
     message: Message,
     user: User,
     state: FSMContext,
     session: AsyncSession,
 ):
-    """Смена гендера в профиле"""
     try:
         viewer_gender = UserViewerGender(input=message.text).convert_input_to_enum()
         answer = UpdatedProfileAnswer.get_viewer_gender_answer(viewer_gender)
 
         await state.clear()
         await message.answer(answer, reply_markup=main_keyboard())
-        await crud.update_user(user.user_id, session, viewer_gender=viewer_gender)
+        await crud.update_user(user.id, session, viewer_gender=viewer_gender)
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)

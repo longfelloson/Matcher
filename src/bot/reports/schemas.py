@@ -1,9 +1,11 @@
-import uuid
+from pydantic import BaseModel
 
-from pydantic import UUID4, Field, BaseModel
+from bot.reports.enums import ReportStatus
 
 
 class Report(BaseModel):
-    report_id: UUID4 = Field(default=uuid.uuid4())
+    id: int
     reporter: int
     reported: int
+    reported_at: int
+    status: ReportStatus.PENDING

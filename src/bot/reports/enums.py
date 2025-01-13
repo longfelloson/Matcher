@@ -7,5 +7,5 @@ class ReportStatus(StrEnum):
     PENDING = "pending"
 
 
-class Answer:
+class Answer(StrEnum):
     sent_report = "Жалоба отправлена 📨"

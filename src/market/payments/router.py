@@ -1,17 +1,30 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_async_session
-from market.payments import crud, schemas
-from market.payments.fkwallet import wallet
+from database import DatabaseSession
+from market.auth.utils import CurrentUser
+from market.payments import crud
+from market.payments.schemas import CreatePayment, Payment
+from market.responses import RESOURCE_CREATED_RESPONSE
+from market.schemas import OffsetLimit
 
 router = APIRouter(tags=["Payments"])
 
 
-@router.post("/payment", response_class=JSONResponse)
-async def create_payment(data: schemas.CreatePayment, session: AsyncSession = Depends(get_async_session)):
-    """Ручка для создания платежа и вывода средств на указанные реквизиты"""
-    await wallet.withdraw(**data.model_dump())
+@router.post("/payments")
+async def create_payment_endpoint(
+    data: CreatePayment,
+    user: CurrentUser,
+    session: DatabaseSession,
+):
+    await crud.create_payment(data, user.id, session)
+    
+    return RESOURCE_CREATED_RESPONSE
 
-    return JSONResponse({"status": "success", "payment_id": await crud.create_payment(data, session)})
+
+@router.get("/payments", response_model=list[Payment])
+async def get_payments(
+    session: DatabaseSession, params: OffsetLimit = Depends(),
+):
+    payments = await crud.get_payments(params.offset, params.limit, session)
+    return payments

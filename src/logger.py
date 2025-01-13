@@ -9,7 +9,7 @@ from config import settings
 log_format = "%(asctime)s - %(levelname)s - %(message)s - [%(funcName)s:%(lineno)d]"
 formatter = Formatter(log_format)
 
-file_handler = AsyncFileHandler(filename=settings.LOGS_FILE_PATH, mode='a+')
+file_handler = AsyncFileHandler(filename=settings.LOGS_FILE_PATH, mode="a+")
 file_handler.formatter = formatter
 
 logger = Logger(name="error_logger", level=logging.ERROR)

@@ -5,19 +5,19 @@ from bot.users.models import User
 
 def get_age_suffix(age):
     if not isinstance(age, int) or age < 0:
-        raise ValueError('Возраст должен быть неотрицательным целым числом.')
+        raise ValueError("Возраст должен быть неотрицательным целым числом.")
 
     last_digit = age % 10
     last_two_digits = age % 100
 
     if 11 <= last_two_digits <= 14:
-        return 'лет'
+        return "лет"
     elif last_digit == 1:
-        return 'год'
+        return "год"
     elif last_digit in {2, 3, 4}:
-        return 'года'
+        return "года"
     else:
-        return 'лет'
+        return "лет"
 
 
 def get_profile_text(user: User) -> str:
@@ -33,7 +33,6 @@ def get_profile_text(user: User) -> str:
 
 
 def get_user_profile_caption(viewer: User, viewed: User) -> str:
-    """Возвращает описание профиля пользовательской анкеты при просмотре другим пользователем"""
     base_caption = f"{viewed.name}, {viewed.city}"
 
     if viewed.instagram:
@@ -47,4 +46,8 @@ def get_user_profile_caption(viewer: User, viewed: User) -> str:
 
 
 def get_user_link(user: User) -> str:
-    return f"@{user.username}" if user.username else f'<a href="tg://user?id={user.user_id}">{user.name}</a>'
+    return (
+        f"@{user.username}"
+        if user.username
+        else f'<a href="tg://user?id={user.id}">{user.name}</a>'
+    )

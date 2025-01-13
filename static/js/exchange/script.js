@@ -2,7 +2,7 @@ async function fetchExchangeRate() {
     try {
         const response = await fetch('/exchange/rate');
         const data = await response.json();
-        return data['current-rate'];
+        return data['rate'];
     } catch (error) {
         console.error('Error fetching exchange rate:', error);
         return null;
@@ -29,6 +29,7 @@ async function selectImage(id) {
 }
 
 async function exchangePoints() {
+    const exchangeRate = await fetchExchangeRate();
     const points = document.getElementById('points').value;
     const selectedImage = document.querySelector('.carousel-item.selected');
     const destination = selectedImage ? selectedImage.id : '';
@@ -36,7 +37,7 @@ async function exchangePoints() {
 
     if (points && destination && accountDetails) {
         try {
-            const balanceResponse = await fetch(`/exchange/user-points`);
+            const balanceResponse = await fetch(`/points`);
             if (!balanceResponse.ok) {
                 const errorData = await balanceResponse.json();
                 alert('Ошибка при получении баланса: ' + (errorData.message || 'Ошибка.'));
@@ -52,9 +53,8 @@ async function exchangePoints() {
             }
 
             const requestData = {
-                points: points,
-                destination: destination,
-                account_details: accountDetails,
+                points: parseInt(points),
+                rate: exchangeRate,
             };
 
             const exchangeResponse = await fetch('/exchange', {

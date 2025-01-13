@@ -1,5 +1,4 @@
 .env
-development.env
 .git
 .idea
 .dockerignore
@@ -10,3 +9,5 @@ tests
 
 errors.log
 pytest.ini
+alembic.ini
+development.env

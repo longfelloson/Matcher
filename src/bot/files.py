@@ -10,7 +10,7 @@ DEFAULT_FILE_EXTENSION = "jpg"
 
 
 async def get_file_from_telegram(file_id: str) -> bytes:
-    """Возвращает файл с серверов Телеграм в виде байтов"""
+    """Returns file by given ID from Telegram's server"""
     file: File = await bot.get_file(file_id)
 
     async with aiohttp.ClientSession() as session:
@@ -20,8 +20,9 @@ async def get_file_from_telegram(file_id: str) -> bytes:
         return await response.read()
 
 
-async def upload_user_photo_to_s3(telegram_file_id: str, extension: str = DEFAULT_FILE_EXTENSION) -> None:
-    """Загружает фото полученное от пользователя в хранилище S3"""
+async def upload_user_photo_to_s3(
+    telegram_file_id: str, extension: str = DEFAULT_FILE_EXTENSION
+) -> None:
     file = await get_file_from_telegram(telegram_file_id)
     filename = f"{telegram_file_id}.{extension}"
 

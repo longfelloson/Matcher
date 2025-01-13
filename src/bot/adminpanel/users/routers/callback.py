@@ -13,9 +13,9 @@ router = Router()
 
 @router.callback_query(UsersSectionAction.filter(F.action == Action.block))
 async def block_user(
-        query: CallbackQuery,
-        callback_data: UsersSectionAction,
-        session: AsyncSession,
+    query: CallbackQuery,
+    callback_data: UsersSectionAction,
+    session: AsyncSession,
 ):
     await bot.answer_callback_query(query.id)
 

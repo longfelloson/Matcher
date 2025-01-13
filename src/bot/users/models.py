@@ -19,7 +19,7 @@ from database import Base
 class UserConfig(Base):
     __tablename__ = "user_config"
 
-    user_id = Column(BigInteger, ForeignKey("users.user_id"), primary_key=True)
+    user_id = Column(BigInteger, ForeignKey("users.id"), primary_key=True)
     guess_age = Column(Boolean)
 
     user = relationship("User", back_populates="config")
@@ -28,7 +28,7 @@ class UserConfig(Base):
 class User(Base):
     __tablename__ = "users"
 
-    user_id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     name = Column(String)
     username = Column(String, nullable=True)
     status = Column(String, default=UserStatus.active)
