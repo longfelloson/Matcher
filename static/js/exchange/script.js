@@ -1,6 +1,6 @@
 async function fetchExchangeRate() {
     try {
-        const response = await fetch('/exchange/rate');
+        const response = await fetch('/points/exchange-rate');
         const data = await response.json();
         return data['rate'];
     } catch (error) {

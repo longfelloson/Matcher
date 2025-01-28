@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi_cache.decorator import cache
 
 from bot.users import crud as users_crud
 from config import settings
@@ -18,6 +19,12 @@ templates = Jinja2Templates(settings.TEMPLATES_PATH)
 async def get_user_points(user: CurrentUser):
     return {"points": user.points}
 
+
+@router.get("/points/exchange-rate")
+@cache(expire=3600)
+async def get_points_exchange_rate():
+    return {"rate": settings.MARKET_EXCHANGE_RATE}
+    
 
 @router.get("/points/exchange")
 async def get_exchange_points_page(request: Request) -> HTMLResponse:

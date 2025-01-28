@@ -22,7 +22,7 @@ def get_search_options(
     searcher: User,
 ) -> Tuple:
     minimal_options = [
-        User.id.not_in(rater_users_ids),  # Getting users who have not rated the user
+        User.id.not_in(rater_users_ids),
         User.id != searcher.id,
         User.status == UserStatus.active,
         or_(
@@ -32,7 +32,10 @@ def get_search_options(
     ]
     if searcher.config.guess_age:
         minimal_options.append(
-            or_(User.id.not_in(guessed_users_ids), User.id.not_in(rated_users_ids))
+            or_(
+                User.id.not_in(guessed_users_ids), 
+                User.id.not_in(rated_users_ids)
+            )
         )
     else:
         minimal_options.append(User.id.not_in(rated_users_ids))

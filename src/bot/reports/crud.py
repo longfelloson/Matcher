@@ -10,7 +10,9 @@ from bot.reports.schemas import Report as ReportSchema
 
 
 async def get_report(report_id: int, session: AsyncSession) -> Report:
-    report = await session.execute(select(Report).where(Report.id == report_id))
+    report = await session.execute(
+        select(Report).where(Report.id == report_id)
+    )
     return report.scalar_one()
 
 
@@ -24,5 +26,7 @@ async def update_report(
     session: AsyncSession,
     **values,
 ) -> None:
-    await session.execute(update(Report).values(**values).where(Report.id == report_id))
+    await session.execute(
+        update(Report).values(**values).where(Report.id == report_id)
+    )
     await session.commit()

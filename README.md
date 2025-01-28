@@ -1,21 +1,22 @@
-# Matcher (бот + сайт)
+# Matcher (bot and website)
 
-Проект для поиска новых знакомств.
+Project to find a new acquaintances.
 
-## Бот
+![Логотип](https://i.imgur.com/RlWV4yK.png)
 
-У пользователя есть возможность угадывать возраст анкеты других пользователей, за
-каждый угаданный возраст анкеты, пользователь получает баллы, которые потом может обменять на маркете.
+## Bot
 
-## Маркет
+A user can rate other users. If a user has positively evaluated another user, the evaluated user will receive a notification and will have the opportunity to evaluate him/her in return.
 
-Сайт для обмена баллов реализован на FastAPI. У пользователя есть возможность обменять баллы (**/exchange-points**)
-на деньги, либо товары (**/add-user-product**).
+![Screenshot](https://i.imgur.com/7yYTMyi.jpeg)
 
-## Установка на Linux
+## Market
 
-1) ```sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose```
-2) ```sudo chmod +x /usr/local/bin/docker-compose```
-3) ```docker compose + docker compose up```
+Website based on FastAPI. A user can exchange points or buy some products.
 
+![Screenshot](https://i.imgur.com/LVpu0Nk.png)
 
+## Clone, deploy, launch (Linux)
+
+1) ```git clone https://github.com/longfelloson/Matcher.git```
+2) ```docker compose up --build```
