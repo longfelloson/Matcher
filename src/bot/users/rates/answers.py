@@ -4,7 +4,7 @@ from bot.users.enums.genders import UserGender
 from bot.users.models import User
 
 
-class RatesAnswer(StrEnum):
+class RateAnswer(StrEnum):
     answer_for_rater = "Ссылка на лайкнутого пользователя: {} 💞"
     someone_liked_you = "Кому-то понравилась ваша анкета 🥰"
 

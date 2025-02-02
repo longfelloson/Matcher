@@ -27,13 +27,16 @@ def notification_keyboard(rater_id: int) -> InlineKeyboard:
 def respond_to_rate_keyboard(user_to_rate: User) -> InlineKeyboard:
     builder = InlineBuilder().row(
         InlineButton(
-            text="❤", callback_data=f"rate_user*{RateType.positive}*{user_to_rate.id}"
+            text="❤", 
+            callback_data=f"rate_user*{RateType.positive}*{user_to_rate.id}"
         ),
         InlineButton(
-            text="👎", callback_data=f"rate_user*{RateType.negative}*{user_to_rate.id}"
+            text="👎", 
+            callback_data=f"rate_user*{RateType.negative}*{user_to_rate.id}"
         ),
     )
-    return builder.as_markup()
+    input_field_placeholder = "Нажми на кнопку, чтобы оценить анкету"
+    return builder.as_markup(input_field_placeholder=input_field_placeholder)
 
 
 def rate_buttons_keyboard() -> Keyboard:

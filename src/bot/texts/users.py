@@ -1,5 +1,5 @@
 from bot.texts.utils import bold
-from bot.users.guesses.answers import Answer
+from bot.users.guesses.utils import convert_points_to_currency
 from bot.users.models import User
 
 
@@ -21,8 +21,7 @@ def get_age_suffix(age):
 
 
 def get_profile_text(user: User) -> str:
-    """Текст анкеты пользователя в его профиле"""
-    currency = Answer.convert_score_to_currency(user.points)
+    currency = convert_points_to_currency(user.points)
     points_info = f"{int(user.points)} (~{currency} ₽)"
     return (
         f"👤 Имя: {bold(user.name)}\n\n"

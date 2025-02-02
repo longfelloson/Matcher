@@ -48,7 +48,7 @@ def get_nearest_user(
 
         if datetime.now() > max_search_time:
             break
-
+    
     return nearest_user
 
 

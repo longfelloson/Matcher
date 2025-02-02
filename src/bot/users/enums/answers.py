@@ -3,6 +3,10 @@ from enum import StrEnum
 from bot.users.registration.constants import MAX_AGE, MIN_AGE
 
 
+class SearchAnswer(StrEnum):
+    no_users_for_view = "Нет пользователей для просмотра 🤷‍♂️"
+
+    
 class IncorrectInputAnswer(StrEnum):
     age = f"Введи возраст от {MIN_AGE} до {MAX_AGE} 😘"
     name = "Это не похоже на имя 🤔"

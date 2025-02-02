@@ -55,7 +55,10 @@ class DatabaseConfig(BaseSettings):
 
     @property
     def db_url(self):
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return (
+            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@"
+            f"{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
 
 
 class MarketConfig(BaseSettings):
@@ -76,6 +79,20 @@ class PaymentsConfig(BaseSettings):
     PAYMENTS_ACCOUNT: str
 
 
+class RabbitMQSettings(BaseSettings):
+    RABBITMQ_USER: str
+    RABBITMQ_PASSWORD: str
+    RABBITMQ_PORT: int
+    RABBITMQ_HOST: str
+
+    @property
+    def acqp_url(self) -> str:
+        return (
+            f"amqp://{self.RABBITMQ_USER}:{self.RABBITMQ_PASSWORD}@"
+            f"{self.RABBITMQ_HOST}:{self.RABBITMQ_PORT}/"
+        )
+    
+
 class Settings(
     AuthConfig,
     S3Config,
@@ -84,6 +101,7 @@ class Settings(
     MarketConfig,
     PaymentsConfig,
     RedisConfig,
+    RabbitMQSettings,
 ):
     LOGS_FILE_PATH: str = DEFAULT_LOGS_PATH
 

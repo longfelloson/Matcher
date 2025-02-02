@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.loader import bot
 from bot.texts.users import get_user_link
 from bot.users import crud as users_crud
-from bot.users.rates.answers import RatesAnswer
+from bot.users.rates.answers import RateAnswer
 from bot.users.rates.constants import USER_RATE_BUTTONS
 from bot.users.models import User
 from bot.users.rates import crud
@@ -70,8 +70,8 @@ async def rate_respond_button_handler(
         rated_link = get_user_link(rated)
         rater_link = get_user_link(user)
 
-        answer_for_rated = RatesAnswer.get_answer_for_rated(user, rater_link)
-        answer_for_rater = RatesAnswer.answer_for_rater.format(rated_link)
+        answer_for_rated = RateAnswer.get_answer_for_rated(user, rater_link)
+        answer_for_rater = RateAnswer.answer_for_rater.format(rated_link)
 
         await call.message.edit_caption(caption=answer_for_rater)
         await send_rate_notification(

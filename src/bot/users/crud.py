@@ -50,8 +50,8 @@ async def decrease_user_points(
 
 async def get_user_by_options(
     session: AsyncSession,
+    options: list,
     limit: int = DEFAULT_USERS_LIMIT,
-    options: List = None,
 ) -> List[User]:
     """Получение пользователей по заданным условиям"""
     stmt = select(User).limit(limit)
@@ -71,7 +71,6 @@ async def get_user_points(user_id: int, session: AsyncSession) -> Union[int, flo
 async def get_users_amount(
     session: AsyncSession, users_status: UserStatus = None
 ) -> int:
-    """Получение количества всех пользователей в базе"""
     stmt = select(count(User.id))
     if users_status:
         stmt = stmt.where(User.status == users_status)

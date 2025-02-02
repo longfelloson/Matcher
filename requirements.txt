@@ -21,3 +21,4 @@ asyncpg==0.30.0
 redis==5.2.1
 fastapi-cache2==0.2.2
 python-jose==3.3.0
+aio-pika==9.5.2

@@ -76,7 +76,8 @@ async def get_user_gender(message: Message, state: FSMContext):
     if message.text == BACK_BUTTON_EMOJI:
         await state.set_state(RegistrationState.name)
         return await message.answer(
-            SectionAnswer.name, reply_markup=ReplyKeyboardRemove()
+            SectionAnswer.name, 
+            reply_markup=select_name_keyboard(message.from_user.first_name),
         )
 
     try:

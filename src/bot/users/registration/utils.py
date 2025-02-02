@@ -5,6 +5,7 @@ from bot.users import crud as users_crud
 from bot.users.configs import crud as users_config_crud
 from bot.users.configs.schemas import UserConfig
 from bot.users.registration.schemas import UserRegistrationInfo
+from bot.notifications.new_users.publisher import publish_new_user
 
 
 async def complete_user_registration(
@@ -16,3 +17,4 @@ async def complete_user_registration(
     await upload_user_photo_to_s3(telegram_file_id=photo_telegram_file_id)
     await users_crud.create_user(user_registration_info, session)
     await users_config_crud.add_user_config(user_config_schema, session)
+    await publish_new_user(user_registration_info)

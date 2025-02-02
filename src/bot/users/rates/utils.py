@@ -10,7 +10,7 @@ from bot.users import crud as users_crud
 from bot.users.enums.statuses import UserStatus
 from bot.users.guesses.answers import Answer
 from bot.users.models import User
-from bot.users.rates.answers import RatesAnswer
+from bot.users.rates.answers import RateAnswer
 from bot.users.rates.keyboards import rate_buttons_keyboard
 from bot.users.rates import crud
 from bot.users.rates.enums import RateType
@@ -32,7 +32,7 @@ async def react_for_user_rate(
     if rate.type == RateType.positive:
         await send_rate_notification(
             user_id=user_for_rate.id,
-            text=RatesAnswer.someone_liked_you,
+            text=RateAnswer.someone_liked_you,
             keyboard=notification_keyboard(rate.rater_user_id),
             session=session,
         )
