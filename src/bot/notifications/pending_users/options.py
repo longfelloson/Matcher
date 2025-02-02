@@ -1,4 +1,3 @@
-from pprint import pprint
 from bot.notifications.keys import USER_SEARCH_OPTIONS_KEY
 from bot.notifications.new_users.schemas import NewUser
 from bot.storage import storage
@@ -29,15 +28,6 @@ def get_new_user_options(new_user: NewUser) -> list[list[str]]:
         ])
 
     return options
-
-    # if new_user.preferred_gender == PreferredGender.both:
-    #     options.append(f"gender:{UserGender.female}")
-    #     options.append(f"gender:{UserGender.male}")
-    # else:
-    #     options.append(f"gender:{new_user.preferred_gender}")
-
-    # options.append(f"preferred_gender:{new_user.gender}")
-    # return options
     
 
 def get_pending_user_options(pending_user: User) -> list[str]:
