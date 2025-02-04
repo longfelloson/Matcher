@@ -60,12 +60,9 @@ async def get_pending_users_ids_by_options(options: list[list[str]]) -> list[int
         response = await storage.redis.sinter(*[
             f"options:{name}" for name in option
         ])
-        print(response, [
-            f"options:{name}" for name in option
-        ])
         users_ids.extend(response)
 
-    return [int(user_id.decode('utf-8')) for user_id in users_ids]
+    return [int(user_id.decode('utf-8')) for user_id in set(users_ids)]
 
 
 async def remove_pending_user_options(user_id: int | str) -> None:

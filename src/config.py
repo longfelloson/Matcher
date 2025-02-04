@@ -3,12 +3,6 @@ from pydantic_settings import BaseSettings
 
 load_dotenv()
 
-DEFAULT_REDIS_PORT = 6379
-DEFAULT_REDIS_HOST = "redis"
-DEFAULT_REDIS_DB = 0
-
-DEFAULT_LOGS_PATH = "../errors.log"
-
 
 class S3Config(BaseSettings):
     S3_ACCESS_KEY: str
@@ -18,9 +12,9 @@ class S3Config(BaseSettings):
 
 
 class RedisConfig(BaseSettings):
-    REDIS_PORT: int = DEFAULT_REDIS_PORT
-    REDIS_HOST: str = DEFAULT_REDIS_HOST
-    REDIS_DB: int = DEFAULT_REDIS_DB
+    REDIS_PORT: int
+    REDIS_HOST: str
+    REDIS_DB: int
 
     @property
     def redis_url(self) -> str:
@@ -103,7 +97,7 @@ class Settings(
     RedisConfig,
     RabbitMQSettings,
 ):
-    LOGS_FILE_PATH: str = DEFAULT_LOGS_PATH
+    LOGS_FILE_PATH: str
 
 
 settings = Settings()

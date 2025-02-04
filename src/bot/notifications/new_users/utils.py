@@ -25,7 +25,7 @@ async def on_new_user(message: IncomingMessage):
     new_user = NewUser(**json_data)
     options = get_new_user_options(new_user)
     users_ids = await get_pending_users_ids_by_options(options)
-    print(users_ids)
+    
     for user_id in users_ids:
         user_counter_value = await get_pending_user_counter(user_id)
         if user_counter_value != MAX_COUNTER_VALUE:

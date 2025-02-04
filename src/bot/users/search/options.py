@@ -2,6 +2,7 @@ from typing import Sequence
 
 from sqlalchemy import or_
 
+from bot.users.enums.genders import UserViewerGender
 from bot.users.enums.statuses import UserStatus
 from bot.users.models import User
 from bot.users.registration.enums.gender import PreferredGender
@@ -17,12 +18,12 @@ def get_minimal_options(
         User.id != searcher.id,
         User.status == UserStatus.active,
         or_(
-            User.gender == searcher.preferred_gender,
+            searcher.preferred_gender == User.gender,
             searcher.preferred_gender == PreferredGender.both,
         ),
         or_(
-            User.preferred_gender == searcher.gender,
-            User.preferred_gender == PreferredGender.both,
+            User.viewer_gender == searcher.gender,
+            User.viewer_gender == UserViewerGender.both,
         ),
     ]
 
