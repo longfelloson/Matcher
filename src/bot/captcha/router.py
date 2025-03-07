@@ -8,6 +8,7 @@ from bot.loader import bot
 from bot.users.enums.actions import UserAction
 from bot.users.registration.enums.answers import SectionAnswer
 from bot.users.registration.states import RegistrationState
+from bot.users.registration.utils import send_warning_about_username
 
 router = Router()
 
@@ -21,6 +22,12 @@ async def captcha_click_handler(call: CallbackQuery, state: FSMContext):
         await bot.answer_callback_query(call.id)
         await call.message.delete()
         await state.set_state(RegistrationState.age)
-        await call.message.answer(SectionAnswer.age)
+        
+        # Warning about not setted username
+        if not call.from_user.username:
+            media_group = await send_warning_about_username(call.message)
+            await media_group[0].reply(SectionAnswer.age)
+        else:
+            await call.message.answer(SectionAnswer.age)
     else:
         await call.answer(text="Неправильный эмодзи 🤷‍♂️", show_alert=True)

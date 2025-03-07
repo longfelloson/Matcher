@@ -12,8 +12,9 @@ async def create_product(
     img_url: str,
     session: AsyncSession,
 ) -> None:
-    await session.execute(insert(Product).values(**data.model_dump(), img_url=img_url))
-    await session.commit()
+    await session.execute(
+        insert(Product).values(**data.model_dump(), img_url=img_url)
+    )
 
 
 async def get_products(
@@ -21,10 +22,13 @@ async def get_products(
     limit: int,
     session: AsyncSession,
 ) -> List[Product]:
-    products = await session.execute(select(Product).offset(offset).limit(limit))
+    products = await session.execute(
+        select(Product).offset(offset).limit(limit)
+    )
     return products.scalars().all()
 
 
-async def delete_product(product_id: uuid.uuid4, session: AsyncSession) -> None:
+async def delete_product(
+    product_id: uuid.uuid4, session: AsyncSession
+) -> None:
     await session.execute(delete(Product).where(Product.id == product_id))
-    await session.commit()

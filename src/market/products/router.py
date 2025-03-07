@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
 
-from database import DatabaseSession
+from database import SessionWithCommit, SessionWithoutCommit
 from market.products.schemas import CreateProduct, Product
 from market.responses import (
     RESOURCE_CREATED_RESPONSE, 
@@ -18,7 +18,7 @@ router = APIRouter(tags=["Products"])
 
 @router.post("/products")
 async def create_product_endpoint(
-    data: CreateProduct, session: DatabaseSession
+    data: CreateProduct, session: SessionWithCommit
 ):
     img_name = str(uuid.uuid4())
     img = base64.b64decode(data.img_base64)
@@ -32,14 +32,16 @@ async def create_product_endpoint(
 
 @router.get("/products", response_model=list[Product])
 async def get_products_endpoint(
-    session: DatabaseSession, params: OffsetLimit = Depends()
+    session: SessionWithoutCommit, params: OffsetLimit = Depends()
 ):
     products = await crud.get_products(params.offset, params.limit, session)
     return products
 
 
 @router.delete("/products/{product_id}")
-async def delete_product_endpoint(product_id: UUID4, session: DatabaseSession):
+async def delete_product_endpoint(
+    product_id: UUID4, session: SessionWithCommit,
+):
     await crud.delete_product(product_id, session)
 
     return RESOURCE_DELETED_RESPONSE

@@ -1,23 +1,36 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+/* HEADER */
+header {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 20vh;
+    justify-content: center;
+    max-height: 40vh;
+    background-color: #fe267b;
+    margin-bottom: 10px;
+}
+
+header .logo {
+    height: 20vh;
+    max-height: 40vh;
 }
 
 .container {
     padding: 20px;
     width: 90%;
+    margin: auto;
     max-width: 600px;
 }
 
 .input-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     position: relative;
 }
 
@@ -29,7 +42,7 @@ body {
 
 .input-field input {
     width: 100%;
-    padding: 10px 40px 10px 10px; /* Adjusted padding for icon on the right */
+    padding: 10px 40px 10px 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -38,7 +51,7 @@ body {
 
 .input-field .icon {
     position: absolute;
-    right: 10px; /* Adjusted position for icon on the right */
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     width: 20px;
@@ -49,31 +62,33 @@ body {
     display: flex;
     justify-content: center;
     overflow-x: auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     padding: 10px 0;
 }
 
 .carousel-inner {
     display: flex;
-    justify-content: center; /* Added to center images */
+    gap: 10px;
+    justify-content: center;
 }
 
 .carousel-item {
+    border: 3px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
     width: 50px;
     height: 50px;
-    margin: 0 5px;
     object-fit: cover;
     cursor: pointer;
     transition: transform 0.2s;
 }
 
 .carousel-item.selected {
-    border: 3px solid #b0b0b0;
-    border-radius: 10px;
-    transform: scale(1.1);
+    border-color: #fe267b;
 }
 
 .account-input {
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 
@@ -91,25 +106,40 @@ body {
 }
 
 .button-container button {
+    height: 10vh;
+    max-height: 20vh;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    margin-top: 10px;
+    background-color: #fe267b;
     color: #fff;
-    font-size: 16px;
+    font-size: 20px;
+    font-family: sans-serif;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .button-container button:hover {
-    background-color: #0056b3;
+    background-color: #ff0066;
 }
 
 @media (max-width: 600px) {
+    header, header .logo {
+        height: 10vh;
+        max-height: 20vh;
+    }
+
+    .button-container button {
+        height: 5vh;
+        max-height: 10vh;
+        font-size: 16px;
+    }
+
     .input-container {
         flex-direction: column;
     }
-
+    
     .input-field {
         margin: 10px 0;
     }

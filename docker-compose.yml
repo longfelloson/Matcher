@@ -64,13 +64,17 @@ services:
     container_name: matcher_bot
     build: .
     depends_on:
-      - db
-      - redis
-      - rabbitmq
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbitmq:
+          condition: service_healthy
     environment:
       - DB_HOST=db
     networks:
       - matcher-network
+
 
   rabbitmq:
     image: rabbitmq:3
@@ -85,13 +89,12 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status"]
+      test: rabbitmqctl status || exit 1
       interval: 5s
       timeout: 20s
       retries: 5
     networks:
       - matcher-network
-
 
 volumes:
   postgres-data:

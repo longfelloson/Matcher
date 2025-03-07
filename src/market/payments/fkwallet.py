@@ -1,17 +1,18 @@
 import hashlib
 import json
-import uuid
 from abc import ABC, abstractmethod
 from typing import Optional
 
 import aiohttp
+from pydantic import UUID4
 
 from config import settings
 from logger import logger
+from market.payments.enums import PaymentDestination
 
-SBERBANK_idFOR_SPB = "1enc00000111"
-YOOMONEY_idFOR_SPB = "1enc00000022"
-TINKOFF_idFOR_SPB = "1enc00000004"
+
+SBERBANK_ID_FOR_SPB = "1enc00000111"
+TINKOFF_ID_FOR_SPB = "1enc00000004"
 
 RUB_CURRENCY_ID = 1
 
@@ -21,6 +22,8 @@ PAYMENT_SYSTEM_YOOMONEY_ID = 7
 
 FEE_FROM_BALANCE = 1
 FEE_FROM_PAYMENT = 0
+
+CARD_NUMBER_SYMBOLS_AMOUNT = 16
 
 
 class PaymentSystem(ABC):
@@ -53,8 +56,17 @@ class Wallet(PaymentSystem):
         return f"{self.base_url}/{self.public_key}/withdrawal"
 
     @staticmethod
-    def __idempotence_key() -> str:
-        return str(uuid.uuid4())
+    def get_payment_system_id(account: str) -> int:
+        if len(account.replace(" ", "")) == CARD_NUMBER_SYMBOLS_AMOUNT:
+            return PAYMENT_SYSTEM_CARD_ID
+        return PAYMENT_SYSTEM_SBP_ID
+    
+    @staticmethod
+    def get_sbp_bank_id(destination: PaymentDestination) -> int:
+        if destination == PaymentDestination.sberbank:
+            return SBERBANK_ID_FOR_SPB
+        elif destination == PaymentDestination.tbank:
+            return TINKOFF_ID_FOR_SPB
 
     def __create_sign(self, data: Optional[dict]) -> str:
         """
@@ -88,23 +100,27 @@ class Wallet(PaymentSystem):
 
     async def withdraw(
         self,
-        sbp_bank_id: int,
-        amount: float,
-        payment_system_id: int,
+        payment_id: UUID4,
+        destination: PaymentDestination,
+        account: str,
+        amount: int | float,
+        currency_id: int = RUB_CURRENCY_ID, 
         fee_from_balance: int = FEE_FROM_PAYMENT,
-        currency_id: int = RUB_CURRENCY_ID,
     ) -> dict:
         """
         Выводит средства с кошелька на указанные реквизиты
         """
         data = {
-            "sbp_bank_id": sbp_bank_id,
+            "idempotence_key": payment_id,
             "currency_id": currency_id,
-            "payment_system_id": payment_system_id,
+            "payment_system_id": self.get_payment_system_id(account),
             "fee_from_balance": fee_from_balance,
             "account": self.account,
             "amount": amount,
         }
+        if data["payment_system_id"] == PAYMENT_SYSTEM_SBP_ID:
+            data["fiels"] = {"sbp_bank_id": self.get_sbp_bank_id(destination)}
+
         return await self._request(self.withdraw_endpoint_url, data=data)
 
 

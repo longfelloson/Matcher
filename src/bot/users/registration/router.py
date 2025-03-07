@@ -109,7 +109,8 @@ async def get_user_preferred_gender(message: Message, state: FSMContext):
         await state.update_data(preferred_gender=preferred_gender)
         await state.set_state(RegistrationState.viewer_gender)
         await message.answer(
-            SectionAnswer.viewer_gender, reply_markup=select_viewer_gender_keyboard()
+            text=SectionAnswer.viewer_gender, 
+            reply_markup=select_viewer_gender_keyboard()
         )
     except ValidationError:
         await message.answer(IncorrectInputAnswer.buttons)
@@ -146,7 +147,9 @@ async def get_user_location(message: Message, state: FSMContext):
 
     try:
         if location := message.location:
-            city = await get_city_by_location(location.latitude, location.longitude)
+            city = await get_city_by_location(
+                location.latitude, location.longitude
+            )
             location_str = f"{location.longitude}*{location.latitude}"
             await state.update_data(location=location_str, city=city)
         else:
@@ -154,7 +157,9 @@ async def get_user_location(message: Message, state: FSMContext):
             await state.update_data(city=city)
 
         await state.set_state(RegistrationState.photo)
-        await message.answer(SectionAnswer.photo, reply_markup=back_button_keyboard())
+        await message.answer(
+            SectionAnswer.photo, reply_markup=back_button_keyboard()
+        )
     except ValidationError:
         await message.answer(IncorrectInputAnswer.city)
 
@@ -183,15 +188,25 @@ async def get_user_photo(
     )
 
     profile_photo_telegram_file_id = message.photo[-1].file_id
-    photo_url = s3_client.get_file_url(file_name=profile_photo_telegram_file_id)
+    photo_url = s3_client.get_file_url(
+        file_name=profile_photo_telegram_file_id
+    )
 
     user_config = UserConfig(user_id=message.chat.id, guess_age=True)
     user_registration_info = UserRegistrationInfo(
-        **data, id=user_config.user_id, photo_url=photo_url
+        **data, 
+        id=user_config.user_id, 
+        photo_url=photo_url, 
+        username=message.from_user.username,
     )
 
     await complete_user_registration(
-        user_config, profile_photo_telegram_file_id, user_registration_info, session
+        user_config, 
+        profile_photo_telegram_file_id, 
+        user_registration_info, 
+        session,
     )
     await answer_for_user_photo.delete()
-    await message.answer(COMPLETED_REGISTRATION_ANSWER, reply_markup=main_keyboard())
+    await message.answer(
+        COMPLETED_REGISTRATION_ANSWER, reply_markup=main_keyboard()
+    )

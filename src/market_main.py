@@ -13,17 +13,14 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 
-import database
+from database import db
 from config import settings
 from market.auth.utils import get_current_user
 from market.router import router as market_router
 
-app = FastAPI(docs_url="", redoc_url="", title="Market")
-
+app = FastAPI(docs_url="/docs", redoc_url="", title="Market")
 app.mount("/static", StaticFiles(directory="../static"), name="static")
-
 app.include_router(market_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -40,7 +37,7 @@ async def startup():
     redis = aioredis.from_url(settings.redis_url)
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
-    await database.create_tables()
+    await db.create_tables()
 
 
 @app.get(
@@ -54,4 +51,6 @@ async def root_page(request: Request):
 
 @app.exception_handler(status.HTTP_401_UNAUTHORIZED)
 async def unauthorized_exception_handler(_: Request, __: HTTPException):
-    return RedirectResponse("/login")
+    return RedirectResponse(
+        url="/login", status_code=status.HTTP_303_SEE_OTHER
+    )

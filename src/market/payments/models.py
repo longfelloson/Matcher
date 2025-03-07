@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 
-from sqlalchemy import UUID, BigInteger, Column, Float, Integer, String, DateTime, ForeignKey
+from sqlalchemy import UUID, BigInteger, Column, Float, String, DateTime, ForeignKey
 
 from database import Base
 from market.payments.enums import PaymentStatus

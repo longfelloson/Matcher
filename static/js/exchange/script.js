@@ -21,21 +21,26 @@ async function calculateMoney() {
 }
 
 async function selectImage(id) {
-    const images = document.querySelectorAll('.carousel-item');
-    images.forEach(image => image.classList.remove('selected'));
-
     const selectedImage = document.getElementById(id);
-    selectedImage.classList.add('selected');
+
+    document.querySelectorAll('.carousel-inner img').forEach(img => img.classList.remove('selected'));
+
+    if (!selectedImage.classList.contains('selected')) {
+        selectedImage.classList.add('selected');
+    }
 }
+
 
 async function exchangePoints() {
     const exchangeRate = await fetchExchangeRate();
-    const points = document.getElementById('points').value;
-    const selectedImage = document.querySelector('.carousel-item.selected');
-    const destination = selectedImage ? selectedImage.id : '';
+    const pointsInput = document.getElementById('points').value;
     const accountDetails = document.getElementById('account-details').value;
+    
+    // Get the selected image (bank)
+    const selectedImage = document.querySelector('.carousel-item.selected');
+    const bankId = selectedImage ? selectedImage.id : '';
 
-    if (points && destination && accountDetails) {
+    if (pointsInput && bankId && accountDetails) {
         try {
             const balanceResponse = await fetch(`/points`);
             if (!balanceResponse.ok) {
@@ -46,22 +51,26 @@ async function exchangePoints() {
 
             const balanceData = await balanceResponse.json();
             const userPoints = balanceData.user_points;
+            const pointsValue = parseFloat(pointsInput);
+            const amount = pointsValue / exchangeRate;
 
-            if (parseInt(points) >= userPoints) {
+            if (pointsValue > userPoints) {
                 alert('Недостаточно баллов для обмена');
                 return;
             }
 
             const requestData = {
-                points: parseInt(points),
+                points: pointsValue,
                 rate: exchangeRate,
+                destination: bankId,
+                account: accountDetails,
+                amount: amount,
+                bank_id: bankId
             };
 
-            const exchangeResponse = await fetch('/exchange', {
+            const exchangeResponse = await fetch('/exchanges', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData),
             });
 
@@ -72,11 +81,10 @@ async function exchangePoints() {
                 document.getElementById('account-details').value = '';
                 document.getElementById('money').value = '';
 
-                const carouselItems = document.querySelectorAll('.carousel-item');
-                carouselItems.forEach(item => item.classList.remove('selected'));
+                document.querySelectorAll('.carousel-item').forEach(item => item.classList.remove('selected'));
             } else {
                 const errorData = await exchangeResponse.json();
-                alert(errorData.message || 'Ошибка при обмене баллов');
+                alert(errorData.detail?.msg || 'Ошибка при обмене баллов');
             }
         } catch (error) {
             alert('Произошла ошибка: ' + error.message);

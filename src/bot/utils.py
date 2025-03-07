@@ -12,7 +12,7 @@ from bot.middlewares.throttling import ThrottlingMiddleware
 from bot.middlewares.user import UserStatusMiddleware
 from bot.users.router import router as users_router
 from config import settings
-from database import create_tables
+from database import db
 
 DEFAULT_RATE_LIMIT = 0.5
 
@@ -20,7 +20,7 @@ DEFAULT_RATE_LIMIT = 0.5
 async def start_bot() -> None:
     """Sets bot settings and start it"""
     dp.include_routers(
-        # errors_router,
+        errors_router,
         captcha_router,
         messages_router,
         commands_router,
@@ -33,7 +33,7 @@ async def start_bot() -> None:
     set_middleware(PayloadMiddleware(), for_updates=True)
     set_middleware(UserStatusMiddleware(), for_messages=True, for_calldata=True)
 
-    await create_tables()
+    await db.create_tables()
     await set_commands()
     await dp.start_polling(bot)
 

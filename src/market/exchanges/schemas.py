@@ -1,6 +1,8 @@
 from datetime import datetime
 from pydantic import UUID4, BaseModel
 
+from market.payments.schemas import CreatePayment
+
 
 class Exchange(BaseModel):
     id: UUID4
@@ -11,7 +13,6 @@ class Exchange(BaseModel):
     points: int | float
 
 
-class CreateExchange(BaseModel):
-    rate: int | float
+class CreateExchange(CreatePayment):
     points: int | float
-    payment_id: UUID4
+    rate: int | float

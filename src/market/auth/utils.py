@@ -9,7 +9,7 @@ from fastapi import (
 
 from bot.users import crud as users_crud
 from bot.users.models import User
-from database import DatabaseSession
+from database import SessionWithoutCommit
 from market.auth.schemas import User as UserSchema
 from market.auth.token import decode_token, create_access_token
 
@@ -19,7 +19,9 @@ def get_auth_link(user_id: int) -> str:
     return f"/auth?token={token}"
 
 
-async def get_current_user(request: Request, session: DatabaseSession) -> User:
+async def get_current_user(
+    request: Request, session: SessionWithoutCommit,
+    ) -> User:
     token = request.cookies.get("token")
     if not token:
         raise HTTPException(

@@ -60,6 +60,11 @@ async def rate_respond_button_handler(
     user: User,
 ):
     rate_type, rated_id = call.data.split("*")[1:]
+    rater_username = call.from_user.username
+    if rater_username:
+        await users_crud.update_user(user.id, session, username=rater_username)
+        user.username = rater_username
+
     rated = await users_crud.get_user_by_id(int(rated_id), session)
     rate = Rate(rater_user_id=user.id, rated_user_id=rated_id, type=rate_type)
 

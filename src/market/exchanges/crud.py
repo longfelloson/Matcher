@@ -1,10 +1,8 @@
 from typing import Optional
-from fastapi import Depends
 from pydantic import UUID4
 from sqlalchemy import insert, select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_async_session
 from market.exchanges.models import Exchange
 from market.exchanges.schemas import CreateExchange
 
@@ -12,12 +10,11 @@ from market.exchanges.schemas import CreateExchange
 async def create_exchange(
     data: CreateExchange,
     user_id: int,
-    session: AsyncSession = Depends(get_async_session),
+    session: AsyncSession,
 ) -> None:
-    await session.execute(insert(Exchange).values(
-        **data.model_dump(), user_id=user_id)
+    await session.execute(
+        insert(Exchange).values(**data.model_dump(), user_id=user_id)
     )
-    await session.commit()
 
 
 async def get_exchanges(
@@ -42,5 +39,4 @@ async def get_exchange(
 
 async def delete_exchange(exchange_id: UUID4, session: AsyncSession) -> None:
     await session.execute(delete(Exchange).where(Exchange.id == exchange_id))
-    await session.commit()
     

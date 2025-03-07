@@ -28,7 +28,9 @@ class UserAge(BaseModel):
 
 
 class UserName(BaseModel):
-    name: str = Field(..., min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH)
+    name: str = Field(
+        ..., min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH
+    )
 
 
 class UserGender(BaseModel):
@@ -79,13 +81,16 @@ class UserPreferredAgeGroup(BaseModel):
 
 
 class UserCity(BaseModel):
-    city: str = Field(..., min_length=MIN_CITY_LENGTH, max_length=MAX_CITY_LENGTH)
+    city: str = Field(
+        ..., min_length=MIN_CITY_LENGTH, max_length=MAX_CITY_LENGTH
+    )
 
 
 class UserRegistrationInfo(BaseModel):
     id: int
     age: int
     name: str
+    username: Optional[str]
     gender: UserGenderEnum
     preferred_gender: PreferredGenderEnum
     viewer_gender: UserViewerGenderEnum

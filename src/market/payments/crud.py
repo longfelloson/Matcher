@@ -14,7 +14,6 @@ async def create_payment(
     await session.execute(
         insert(Payment).values(**data.model_dump(), user_id=user_id)
     )
-    await session.commit()
 
 
 async def get_payment(payment_id: UUID4, session: AsyncSession) -> Payment:
@@ -39,4 +38,3 @@ async def update_payment(payment_id: int, session: AsyncSession, **values):
     await session.execute(
         update(Payment).where(Payment.id == payment_id).values(**values)
     )
-    await session.commit()

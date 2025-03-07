@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi_cache.decorator import cache
 
 from bot.users import crud as users_crud
 from config import settings
-from database import DatabaseSession
-from market.auth.utils import CurrentUser
+from database import SessionWithCommit
+from market.auth.utils import CurrentUser, get_current_user
 from market.points.schemas import UpdateUserPoints
 from market.points.enums import PointsOperationType
 from market.responses import RESOURCE_UPDATED_RESPONSE
 
-router = APIRouter(tags=["Points"])
+router = APIRouter(tags=["Points"], dependencies=[Depends(get_current_user)])
 templates = Jinja2Templates(settings.TEMPLATES_PATH)
 
 
@@ -35,7 +35,7 @@ async def get_exchange_points_page(request: Request) -> HTMLResponse:
 async def update_user_points(
     data: UpdateUserPoints,
     user: CurrentUser,
-    session: DatabaseSession,
+    session: SessionWithCommit,
 ):
     if data.operation == PointsOperationType.INCREASE:
         await users_crud.increase_user_points(user.id, data.amount, session)

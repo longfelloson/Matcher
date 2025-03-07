@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
 
-from database import DatabaseSession
+from database import SessionWithCommit, SessionWithoutCommit
 from market.auth.utils import CurrentUser
 from market.payments import crud
 from market.payments.schemas import CreatePayment, Payment
@@ -15,7 +14,7 @@ router = APIRouter(tags=["Payments"])
 async def create_payment_endpoint(
     data: CreatePayment,
     user: CurrentUser,
-    session: DatabaseSession,
+    session: SessionWithCommit,
 ):
     await crud.create_payment(data, user.id, session)
     
@@ -24,7 +23,7 @@ async def create_payment_endpoint(
 
 @router.get("/payments", response_model=list[Payment])
 async def get_payments(
-    session: DatabaseSession, params: OffsetLimit = Depends(),
+    session: SessionWithoutCommit, params: OffsetLimit = Depends(),
 ):
     payments = await crud.get_payments(params.offset, params.limit, session)
     return payments
