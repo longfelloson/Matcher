@@ -6,7 +6,7 @@ services:
       resources:
         limits:
           memory: 256M
-    command: ["redis-server", "--maxmemory", "200mb", "--maxmemory-policy", "allkeys-lru"]
+    command: ["redis-server", "--maxmemory", "250mb", "--maxmemory-policy", "allkeys-lru", "--replica-read-only", "no"]
     env_file:
       - .env
     ports:

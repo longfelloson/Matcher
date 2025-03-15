@@ -4,6 +4,7 @@ from aiogram import Router, F
 from aiogram.filters import Command, or_f, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from aiogram.types import FSInputFile 
 
 from bot.adminpanel.keyboards import select_section_keyboard
 from bot.captcha.utils import send_captcha, generate_captcha
@@ -37,9 +38,20 @@ async def start_command_handler(
 
 @router.message(Command("help"))
 async def help_command_handler(message: Message):
-    await message.answer(CommandAnswer.help, reply_markup=help_command_keyboard())
+    await message.answer(
+        CommandAnswer.help, reply_markup=help_command_keyboard()
+    )
 
 
 @router.message(Command("admin"), F.from_user.id.in_(settings.admins_ids))
 async def admin_command_handler(message: Message):
-    await message.answer(CommandAnswer.admin, reply_markup=select_section_keyboard())
+    await message.answer(
+        CommandAnswer.admin, reply_markup=select_section_keyboard()
+    )
+
+
+@router.message(Command("logs"), F.from_user.id.in_(settings.admins_ids))
+async def logs_command_handler(message: Message):
+    logs = FSInputFile(settings.LOGS_FILE_PATH)
+    await message.answer_document(logs)
+    
